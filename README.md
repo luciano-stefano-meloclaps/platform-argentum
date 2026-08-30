@@ -3,7 +3,7 @@
 Aplicación web para que los chicos aprendan sobre Argentina.
 
 > **Estado: sin código todavía.** La arquitectura y el stack ya están decididos
-> y documentados en [`docs/architecture/adr/`](docs/architecture/adr/). La
+> y documentados en [`docs/adr/`](docs/adr/). La
 > sección [Puesta en marcha](#puesta-en-marcha) describe el procedimiento
 > previsto y aplica a partir del momento en que exista el proyecto.
 
@@ -20,7 +20,7 @@ tarjetas de repaso y un juego de preguntas que refuercen lo leído.
 El conjunto de tipos de contenido **no está cerrado a propósito**. Hoy son los
 que están arriba; mañana pueden ser otros. Toda la arquitectura está diseñada
 alrededor de ese hecho: agregar un tipo nuevo tiene que ser barato (ver
-[ADR 0001](docs/architecture/adr/0001-modelo-de-entidad-unica-con-jsonb.md)).
+[ADR 0001](docs/adr/0001-modelo-de-entidad-unica-con-jsonb.md)).
 
 ## Alcance
 
@@ -48,7 +48,7 @@ El progreso del MVP se guarda **en el dispositivo**. No hay cuentas todavía.
   rol: es la ausencia de sesión.
 - **Aplicación mobile.** Mencionada como posibilidad a largo plazo. La
   arquitectura la admite sin reescritura (ver
-  [ADR 0002](docs/architecture/adr/0002-monolito-modular-un-solo-deploy.md)).
+  [ADR 0002](docs/adr/0002-monolito-modular-un-solo-deploy.md)).
 
 ## Cómo está construido
 
@@ -92,7 +92,7 @@ contenido tiene historial, revisión y vuelta atrás, sin construir nada.
 El criterio de selección fue explícito: **lo mejor para el proyecto**, no lo más
 conocido ni lo más novedoso. El razonamiento completo, con las alternativas que
 se descartaron y por qué, está en
-[ADR 0003](docs/architecture/adr/0003-stack-nextjs-postgresql.md).
+[ADR 0003](docs/adr/0003-stack-nextjs-postgresql.md).
 
 ## Puesta en marcha
 
@@ -153,8 +153,9 @@ construye "todo el backend" y después "todo el frontend".
 
 | Ruta | Qué contiene |
 | ---- | ------------ |
-| [`docs/architecture/`](docs/architecture/) | Diseño y análisis funcional |
-| [`docs/architecture/adr/`](docs/architecture/adr/) | Decisiones arquitectónicas, con su contexto y sus alternativas |
+| [`CONTEXT.md`](CONTEXT.md) | Glosario del dominio: el vocabulario del proyecto |
+| [`.claude/skills/`](.claude/skills/) | Skills del proyecto: convenciones de Git y revisión de interfaz |
+| [`docs/adr/`](docs/adr/) | Decisiones arquitectónicas, con su contexto y sus alternativas |
 | [`CLAUDE.md`](CLAUDE.md) | Contexto del proyecto para Claude Code |
 
 **Antes de proponer un cambio que contradiga una decisión registrada, leé el ADR

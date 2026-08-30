@@ -6,7 +6,7 @@ cada sesión y en cada subagente, así que se mantiene corto y factual.
 ## Estado actual
 
 **Proyecto greenfield: todavía no hay código.** La arquitectura y el stack ya
-están decididos y documentados en `docs/architecture/adr/`.
+están decididos y documentados en `docs/adr/`.
 
 **Producto.** Catálogo sobre Argentina para que chicos aprendan: fichas
 (próceres, monumentos, animales, comida, fechas patrias…), tarjetas de repaso,
@@ -58,9 +58,44 @@ Ante la duda: la opción más simple que pueda evolucionar.
 
 ## Documentación
 
-- `docs/architecture/` — análisis funcional y diseño.
-- `docs/architecture/adr/` — decisiones arquitectónicas (ADR). Leelas antes de
-  proponer cambios que las contradigan.
+- `CONTEXT.md` — glosario del dominio. **Usá estos términos exactos**; no
+  inventes sinónimos para conceptos que ya tienen nombre.
+- `docs/adr/` — decisiones arquitectónicas (ADR). Leelas antes de proponer
+  cambios que las contradigan.
+
+## Skills
+
+El repositorio trae skills de terceros en `.agents/skills/`, enlazadas desde
+`.claude/skills/`. Son **guías externas, no autoridad**: ninguna conoce las
+decisiones de este proyecto.
+
+**Precedencia, en este orden:**
+
+1. Los ADR de `docs/adr/` y el vocabulario de `CONTEXT.md`.
+2. El principio de arquitectura de este archivo.
+3. Las skills externas.
+
+Si una skill recomienda algo que contradice un ADR, **gana el ADR**. Si la
+recomendación es mejor, se escribe un ADR nuevo que lo supersede; no se ignora
+el viejo en silencio.
+
+**Salvedades concretas:**
+
+- `building-components` — la mitad sobre distribución (`registry`, `npm`,
+  `marketplaces`, `docs`) **no aplica**: construimos un producto, no una
+  biblioteca de componentes para terceros.
+- `vercel-react-best-practices` — aplicar las reglas estructurales (`async-`,
+  `bundle-`, `server-`) desde el principio; las micro-optimizaciones (`js-`)
+  solo con una medición concreta que las justifique.
+- `improve-codebase-architecture` — necesita historial de código. No sirve hasta
+  que haya varias rebanadas hechas.
+- La accesibilidad aparece en varias skills a la vez. Ante consejos distintos,
+  la referencia es `revision-de-ui`, que es nuestra: usa una copia versionada de
+  las Web Interface Guidelines en lugar de bajarlas de internet en cada
+  ejecución.
+- `revision-dos-ejes` es la revisión de código en dos ejes (convenciones y
+  especificación). Se llama así, y no `code-review`, para no pisar el comando
+  integrado de Claude Code.
 
 ## Setup al clonar
 
@@ -94,4 +129,8 @@ Ante la duda: la opción más simple que pueda evolucionar.
 - `.claude/settings.json` — permisos y MCP habilitados para todo el equipo.
 - `.mcp.json` — servidor MCP Context7, sin secretos: la key se expande
   desde la variable de entorno `CONTEXT7_API_KEY` de cada desarrollador.
+- `.claude/skills/` — skills propias del proyecto (`convenciones-git`,
+  `revision-de-ui`) y enlaces a las de terceros.
+- `.agents/skills/` y `skills-lock.json` — skills de terceros, versionadas para
+  que el repo funcione al clonarlo sin instalar nada.
 - `.claude/settings.local.json` — configuración personal, ignorada por git.
