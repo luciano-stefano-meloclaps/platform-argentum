@@ -1,0 +1,28 @@
+# Configuración personal de Claude Code (NO se comparte).
+# `.claude/settings.json`, `.claude/agents/` y `.mcp.json` sí se commitean.
+.claude/settings.local.json
+
+# Secretos y entorno local. `.env.example` SÍ se commitea (es la plantilla).
+# CONTEXT7_API_KEY va en el entorno de la shell, no acá: ver CLAUDE.md.
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+
+# Dependencias
+node_modules/
+.pnpm-store/
+
+# Next.js
+.next/
+out/
+next-env.d.ts
+.vercel/
+
+# Tests y herramientas
+coverage/
+*.tsbuildinfo
