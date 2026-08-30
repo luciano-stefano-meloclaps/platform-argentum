@@ -77,7 +77,7 @@ Antes de analizar, revisá lo que corresponda:
 - archivos de configuración y de dependencias;
 - convenciones de nombres, estilo y organización ya presentes;
 - documentación (`README`, `CLAUDE.md`, `docs/`);
-- ADRs previos en `docs/architecture/adr/`;
+- ADRs previos en `docs/adr/`;
 - infraestructura, scripts, CI;
 - tests existentes y su estrategia;
 - variables de entorno declaradas (`.env.example`);
@@ -280,7 +280,7 @@ quién, dónde vive cada regla de negocio y qué dependencias hay entre partes.
 ## 10. Documentación de decisiones
 
 Cuando se tome una decisión arquitectónica importante, escribí un ADR en
-`docs/architecture/adr/`, usando la plantilla en `0000-template.md`, con la
+`docs/adr/`, usando la plantilla en `0000-template.md`, con la
 estructura:
 
 ```
