@@ -1,6 +1,8 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
-  "enabledMcpjsonServers": ["context7"],
+  "enabledMcpjsonServers": [
+    "context7"
+  ],
   "permissions": {
     "allow": [
       "mcp__context7",
@@ -15,6 +17,20 @@
       "Read(.env.local)",
       "Read(**/*.pem)",
       "Read(**/id_rsa*)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "if": "Bash(git *)",
+            "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/bloquear-git-push.sh"
+          }
+        ]
+      }
     ]
   }
 }

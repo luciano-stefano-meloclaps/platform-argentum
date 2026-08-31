@@ -1,7 +1,9 @@
 ---
 name: improve-codebase-architecture
 description: Scan a codebase for deepening opportunities, present them as a visual HTML report, then grill through whichever one you pick.
-disable-model-invocation: true
+# MODIFICADO LOCALMENTE: se quitó `disable-model-invocation: true` para que
+# el arquitecto pueda invocarla por su cuenta. Al actualizar la skill desde
+# el origen, volver a aplicar este cambio. Ver CLAUDE.md, sección Skills.
 ---
 
 # Improve Codebase Architecture
