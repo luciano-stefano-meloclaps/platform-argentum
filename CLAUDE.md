@@ -62,10 +62,15 @@ La implementación la hacen tres especialistas, en `.claude/agents/`:
 
 Claude puede delegarles solo, o se los invoca con `@agent-<nombre>`.
 
-**Los tres proponen; no deciden.** Ninguno commitea, ninguno cambia una decisión
-tomada y ninguno instala dependencias por su cuenta. No pueden abrir un diálogo
-con el usuario: cuando algo los bloquea, terminan su turno con las preguntas
-escritas y esperan.
+**Qué pueden hacer solos:** escribir código en su área, invocar skills, commitear
+siguiendo `convenciones-git`, convocar a otro especialista o al arquitecto con
+`Agent`, y preguntarle al usuario mandándole un mensaje a `main` con
+`SendMessage` sin cortar el trabajo.
+
+**Qué no pueden:** `git push` —bloqueado por un hook, ver abajo—, cambiar una
+decisión ya tomada, instalar dependencias o contradecir un ADR. Eso se propone y
+se espera. `AskUserQuestion` no existe para ningún subagente: si algo los
+bloquea de verdad, terminan el turno con las preguntas escritas.
 
 La costura entre ellos: el `database-specialist` define el esquema y las
 migraciones, el `backend-specialist` escribe las consultas dentro de sus módulos,
@@ -108,8 +113,15 @@ el viejo en silencio.
 - `vercel-react-best-practices` — aplicar las reglas estructurales (`async-`,
   `bundle-`, `server-`) desde el principio; las micro-optimizaciones (`js-`)
   solo con una medición concreta que las justifique.
-- `improve-codebase-architecture` — necesita historial de código. No sirve hasta
-  que haya varias rebanadas hechas.
+- `improve-codebase-architecture` — **es del arquitecto**, ningún otro agente la
+  usa. Necesita historial de commits y código real, así que no sirve hasta que
+  haya varias rebanadas hechas. Está **modificada localmente** para que se pueda
+  auto-invocar: al actualizarla desde el origen hay que volver a quitarle
+  `disable-model-invocation`.
+- Siguen siendo de invocación manual, a propósito: `grill-me` (la pedís vos
+  cuando querés que te interroguen) y `to-tickets` con `setup-matt-pocock-skills`
+  (quedan para cuando exista el agente de GitHub, que es quien va a manejar el
+  tracker).
 - La accesibilidad aparece en varias skills a la vez. Ante consejos distintos,
   la referencia es `revision-de-ui`, que es nuestra: usa una copia versionada de
   las Web Interface Guidelines en lugar de bajarlas de internet en cada
@@ -154,4 +166,6 @@ el viejo en silencio.
   `revision-de-ui`) y enlaces a las de terceros.
 - `.agents/skills/` y `skills-lock.json` — skills de terceros, versionadas para
   que el repo funcione al clonarlo sin instalar nada.
+- `.claude/hooks/bloquear-git-push.sh` — impide que los especialistas publiquen
+  en el remoto. La sesión principal y el arquitecto no quedan afectados.
 - `.claude/settings.local.json` — configuración personal, ignorada por git.
