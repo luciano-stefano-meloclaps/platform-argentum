@@ -50,6 +50,27 @@ claude --agent super-architect     # como sesión principal (recomendado:
 O desde una sesión normal, mencionándolo: `@agent-super-architect` o pidiendo
 que se delegue en él.
 
+### Especialistas
+
+La implementación la hacen tres especialistas, en `.claude/agents/`:
+
+| Agente | Dueño de | No toca |
+| ------ | -------- | ------- |
+| `backend-specialist` | Los cinco módulos, contratos, autorización, validación | Esquema, migraciones, interfaz |
+| `frontend-specialist` | Pantallas, componentes, estilos, accesibilidad | Base de datos, lógica de negocio |
+| `database-specialist` | Esquema, migraciones, índices, entornos de base | Lógica de negocio, interfaz |
+
+Claude puede delegarles solo, o se los invoca con `@agent-<nombre>`.
+
+**Los tres proponen; no deciden.** Ninguno commitea, ninguno cambia una decisión
+tomada y ninguno instala dependencias por su cuenta. No pueden abrir un diálogo
+con el usuario: cuando algo los bloquea, terminan su turno con las preguntas
+escritas y esperan.
+
+La costura entre ellos: el `database-specialist` define el esquema y las
+migraciones, el `backend-specialist` escribe las consultas dentro de sus módulos,
+y el `frontend-specialist` **nunca** toca la base — le pide al módulo.
+
 ## Principio de arquitectura
 
 Mínimo necesario para validar el producto, diseñado para poder crecer. Cada
