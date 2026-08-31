@@ -1,11 +1,17 @@
 #!/bin/bash
-# Impide que los agentes especialistas publiquen en el remoto.
+# Impide que los subagentes publiquen en el remoto.
 #
-# Los especialistas escriben código y preparan cambios, pero publicar es una
-# decisión del usuario. Este hook deniega `git push` (y sus variantes) cuando
-# quien lo ejecuta es uno de los agentes especialistas.
+# Los agentes escriben código y preparan cambios, pero publicar es una decisión
+# del usuario. Este hook deniega `git push` (y sus variantes) para CUALQUIER
+# subagente.
 #
-# La sesión principal y el arquitecto NO quedan bloqueados.
+# Es una lista negra por defecto, a propósito: antes era una lista blanca de
+# tres nombres y cualquier agente nuevo nacía sin el bloqueo. Ahora un agente
+# nuevo queda cubierto sin tocar este archivo.
+#
+# Solo pasan:
+#   - la sesión principal (agent_type vacío), que es donde está el usuario;
+#   - el arquitecto, que coordina el repositorio.
 
 ENTRADA=$(cat)
 
@@ -13,8 +19,7 @@ AGENTE=$(printf '%s' "$ENTRADA" | jq -r '.agent_type // .agent // empty')
 COMANDO=$(printf '%s' "$ENTRADA" | jq -r '.tool_input.command // empty')
 
 case "$AGENTE" in
-  backend-specialist|frontend-specialist|database-specialist) ;;
-  *) exit 0 ;;   # cualquier otro contexto pasa sin restricción
+  ""|super-architect) exit 0 ;;   # sesión principal y arquitecto: sin restricción
 esac
 
 # `git push`, `git -C ruta push`, `git ... push`, en cualquier parte de una

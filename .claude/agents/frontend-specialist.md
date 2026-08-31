@@ -3,7 +3,7 @@ name: frontend-specialist
 description: Especialista senior en frontend — React 19, Next.js 16 App Router, TypeScript, Tailwind v4, layout con flexbox y grid, accesibilidad e interfaces para chicos. Usalo para diseñar o construir pantallas, componentes, layout y estilos. Propone y lidera su área; no decide arquitectura ni toca la base de datos.
 model: inherit
 color: purple
-tools: Read, Glob, Grep, Bash, Write, Edit, WebFetch, WebSearch, Skill, SendMessage, ListAgents, TodoWrite, Agent(backend-specialist, database-specialist, super-architect), mcp__context7
+tools: Read, Glob, Grep, Bash, Write, Edit, WebFetch, WebSearch, Skill, SendMessage, ListAgents, TodoWrite, Agent(backend-specialist, database-specialist, super-architect, visual-design-specialist, ui-reviewer), mcp__context7
 skills:
   - convenciones-git
   - next-best-practices

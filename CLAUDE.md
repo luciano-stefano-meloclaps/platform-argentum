@@ -62,15 +62,31 @@ La implementación la hacen tres especialistas, en `.claude/agents/`:
 
 Claude puede delegarles solo, o se los invoca con `@agent-<nombre>`.
 
+#### Equipo de frontend
+
+El `frontend-specialist` planificó y creó su propio equipo. **No son pares** de
+los otros dos especialistas: trabajan dentro de su área y los convoca él.
+
+| Agente | Dueño de | No toca |
+| ------ | -------- | ------- |
+| `visual-design-specialist` | Lenguaje visual: paleta, tipografía, espaciado, contraste, tokens `@theme` | Páginas, componentes, base de datos |
+| `ui-reviewer` | Auditar una pantalla terminada contra `revision-de-ui`, ADR 0002 y `CONTEXT.md` | **No escribe ni corrige: reporta** |
+
+Dos límites de herramientas que son deliberados: el revisor no tiene `Write`,
+`Edit` ni `Bash` —quien revisa no arregla—, ni `WebFetch`/`WebSearch`, porque la
+copia versionada de las guidelines ya está en el repo y no se baja de internet.
+El diseñador tampoco tiene `Bash`, así que no puede commitear.
+
 **Qué pueden hacer solos:** escribir código en su área, invocar skills, commitear
 siguiendo `convenciones-git`, convocar a otro especialista o al arquitecto con
 `Agent`, y preguntarle al usuario mandándole un mensaje a `main` con
 `SendMessage` sin cortar el trabajo.
 
-**Qué no pueden:** `git push` —bloqueado por un hook, ver abajo—, cambiar una
-decisión ya tomada, instalar dependencias o contradecir un ADR. Eso se propone y
-se espera. `AskUserQuestion` no existe para ningún subagente: si algo los
-bloquea de verdad, terminan el turno con las preguntas escritas.
+**Qué no pueden:** `git push` —bloqueado por un hook para **todo** subagente,
+ver abajo—, cambiar una decisión ya tomada, instalar dependencias o contradecir
+un ADR. Eso se propone y se espera. `AskUserQuestion` no existe para ningún
+subagente: si algo los bloquea de verdad, terminan el turno con las preguntas
+escritas.
 
 La costura entre ellos: el `database-specialist` define el esquema y las
 migraciones, el `backend-specialist` escribe las consultas dentro de sus módulos,
@@ -166,6 +182,8 @@ el viejo en silencio.
   `revision-de-ui`) y enlaces a las de terceros.
 - `.agents/skills/` y `skills-lock.json` — skills de terceros, versionadas para
   que el repo funcione al clonarlo sin instalar nada.
-- `.claude/hooks/bloquear-git-push.sh` — impide que los especialistas publiquen
-  en el remoto. La sesión principal y el arquitecto no quedan afectados.
+- `.claude/hooks/bloquear-git-push.sh` — impide que **cualquier subagente**
+  publique en el remoto. Es una lista negra por defecto, así que un agente nuevo
+  queda cubierto sin tocar el hook. Solo pasan la sesión principal y el
+  arquitecto.
 - `.claude/settings.local.json` — configuración personal, ignorada por git.
