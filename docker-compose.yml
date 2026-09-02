@@ -1,0 +1,56 @@
+# PostgreSQL local para desarrollo.
+#
+# El ADR 0006 elige Neon para producción y PostgreSQL local en Docker para
+# desarrollo, y anota como riesgo aceptado la divergencia entre los dos
+# entornos, con una mitigación explícita: fijar la misma versión mayor en
+# ambos. Este archivo es esa mitigación.
+#
+# Arranque:  docker compose up -d
+# Apagado:   docker compose down        (conserva los datos)
+#            docker compose down -v     (borra los datos)
+
+services:
+  postgres:
+    # Versión mayor 18, la misma que Neon usa por defecto en proyectos nuevos.
+    # Se fija el major y no el minor: el minor de Neon lo parchea Neon, así que
+    # clavar un 18.x en local daría una precisión falsa.
+    #
+    # Variante Debian (trixie), no Alpine: Alpine usa musl, cuyas collations
+    # difieren de las de glibc, que es lo que corre Neon. Un ORDER BY sobre
+    # texto con tildes y ñ podría ordenar distinto en local que en producción.
+    image: postgres:18-trixie
+    restart: unless-stopped
+    environment:
+      # Credenciales de la base LOCAL de desarrollo. No son un secreto y no se
+      # usan en ningún otro entorno: la cadena de producción sale de Neon y
+      # vive en el entorno de Vercel, nunca en el repositorio.
+      POSTGRES_USER: argentum
+      POSTGRES_PASSWORD: argentum_local
+      POSTGRES_DB: argentum
+      # Neon crea sus bases con collation C.UTF-8 sobre el proveedor libc, y la
+      # imagen de Docker usaría en_US.utf8 si no se le dice nada. Igualarlo es
+      # la misma razón por la que arriba no usamos Alpine: que el ordenamiento
+      # de texto sea el mismo en local y en producción.
+      # Solo tiene efecto en el initdb de la primera vez: cambiarlo después
+      # exige recrear el volumen (docker compose down -v).
+      POSTGRES_INITDB_ARGS: "--locale-provider=libc --locale=C.UTF-8 --encoding=UTF8"
+    ports:
+      # Publicado solo en loopback: la base de desarrollo no se expone a la red.
+      - "127.0.0.1:5432:5432"
+    volumes:
+      # /var/lib/postgresql, NO /var/lib/postgresql/data.
+      # La imagen de PostgreSQL 18 movió PGDATA a /var/lib/postgresql/18/docker
+      # y declara VOLUME /var/lib/postgresql. Montar /var/lib/postgresql/data es
+      # el error heredado de los tutoriales de PostgreSQL 17 y anteriores: en 18
+      # el entrypoint lo detecta y se niega a arrancar. La verificación de
+      # persistencia se corre igual, porque la ruta es lo único que la garantiza.
+      - postgres-datos:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U argentum -d argentum"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+volumes:
+  postgres-datos:
