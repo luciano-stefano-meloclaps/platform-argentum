@@ -5,6 +5,16 @@
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
+    // ADR 0007: sin esto, indexar una lista devuelve T en vez de T | undefined (ver ficha por slug inexistente y distractores del quiz).
+    "noUncheckedIndexedAccess": true,
+    // ADR 0007: prohíbe enum/namespace con runtime/import =, para que el discriminador de tipo salga solo del registro de descriptores (ADR 0001).
+    "erasableSyntaxOnly": true,
+    // ADR 0007: obliga a "import type" explícito, para que un import de valor que cruza la costura servidor/cliente se vea en el diff.
+    "verbatimModuleSyntax": true,
+    // ADR 0007: un switch sobre "tipo" que no cubre un caso deja de compilar, en vez de devolver undefined en runtime.
+    "noImplicitReturns": true,
+    // ADR 0007: la más floja de las cinco, entra porque el switch sobre "tipo" es central y el seguro cuesta cero.
+    "noFallthroughCasesInSwitch": true,
     "noEmit": true,
     "esModuleInterop": true,
     "module": "esnext",
