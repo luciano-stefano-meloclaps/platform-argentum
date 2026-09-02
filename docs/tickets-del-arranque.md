@@ -156,12 +156,17 @@ número.
 ```
 Bloqueado por: #9 (Tailwind)
 Prioridad: antes de la primera rebanada
-Lo toma: visual-design-specialist
+Lo toma: brand-specialist
 ```
 
-Paleta, tipografía, escala de espaciado, contraste y tamaño mínimo de objetivo
-táctil, en un bloque `@theme`. La aplicación la usan chicos, así que el contraste
-y el tamaño táctil no son un detalle de acabado.
+Bajar la identidad **Argentum** (`docs/marca/sistema-de-diseno.md`) a un bloque
+`@theme`: colores, las dos familias con `next/font/google`, escala de texto,
+espaciado, radios y sombras, con las correcciones de contraste del ADR 0008 ya
+aplicadas.
+
+**No es un ticket de diseño, es uno de traducción**: la paleta y la tipografía ya
+están elegidas y aprobadas. Entran los tokens que la primera pantalla usa, no los
+cincuenta del documento.
 
 Los tokens se definen una vez, **antes de la primera pantalla**, o el sistema
 visual queda como residuo de lo primero que alguien escribió.

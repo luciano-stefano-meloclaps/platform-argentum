@@ -11,6 +11,8 @@ repositorio antes de explorar el código.
 - [`CONTEXT.md`](../../CONTEXT.md) en la raíz — el glosario del dominio.
 - [`docs/adr/`](../adr/) — las decisiones que tocan el área en la que vas a
   trabajar. Empezá por el [índice](../adr/README.md).
+- [`docs/marca/sistema-de-diseno.md`](../marca/sistema-de-diseno.md) — la
+  identidad visual, si vas a tocar algo que se ve. La corrige el ADR 0008.
 
 Los dos existen y están escritos. No es un repositorio donde haya que
 "proceder en silencio" ante su ausencia: acá están, y **no leerlos es un error**.
@@ -21,7 +23,8 @@ Los dos existen y están escritos. No es un repositorio donde haya que
 /
 ├── CONTEXT.md          ← glosario del dominio
 ├── docs/
-│   ├── adr/            ← decisiones arquitectónicas (0001…0006)
+│   ├── adr/            ← decisiones arquitectónicas (0001…0008)
+│   ├── marca/          ← la identidad visual Argentum
 │   └── agents/         ← este archivo y el del tracker
 └── src/                ← todavía no existe: el proyecto es greenfield
 ```
@@ -41,6 +44,8 @@ Casos que se confunden seguido en este proyecto:
   esquema. Nunca se usa "migración" para el contenido.
 - **Rebanada** atraviesa todas las capas y queda usable. **Cimiento** no, porque
   todavía no hay capas.
+- Las **ligas** son **Cobre, Plata, Oro y Litio**. No son emblemas, no son
+  niveles y ya no hay una de bronce.
 
 Si el concepto que necesitás no está en el glosario, es una señal: o estás
 inventando lenguaje que el proyecto no usa —reconsideralo— o hay un hueco real, y

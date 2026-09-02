@@ -18,6 +18,7 @@ pregunta por qué las cosas están así.
 | [0005](0005-acceso-a-datos-drizzle.md) | Acceso a datos con Drizzle ORM | Aceptado |
 | [0006](0006-infraestructura-vercel-neon.md) | Infraestructura: Vercel y Neon, con PostgreSQL local en Docker | Aceptado |
 | [0007](0007-severidad-del-compilador-de-typescript.md) | Severidad del compilador de TypeScript | Propuesto |
+| [0008](0008-identidad-visual-argentum.md) | Identidad visual Argentum | Propuesto |
 
 ## Cuándo escribir un ADR
 
@@ -56,4 +57,5 @@ supersede al anterior — no se ignora el viejo en silencio.
 | Ruta | Qué contiene |
 | ---- | ------------ |
 | [`../../CONTEXT.md`](../../CONTEXT.md) | Glosario del dominio: el vocabulario del proyecto |
+| [`../marca/sistema-de-diseno.md`](../marca/sistema-de-diseno.md) | La identidad visual Argentum, adoptada por el ADR 0008 |
 | [`../../CLAUDE.md`](../../CLAUDE.md) | Estado, stack y decisiones resumidas, para agentes |

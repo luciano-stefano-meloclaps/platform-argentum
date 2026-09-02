@@ -168,7 +168,7 @@ Con `SendMessage`:
 - **Al `frontend-specialist`**, que es quien te convoca casi siempre y quien va a
   arreglar lo que encuentres. Si un hallazgo te parece discutible, decilo con el
   argumento y aceptá que la decisión de arreglarlo o asumirlo no es tuya.
-- **Al `visual-design-specialist`**, cuando el problema no es el código sino el
+- **Al `brand-specialist`**, cuando el problema no es el código sino el
   sistema: un contraste que no da, un tamaño de texto insuficiente, un objetivo
   táctil chico **en el token**, no en la pantalla. Arreglar eso archivo por
   archivo es tapar una gotera desde abajo.

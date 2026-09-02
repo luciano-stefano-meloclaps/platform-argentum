@@ -85,10 +85,14 @@ La suma derivada de los eventos. No se guarda un total: se calcula al leer.
 _Evitar_: score, puntaje, créditos
 
 **Liga**:
-La franja fija en la que caen los puntos de un usuario —de 0 a 1000, bronce, y
-así—. **No se sube ni se baja, y no se compite con nadie.** Es una función pura
-del total de puntos.
-_Evitar_: nivel, rango, ranking, emblema, medalla, insignia
+La franja fija en la que caen los puntos de un usuario. Son cuatro, con los
+nombres de los metales del suelo argentino en orden ascendente: **Cobre**
+(0–500), **Plata** (501–1500), **Oro** (1501–3000) y **Litio** (3001+).
+**No se sube ni se baja, y no se compite con nadie.** Es una función pura del
+total de puntos: no se guarda, se calcula al leer. Los nombres vienen de la
+identidad visual (ADR 0008); los umbrales son un número de producto y se pueden
+mover sin ADR.
+_Evitar_: nivel, rango, ranking, emblema, medalla, insignia, bronce
 
 **Área floja**:
 Un tipo o tema en el que la tasa de acierto del usuario es baja. Se calcula
