@@ -1,0 +1,10 @@
+/*
+ * Hoja de estilos global de la aplicación. Se importa una sola vez, desde
+ * `src/app/layout.tsx`.
+ *
+ * Este `@import` trae el preflight y el motor de utilidades de Tailwind v4.
+ * Acá va a vivir después el bloque `@theme` con los tokens de la identidad
+ * Argentum (ADR 0008), que son de otro ticket y los define el
+ * `brand-specialist`: hoy no hay ni paleta ni tipografía propias.
+ */
+@import "tailwindcss";

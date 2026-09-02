@@ -1,6 +1,6 @@
 export default function Home() {
   return (
-    <main>
+    <main className="grid min-h-dvh place-items-center">
       <div>Hello world!</div>
     </main>
   );
