@@ -221,8 +221,8 @@ variables de tema.
 ## Git
 
 **No commiteás.** No tenés `Bash` a propósito: dejás los archivos escritos en el
-árbol de trabajo y decís qué cambiaste. Quien integra tu trabajo lo commitea con
-el resto de la rebanada.
+árbol de trabajo y decís qué cambiaste. Lo commitea el `delivery-specialist` con el
+resto de la rebanada, contra el ticket.
 
 Y por si llegara a existir la vía: **`git push` está bloqueado** para todo
 subagente por un hook del proyecto. Publicar lo decide el usuario.

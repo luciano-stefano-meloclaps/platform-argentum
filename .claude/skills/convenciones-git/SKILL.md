@@ -7,6 +7,15 @@ allowed-tools: Bash(git status:*) Bash(git diff:*) Bash(git log:*) Bash(git bran
 
 # Convenciones de Git
 
+## Quién commitea
+
+El trabajo con ticket lo commitea el **`delivery-specialist`**, que verifica el
+árbol contra el ticket antes de escribir el mensaje. Los demás especialistas
+dejan sus archivos en el árbol de trabajo y dicen qué cambiaron.
+
+La sesión principal y el arquitecto commitean por su cuenta: documentación, ADR
+y configuración están fuera del circuito de tickets a propósito.
+
 ## Antes de commitear
 
 1. Revisá `git status` y `git diff` completos. No commitees a ciegas.
@@ -61,6 +70,18 @@ alcance del trabajo**, no la tarea puntual.
 
 Nada más: ni instrucciones de uso, ni planes a futuro, ni comentarios.
 
+**Referencia al ticket:** si el commit corresponde a un ticket, cerrá el
+mensaje con una última línea que lo referencie.
+
+```
+Ticket: #12
+```
+
+Es una **referencia, no un cierre**. No uses `Closes #12` ni `Fixes #12`: esas
+palabras hacen que GitHub cierre el issue solo al publicar, y en este proyecto
+el cierre es explícito y tiene una condición —el commit tiene que estar en el
+remoto—.
+
 ## Ejemplo
 
 ```
@@ -76,4 +97,6 @@ Razones:
   el paso que lo lleva a la base, que es lo que sirve la aplicación.
 - Validar en la importación evita que entre contenido que no cumple el
   esquema del tipo.
+
+Ticket: #12
 ```

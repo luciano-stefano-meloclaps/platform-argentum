@@ -126,6 +126,20 @@ termina desplegada y usable por sí sola. El proyecto avanza por rebanadas, no
 construyendo primero "todo el backend".
 _Evitar_: sprint, fase, tarea, capa, milestone
 
+**Cimiento**:
+Trabajo que **no** atraviesa las capas porque todavía no hay capas: prepara el
+terreno para que existan rebanadas —el arranque del proyecto, el contenedor de
+la base, la configuración del compilador—. Se verifica porque el proyecto
+compila, arranca o corre, no porque alguien pueda usarlo. Es la excepción:
+cuando algo se puede cortar como rebanada, se corta como rebanada.
+_Evitar_: setup, scaffolding, infraestructura, tarea técnica, chore
+
+**Ticket**:
+Una rebanada o un cimiento, publicado como issue de GitHub para poder seguirlo.
+Es la unidad que se aprueba, se commitea y se cierra; el trabajo sin ticket no
+debería estar pasando.
+_Evitar_: tarea, historia, card, issue (en español), requerimiento
+
 **Módulo**:
 Cada una de las cinco piezas lógicas del sistema: `catalogo`, `moderacion`,
 `aprendizaje`, `progreso` e `identidad`. La capa web no consulta la base de
