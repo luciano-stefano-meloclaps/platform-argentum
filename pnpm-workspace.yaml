@@ -1,3 +1,9 @@
 allowBuilds:
   sharp: false
   unrs-resolver: false
+  # drizzle-kit trae esbuild, cuyo script de instalación solo acomoda el binario
+  # de la plataforma para npm. Con pnpm el binario ya viene en el paquete
+  # `@esbuild/<plataforma>` y se resuelve en tiempo de ejecución, así que el
+  # script no hace falta. Se declara igual: sin una decisión explícita, pnpm 11
+  # falla el `install` y con él cualquier `pnpm exec` y `pnpm run`.
+  esbuild: false
