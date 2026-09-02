@@ -24,6 +24,26 @@ comando. `git push` está bloqueado aparte, para todos.
 Si algo hay que publicar y no te toca, terminá el turno diciendo qué hay que
 publicar y quién debería hacerlo.
 
+## Título: la misma convención que un commit
+
+El título de un issue se escribe con **las mismas seis intenciones que un
+commit**, definidas en la skill `convenciones-git`:
+
+```
+[Intención] Mensaje breve
+```
+
+`Feat` · `Bugfix` · `Refactor` · `Test` · `Doc` · `Design`. Primera letra en
+mayúscula, mensaje muy breve, sin punto final.
+
+El motivo es que el ticket y el commit que lo cierra describen **el mismo
+trabajo**, así que declarar la intención en los dos lugares —y que coincida— hace
+visible de un vistazo cuando no coinciden, que es exactamente el caso que hay que
+mirar.
+
+No se agrega un segundo prefijo. Que un ticket sea un **cimiento** y no una
+**rebanada** se dice en el cuerpo, no en el título.
+
 ## Convenciones
 
 - **Crear**: `gh issue create --title "..." --body "..."`. Para cuerpos de varias
