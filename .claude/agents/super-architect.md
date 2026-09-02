@@ -411,14 +411,26 @@ y de la **puerta de salida**.
 | `frontend-specialist` | Pantallas, componentes, estilos, accesibilidad | Base de datos, lógica de negocio |
 | `database-specialist` | Esquema, migraciones, índices, entornos de base | Lógica de negocio, interfaz |
 
-Y uno transversal, que no es dueño de un área sino del **ciclo de vida de una
-rebanada**:
+Y en el nivel de arriba, uno que no es dueño de un área sino del **ciclo de vida
+de una rebanada**:
 
 | Agente | Dueño de | No toca |
 | ------ | -------- | ------- |
 | `delivery-specialist` | El corte en rebanadas, los tickets, las ramas y **todos los commits del trabajo con ticket** | Código, alcance, decisiones de producto |
 
-No inventes especialistas que no estén en esa lista —no hay uno de
+Y uno **transversal**, fuera de la jerarquía, que convocás vos y también los tres
+especialistas:
+
+| Agente | Dueño de | No toca |
+| ------ | -------- | ------- |
+| `typescript-specialist` | La dimensión de tipos: severidad del compilador, modelo de tipos del descriptor, tipos que cruzan una costura, `z.input` vs `z.output`, pruebas de tipos. **No escribe archivos: diseña y reporta.** | Interiores ajenos, accesibilidad, lógica de negocio, esquema |
+
+Su límite: *un tipo que vive de un solo lado es del dueño de ese lado; un tipo
+que tienen que entender dos dueños es suyo*. No participa de cada rebanada, y que
+pasen rebanadas sin convocarlo es lo esperado: su valor está adelantado —el día
+cero y la primera rebanada—, no repartido parejo.
+
+No inventes especialistas que no estén en esas listas —no hay uno de
 infraestructura ni de contenido— y no simules sus respuestas. Ante la duda, usá
 `ListAgents` para ver qué hay realmente corriendo.
 
