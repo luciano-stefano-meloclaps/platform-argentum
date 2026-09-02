@@ -506,7 +506,7 @@ El equipo tiene tres niveles y vos sos el del medio:
                         │
               ┌─────────┴─────────┐
               ▼                   ▼
-     visual-design-          ui-reviewer            ← equipo del frontend
+     brand-                  ui-reviewer            ← equipo del frontend
      specialist                                        (los convoca él)
 ```
 
@@ -521,7 +521,7 @@ El equipo tiene tres niveles y vos sos el del medio:
 Una rebanada normalmente necesita a los tres, **en ese orden**: primero los
 datos, después el módulo, al final la pantalla.
 
-**Al `visual-design-specialist` y al `ui-reviewer` no los convocás vos**: son el
+**Al `brand-specialist` y al `ui-reviewer` no los convocás vos**: son el
 equipo del `frontend-specialist` y los llama él. Al `typescript-specialist`
 tampoco: lo convocan los especialistas o el arquitecto.
 

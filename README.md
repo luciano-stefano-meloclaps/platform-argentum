@@ -32,9 +32,9 @@ alrededor de ese hecho: agregar un tipo nuevo tiene que ser barato (ver
   se generan a partir del propio catálogo, no se redactan a mano.
 - **Progreso y panel de resultados.** Qué respondiste bien, qué mal, en qué
   temas fallás más.
-- **Puntos y emblemas.** El puntaje da un emblema o liga fija —de 0 a 1000
-  bronce, y así—. **No se sube ni se baja de liga, y no se compite con nadie.**
-  Es un incentivo, no un ranking.
+- **Puntos y ligas.** El puntaje cae en una liga fija: Cobre, Plata, Oro o
+  Litio, los metales del suelo argentino. **No se sube ni se baja de liga, y no
+  se compite con nadie.** Es un incentivo, no un ranking.
 
 El progreso del MVP se guarda **en el dispositivo**. No hay cuentas todavía.
 
@@ -58,7 +58,7 @@ Una sola aplicación *fullstack*, un solo deploy, organizada en cinco módulos:
 | ------ | --------------- |
 | `catalogo` | Entidades, tipos y sus fichas |
 | `aprendizaje` | Tarjetas de repaso y quiz |
-| `progreso` | Eventos de actividad, puntos, emblemas, áreas flojas |
+| `progreso` | Eventos de actividad, puntos, ligas, áreas flojas |
 | `moderacion` | Propuestas de la comunidad y su aprobación |
 | `identidad` | Cuentas, sesiones y roles |
 

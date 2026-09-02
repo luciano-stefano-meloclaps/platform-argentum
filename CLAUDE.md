@@ -28,6 +28,11 @@ lleguen las cuentas: el MVP no tiene cuentas.
 - Catálogo: una sola tabla `entidad` con discriminador `tipo` y columna `datos`
   JSONB; los campos de cada tipo viven en descriptores en código (ADR 0001).
 - Contenido curado en archivos versionados, importado a la base (ADR 0004).
+- **Identidad visual decidida:** la marca **Argentum** —celeste, dorado y
+  neutrales cálidos, Cormorant Garamond y Montserrat— está cerrada y
+  versionada en `docs/marca/sistema-de-diseno.md`, adoptada con correcciones
+  de contraste por el ADR 0008. **No se propone paleta ni tipografía: ya están
+  elegidas.**
 
 **Antes de contradecir cualquiera de estos puntos, leé el ADR correspondiente.**
 Si una decisión cambia, se escribe un ADR nuevo que supersede al anterior; no se
@@ -54,7 +59,7 @@ El equipo tiene **tres niveles**, y cada uno decide una cosa distinta:
                         │
               ┌─────────┴─────────┐
               ▼                   ▼
-   visual-design-           ui-reviewer      ← equipo del frontend
+   brand-                   ui-reviewer      ← equipo del frontend
    specialist
 ```
 
@@ -182,13 +187,13 @@ los otros dos especialistas: trabajan dentro de su área y los convoca él.
 
 | Agente | Dueño de | No toca |
 | ------ | -------- | ------- |
-| `visual-design-specialist` | Lenguaje visual: paleta, tipografía, espaciado, contraste, tokens `@theme` | Páginas, componentes, base de datos |
+| `brand-specialist` | La identidad **Argentum**: marca, logotipo, texturas, paleta, tipografía, contraste y tokens `@theme` | Páginas, componentes, base de datos |
 | `ui-reviewer` | Auditar una pantalla terminada contra `revision-de-ui`, ADR 0002 y `CONTEXT.md` | **No escribe ni corrige: reporta** |
 
 Dos límites de herramientas que son deliberados: el revisor no tiene `Write`,
 `Edit` ni `Bash` —quien revisa no arregla—, ni `WebFetch`/`WebSearch`, porque la
 copia versionada de las guidelines ya está en el repo y no se baja de internet.
-El diseñador tampoco tiene `Bash`, así que no puede commitear.
+El de marca tampoco tiene `Bash`, así que no puede commitear.
 
 **Qué pueden hacer solos:** escribir código en su área, invocar skills, convocar
 a otro especialista o al arquitecto con `Agent`, y preguntarle al usuario
@@ -278,6 +283,10 @@ Ante la duda: la opción más simple que pueda evolucionar.
 - `CONTEXT.md` — glosario del dominio. **Usá estos términos exactos**; no
   inventes sinónimos para conceptos que ya tienen nombre. Para el método de
   trabajo, los términos son **rebanada**, **cimiento** y **ticket**.
+- `docs/marca/sistema-de-diseno.md` — la identidad **Argentum**: concepto,
+  logotipo, paleta, tipografía, componentes y reglas de aplicación. Es la
+  fuente del lenguaje visual y **no se edita**: donde el ADR 0008 la corrige,
+  gana el ADR. Su dueño es el `brand-specialist`.
 - `docs/adr/` — decisiones arquitectónicas (ADR). Leelas antes de proponer
   cambios que las contradigan.
 

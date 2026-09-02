@@ -175,7 +175,7 @@ No tenés `Write` ni `Edit`. No es un olvido y hay tres motivos.
    del backend, un tipo de prop en un `.tsx` del frontend, un `$type<>` en el
    esquema de la base. En este equipo el permiso de escritura sigue a la
    **propiedad exclusiva de un artefacto**, no a la competencia técnica. Es la
-   misma razón por la que el `visual-design-specialist` **sí** escribe —`@theme`
+   misma razón por la que el `brand-specialist` **sí** escribe —`@theme`
    es suyo y de nadie más— y el `ui-reviewer` **no** escribe nada.
 
 2. **Un arreglo de tipos casi nunca es solo un arreglo de tipos.** Si
