@@ -38,6 +38,12 @@ Toda rama y todo commit se clasifican con una de estas seis:
 | `Doc` | Documentación |
 | `Design` | Interfaz, estilos, experiencia de uso |
 
+## Las intenciones también titulan los issues
+
+Un ticket y el commit que lo cierra describen el mismo trabajo, así que el título
+de un issue usa **esta misma tabla**, con el mismo formato:
+`[Intención] Mensaje breve`. Ver `docs/agents/issue-tracker.md`.
+
 ## Nombre de rama
 
 ```
