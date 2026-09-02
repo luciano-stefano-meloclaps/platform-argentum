@@ -17,6 +17,7 @@ pregunta por qué las cosas están así.
 | [0004](0004-contenido-en-archivos-versionados.md) | Contenido curado en archivos versionados, importado a la base | Aceptado |
 | [0005](0005-acceso-a-datos-drizzle.md) | Acceso a datos con Drizzle ORM | Aceptado |
 | [0006](0006-infraestructura-vercel-neon.md) | Infraestructura: Vercel y Neon, con PostgreSQL local en Docker | Aceptado |
+| [0007](0007-severidad-del-compilador-de-typescript.md) | Severidad del compilador de TypeScript | Propuesto |
 
 ## Cuándo escribir un ADR
 
