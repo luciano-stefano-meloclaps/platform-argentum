@@ -1,4 +1,5 @@
 import nextCoreWebVitals from "eslint-config-next/core-web-vitals";
+import drizzlePlugin from "eslint-plugin-drizzle";
 import jsxA11y from "eslint-plugin-jsx-a11y";
 import tseslint from "typescript-eslint";
 
@@ -12,10 +13,16 @@ import tseslint from "typescript-eslint";
  * `eslint@^10` (`typescript-eslint` y `eslint-config-next` sí). Se revisa
  * cuando `jsx-a11y` publique soporte para ESLint 10.
  *
- * Fuera de este archivo, a propósito y para un segundo incremento del mismo
- * ticket: las tres reglas con información de tipos (`no-floating-promises`,
- * `switch-exhaustiveness-check` sobre `entidad.tipo`, `no-restricted-imports`
- * por glob) y `eslint-plugin-drizzle`.
+ * Segundo incremento del ticket #14: se suma `@typescript-eslint/no-floating-promises`
+ * (con información de tipos) y `eslint-plugin-drizzle` (`enforce-delete-with-where`).
+ *
+ * Fuera de este archivo, a propósito, porque no tienen superficie real
+ * todavía: `switch-exhaustiveness-check` sobre `entidad.tipo` (no hay unión
+ * discriminada: los descriptores no existen, `tipo` es `text` libre) y
+ * `no-restricted-imports` por glob para el límite del ADR 0002 (no hay
+ * separación física entre capa web y módulo: solo existen `src/app` y
+ * `src/db`). Quedan para cuando exista el primer descriptor y la primera
+ * separación de módulo.
  */
 
 // Todo lo que puede llevar sintaxis de TypeScript, incluidos los archivos de
@@ -45,10 +52,51 @@ const configuracion = [
     plugins: { "@typescript-eslint": tseslint.plugin },
     languageOptions: {
       parser: tseslint.parser,
-      parserOptions: { sourceType: "module" },
+      parserOptions: {
+        sourceType: "module",
+        // `no-floating-promises` necesita el árbol de tipos para saber si una
+        // expresión es una Promise. `projectService` es el mecanismo actual de
+        // `typescript-eslint` (v8) para esto en configuración plana: arma el
+        // programa de TypeScript a partir de `tsconfig.json` sin que haga falta
+        // declarar un segundo `tsconfig.eslint.json` paralelo.
+        projectService: true,
+        // `typescript-eslint` resuelve `tsconfig.json` relativo a este valor,
+        // no al directorio desde el que se invoca `eslint`. Sin esto, correr
+        // `pnpm lint` desde otro `cwd` rompe la resolución del proyecto.
+        tsconfigRootDir: import.meta.dirname,
+      },
     },
     rules: {
       "@typescript-eslint/no-unused-vars": "warn",
+      // Con información de tipos porque sin ella la regla no puede saber si
+      // una expresión es una Promise. Está en "error" y no en "warn": una
+      // promesa sin manejar es un bug silencioso (una escritura o un envío que
+      // no se sabe si terminó), no un estilo a discutir.
+      "@typescript-eslint/no-floating-promises": "error",
+    },
+  },
+
+  {
+    // `eslint-plugin-drizzle` no publica preset plano: verificado leyendo el
+    // paquete instalado (`node_modules/eslint-plugin-drizzle/src/index.js`,
+    // 0.2.3 estable, y el mismo resultado en el rc 1.0.0-rc.5-ab785fc), su
+    // único `configs.recommended` es formato legacy (`env`/`parserOptions`/
+    // `plugins` como string), incompatible con la configuración plana de
+    // ESLint 9. Se registra el plugin a mano y se toma una sola regla, con el
+    // mismo patrón que ya usa este archivo para `jsx-a11y.flatConfigs.recommended.rules`.
+    //
+    // Disparador de reconsideración: si `eslint-plugin-drizzle` publica un
+    // export `flat/recommended` (o si el plugin deja de mantenerse y de
+    // correr), se revisa este bloque; no hace falta antes.
+    files: archivosTypeScript,
+    plugins: { drizzle: drizzlePlugin },
+    rules: {
+      // Solo esta, no las dos del preset: `enforce-update-with-where` queda
+      // afuera porque hoy no hay una sola tabla (`src/db/esquema.ts` es un
+      // `export {}` vacío) y sumar una regla sin código que la ejercite no
+      // tiene con qué justificarse todavía. Se suma cuando exista la primera
+      // tabla y el primer `update`.
+      "drizzle/enforce-delete-with-where": "error",
     },
   },
 
