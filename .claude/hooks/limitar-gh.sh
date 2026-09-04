@@ -65,14 +65,20 @@ while IFS= read -r FRAG; do
   case "$FRAG" in
     gh|gh[[:space:]]*) ;;
     *)
-      # Un `gh` que no arranca el fragmento está envuelto en otro comando:
-      # `bash -c 'gh ...'`, `echo $(gh ...)`, `xargs gh ...`. La lista blanca
-      # no puede analizar lo que no ve, así que se deniega sin analizar.
+      # Un `gh` que no arranca el fragmento puede estar envuelto en otro
+      # comando: `bash -c 'gh ...'`, `echo $(gh ...)`, `xargs gh ...`. La lista
+      # blanca no puede analizar lo que no ve, así que se deniega sin analizar.
       #
-      # Un `gh` que aparece dentro del texto entrecomillado de OTRO fragmento
-      # que sí empieza con `gh` no llega hasta acá, y está bien que no llegue:
-      # ese `gh` es texto, no se ejecuta.
-      if printf '%s' "$FRAG" | grep -Eq '(^|[^[:alnum:]_./-])gh([[:space:]]|$)'; then
+      # Se buscan formas de EJECUCIÓN, no la palabra en cualquier lado. Antes
+      # esto era un `grep` por `gh` suelto, y denegaba
+      # `git commit -m 'arregla el hook gh'`: prosa, no un comando. El falso
+      # positivo estaba tapado porque el hook se filtraba con `if` en el
+      # settings y nunca corría sobre `git`; al pasar a correr siempre —para que
+      # `rtk gh ...` y `gh` a secas no se escapen— quedó a la vista.
+      #
+      # Un `gh` dentro del texto entrecomillado de OTRO fragmento que sí empieza
+      # con `gh` no llega hasta acá, y está bien: ese `gh` es texto.
+      if printf '%s' "$FRAG" | grep -Eq '(\$\(|`|[[:space:]]-c[[:space:]]+.?|xargs[[:space:]]+|eval[[:space:]]+|env[[:space:]]+)[[:space:]"'"'"']*gh([[:space:]]|$)'; then
         denegar "gh envuelto en otro comando"
       fi
       continue

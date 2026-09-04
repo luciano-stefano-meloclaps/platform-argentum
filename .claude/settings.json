@@ -31,7 +31,6 @@
           },
           {
             "type": "command",
-            "if": "Bash(gh *)",
             "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/limitar-gh.sh"
           }
         ]
