@@ -24,6 +24,13 @@
 #
 # Sin restricción: la sesión principal (agent_type vacío), que es donde está
 # el usuario, y el arquitecto, que coordina el repositorio.
+#
+# `rtk` (github.com/rtk-ai/rtk) antepone su nombre a comandos para filtrar su
+# salida y ahorrar tokens (`rtk gh pr view 123`). Sin desenvolverlo acá, el
+# fragmento ya no arranca con `gh` y cae en la rama de "gh envuelto en otro
+# comando", que deniega incluso una lectura permitida. Se lo saca antes de
+# clasificar el fragmento, no después: es el mismo comando de siempre con un
+# prefijo de filtrado, no un envoltorio real.
 
 ENTRADA=$(cat)
 
@@ -53,6 +60,7 @@ FRAGMENTOS=$(printf '%s' "$COMANDO" | tr ';|&' '\n')
 while IFS= read -r FRAG; do
   # Sacar espacios y asignaciones de entorno al principio (FOO=bar gh ...).
   FRAG=$(printf '%s' "$FRAG" | sed -E 's/^[[:space:]]+//; s/^([A-Za-z_][A-Za-z0-9_]*=[^[:space:]]*[[:space:]]+)*//')
+  FRAG=$(printf '%s' "$FRAG" | sed -E 's/^rtk([[:space:]]+proxy)?[[:space:]]+//')
 
   case "$FRAG" in
     gh|gh[[:space:]]*) ;;
