@@ -12,7 +12,9 @@
     "typecheck": "next typegen && tsc --noEmit",
     "lint": "eslint .",
     "test": "vitest run",
-    "db:ping": "node --env-file-if-exists=.env src/db/ping.mts"
+    "db:ping": "node --env-file-if-exists=.env src/db/ping.mts",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate"
   },
   "dependencies": {
     "drizzle-orm": "0.45.2",
