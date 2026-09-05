@@ -174,7 +174,7 @@ La implementación la hacen tres especialistas, en `.claude/agents/`:
 
 | Agente | Dueño de | No toca |
 | ------ | -------- | ------- |
-| `backend-specialist` | Los cinco módulos, contratos, autorización, validación | Esquema, migraciones, interfaz |
+| `backend-specialist` | Los cinco módulos, contratos, autorización, validación, y el contenido curado de `contenido/` con su importación | Esquema, migraciones, interfaz |
 | `frontend-specialist` | Pantallas, componentes, estilos, accesibilidad | Base de datos, lógica de negocio |
 | `database-specialist` | Esquema, migraciones, índices, entornos de base | Lógica de negocio, interfaz |
 
@@ -252,6 +252,12 @@ y el `frontend-specialist` **nunca** toca la base — le pide al módulo. El
 `typescript-specialist` no vive en ninguna de las tres áreas: vive **en las
 costuras** entre ellas, que es donde un tipo duplicado a los dos lados es
 invisible desde cada lado por separado.
+
+El **contenido curado** de `contenido/` (ADR 0009) es del `backend-specialist`,
+aunque viva fuera de `src/`: el único que abre esos archivos es el script de
+importación, que valida cada ficha contra el **descriptor** de su tipo, y ambas
+cosas son suyas. Lo que **no** es suyo es decidir qué fichas entran ni redactar
+su texto: eso es trabajo editorial del usuario.
 
 #### Agentes del plugin de Vercel
 
