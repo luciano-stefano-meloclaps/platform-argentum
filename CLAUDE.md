@@ -289,6 +289,11 @@ Ante la duda: la opción más simple que pueda evolucionar.
   gana el ADR. Su dueño es el `brand-specialist`.
 - `docs/adr/` — decisiones arquitectónicas (ADR). Leelas antes de proponer
   cambios que las contradigan.
+- `docs/decisiones-pendientes.md` — lo que **todavía no** se decidió, a
+  propósito, con el disparador que va a obligar a decidirlo y la regla que rige
+  mientras tanto. Si vas a escribir código que roza una de esas entradas,
+  **respetá la regla interina y no decidas por tu cuenta**: cuando el disparador
+  se cumple, la entrada se va de ahí y nace un ADR.
 
 ## Agent skills
 
