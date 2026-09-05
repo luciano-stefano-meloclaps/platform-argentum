@@ -29,6 +29,16 @@ fuente única que tipa la columna, valida la importación, valida las propuestas
 renderiza tanto el formulario como la ficha.
 _Evitar_: esquema, schema, metadata, definición
 
+**Registro de descriptores**:
+La estructura en código que reúne los descriptores de todos los tipos. Es la que
+define **qué tipos existen** —la base no lo sabe: la columna `tipo` es `text` y
+no un enum— y de la que se deriva el tipo **Datos** como unión discriminada.
+Agregar un tipo es agregarle un descriptor: no hay migración.
+La locución va completa. La palabra _registro_ sola sigue prohibida, porque
+significa otra cosa (ver **Entidad**).
+_Evitar_: catálogo de descriptores (catálogo es otra cosa), mapa, índice,
+diccionario, tabla de tipos
+
 **Datos**:
 El objeto JSONB de una entidad, con los campos propios de su tipo. Su forma la
 dicta el descriptor, no la base.
