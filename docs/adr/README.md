@@ -19,6 +19,7 @@ pregunta por qué las cosas están así.
 | [0006](0006-infraestructura-vercel-neon.md) | Infraestructura: Vercel y Neon, con PostgreSQL local en Docker | Aceptado |
 | [0007](0007-severidad-del-compilador-de-typescript.md) | Severidad del compilador de TypeScript | Propuesto |
 | [0008](0008-identidad-visual-argentum.md) | Identidad visual Argentum | Propuesto |
+| [0009](0009-formato-del-contenido-curado.md) | Formato, ubicación e imágenes del contenido curado | Propuesto |
 
 ## Cuándo escribir un ADR
 
