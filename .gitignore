@@ -26,3 +26,8 @@ next-env.d.ts
 # Tests y herramientas
 coverage/
 *.tsbuildinfo
+
+# Entorno y plataforma
+.vercel
+.env*
+!.env.example
