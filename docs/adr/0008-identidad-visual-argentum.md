@@ -1,6 +1,6 @@
 # 0008 — Identidad visual Argentum
 
-- **Estado:** Propuesto
+- **Estado:** Aceptado
 - **Fecha:** 2026-09-02
 - **Decide:** el usuario
 

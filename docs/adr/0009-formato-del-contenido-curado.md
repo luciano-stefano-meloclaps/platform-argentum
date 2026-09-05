@@ -1,6 +1,6 @@
 # 0009 — Formato, ubicación e imágenes del contenido curado
 
-- **Estado:** Propuesto
+- **Estado:** Aceptado
 - **Fecha:** 2026-09-04
 - **Decide:** Luciano Melo Claps
 
