@@ -200,12 +200,17 @@ adaptador HTTP del ADR 0002— seguimos esperando.
 - Alguien propone bajar una de las cinco. No se baja en silencio: se supersede
   este ADR, con el caso concreto que lo motivó.
 
-## Pendiente de comprobar
+## Comprobado
 
-Dos afirmaciones de arriba se apoyan en documentación y en lectura del código
-fuente, **no en una corrida del compilador**, porque cuando se escribió este ADR
-no había TypeScript instalado. Las dos se verifican en un minuto en cuanto exista
-el esqueleto, y así está anotado en el ticket correspondiente:
+**Las dos comprobaciones que quedaban pendientes se hicieron, y las dos dieron
+lo esperado.** Se verificaron con el compilador contra el código del #27 —el
+registro de descriptores y el descriptor de `procer`, commit `3913516`—, que es
+justamente el caso que motivaba la duda. La decisión de arriba queda como está:
+esta sección solo registra el resultado, no la cambia.
+
+Las dos afirmaciones eran estas, y en su momento se apoyaban en documentación y
+en lectura del código fuente, **no en una corrida del compilador**, porque
+cuando se escribió este ADR no había TypeScript instalado:
 
 1. Que `noUncheckedIndexedAccess` **no** afecta a un `Record<UniónDeLiterales, X>`
    —es decir, que el registro de descriptores del ADR 0001, que es el lugar donde
