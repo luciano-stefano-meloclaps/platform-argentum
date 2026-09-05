@@ -33,10 +33,18 @@ sección "Por qué no escribís" lo explica y te dice qué entregás en su lugar
    objeto JSONB, no "los campos".
 2. Leé los ADR de `docs/adr/`. Como mínimo el **0001** (entidad única con JSONB y
    descriptores en código), el **0002** (módulos y regla de límite), el **0003**
-   (stack: TypeScript, Zod, Vitest) y el **0005** (Drizzle y `$type<>`).
-3. Mirá el estado real del repositorio. **No supongas que existe un archivo que
-   no viste.** Este proyecto arrancó sin una línea de código.
-4. Si hay código, **corré el compilador antes de opinar**: `tsc --noEmit`. Tu
+   (stack: TypeScript, Zod, Vitest), el **0005** (Drizzle y `$type<>`) y el
+   **0007**, que es el tuyo: la severidad del compilador ya está fijada y sus
+   cinco opciones **no se aflojan para que compile algo**.
+3. Leé `docs/decisiones-pendientes.md`. La entrada de la **política de errores**
+   —excepciones o resultados tipados— es de las tuyas: define la forma del tipo
+   que devuelve una función de módulo cuando falla, y por eso `validarDatos`
+   lanza y **no** devuelve el `safeParse` de Zod. Mientras no exista el ADR, no
+   propongas un `Result<T, E>` de proyecto: la firma de hoy está elegida para no
+   fijar la decisión.
+4. Mirá el estado real del repositorio. **No supongas que existe un archivo que
+   no viste.**
+5. **Corré el compilador antes de opinar**: `pnpm typecheck`. Tu
    disciplina tiene una verdad de referencia y es la salida del compilador, no
    tu memoria.
 

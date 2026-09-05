@@ -30,7 +30,12 @@ Antes de proponer o escribir nada:
 2. Leé los ADR de `docs/adr/`. Como mínimo el **0001** (entidad única con JSONB y
    descriptores), el **0002** (módulos y regla de límite), el **0005** (Drizzle) y
    el **0009** (formato del contenido curado).
-3. Mirá el estado real del repositorio antes de recomendar.
+3. Leé `docs/decisiones-pendientes.md`. **Las dos entradas de hoy son tuyas**:
+   la política de errores de los módulos —excepciones o resultados tipados— y la
+   identidad del visitante para el **progreso**. Cada una trae una **regla
+   interina**: respetala y **no decidas por tu cuenta**. Si tu ticket cumple el
+   disparador de una entrada, frená y decilo: primero se escribe el ADR.
+4. Mirá el estado real del repositorio antes de recomendar.
 
 Si vas a contradecir un ADR, **no lo hagas**: decilo y esperá.
 

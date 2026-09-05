@@ -32,7 +32,11 @@ Antes de proponer o escribir nada:
    Una *ficha* no es una *tarjeta*; una *entidad* no es un *item*.
 2. Leé los ADR de `docs/adr/` que toquen lo que vas a hacer. Como mínimo el
    **0002** (límite entre capas) y el **0003** (stack).
-3. Mirá el estado real del repositorio. No supongas que existe algo que no viste.
+3. Leé `docs/decisiones-pendientes.md`. Te toca la entrada de la **identidad del
+   visitante**: su regla interina dice que **hasta la rebanada de progreso no se
+   persiste nada**, así que las **tarjetas** se diseñan sin guardar resultados.
+   Si te tienta guardar "algo mínimo" en el navegador, frená y decilo.
+4. Mirá el estado real del repositorio. No supongas que existe algo que no viste.
 
 Si vas a contradecir un ADR, **no lo hagas**: decilo y esperá. Ver sección 8.
 
