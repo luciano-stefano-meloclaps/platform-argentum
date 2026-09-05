@@ -1,5 +1,7 @@
 import { jsonb, pgTable, text, unique, uuid } from "drizzle-orm/pg-core";
 
+import type { Datos } from "../catalogo/descriptores/registro";
+
 /**
  * Esquema de la base, en TypeScript plano (ADR 0005).
  *
@@ -66,16 +68,26 @@ export const entidad = pgTable(
     /**
      * Los **datos** de la entidad: los campos propios de su tipo.
      *
-     * Sin `$type<Datos>()` todavía, y es deliberado: `Datos` sale de los
-     * descriptores, que no existen hasta la primera rebanada. Engancharlo
-     * después **no cuesta una migración**, porque `$type<>()` es puramente de
-     * compilación y no cambia una coma del SQL.
+     * `$type<Datos>()` es el único lugar donde la base y el registro de
+     * descriptores se tocan, y es **puramente de compilación**: no cambia una
+     * coma del SQL ni cuesta una **migración**. La columna sigue siendo `jsonb`
+     * a secas; lo que cambia es que quien lea o escriba por Drizzle ve `Datos`
+     * en vez de `unknown`.
+     *
+     * El tipo se importa con `import type`, así que el esquema no arrastra el
+     * módulo `catalogo` en tiempo de ejecución: lo que lee `drizzle-kit` sigue
+     * sin depender de los descriptores.
+     *
+     * `Datos` es la unión de los datos de todos los **tipos**, no una unión
+     * discriminada: el discriminador `tipo` es la columna de al lado y no vive
+     * adentro del JSONB (ADR 0001). Emparejar las dos columnas en una unión
+     * discriminada es del módulo `catalogo` cuando lee, no del esquema.
      *
      * `notNull` sin valor por omisión: una entidad sin datos es un error de la
      * importación, y conviene que falle al insertar y no que quede una fila con
      * `{}` que después nadie sabe si es un vacío legítimo.
      */
-    datos: jsonb("datos").notNull(),
+    datos: jsonb("datos").$type<Datos>().notNull(),
   },
   (tabla) => [
     /**
