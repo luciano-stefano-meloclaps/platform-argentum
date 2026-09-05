@@ -50,7 +50,8 @@ Antes de proponer o escribir nada:
    como mínimo el **0002** (límite entre capas) y el **0003** (stack: Tailwind
    v4, sin librería de componentes ni de íconos).
 5. Mirá el estado real del repositorio. **No supongas que existe un archivo que
-   no viste.** Este proyecto arrancó sin una línea de código.
+   no viste.** Hoy hay esqueleto de Next.js con Tailwind v4 conectado, pero
+   todavía **no hay tokens `@theme`**: ese es el ticket #26 y es tuyo.
 
 Si vas a contradecir un ADR, **no lo hagas**: decilo y esperá. Ver sección 9.
 

@@ -2,10 +2,14 @@
 
 Aplicación web para que los chicos aprendan sobre Argentina.
 
-> **Estado: sin código todavía.** La arquitectura y el stack ya están decididos
-> y documentados en [`docs/adr/`](docs/adr/). La
-> sección [Puesta en marcha](#puesta-en-marcha) describe el procedimiento
-> previsto y aplica a partir del momento en que exista el proyecto.
+> **Estado: el arranque está hecho.** La aplicación compila, corre contra
+> PostgreSQL y está desplegada. Existen la tabla `entidad` con su migración y el
+> registro de descriptores; **todavía no existen los módulos, las pantallas de
+> producto ni el contenido**. La arquitectura y el stack están decididos y
+> documentados en [`docs/adr/`](docs/adr/).
+>
+> Los pasos de [Puesta en marcha](#puesta-en-marcha) marcados como *previsto* son
+> los que todavía no tienen su comando.
 
 ## Qué es
 
@@ -36,7 +40,11 @@ alrededor de ese hecho: agregar un tipo nuevo tiene que ser barato (ver
   Litio, los metales del suelo argentino. **No se sube ni se baja de liga, y no
   se compite con nadie.** Es un incentivo, no un ranking.
 
-El progreso del MVP se guarda **en el dispositivo**. No hay cuentas todavía.
+No hay cuentas todavía. **Dónde se guarda el progreso de alguien sin cuenta es
+una decisión abierta a propósito**, y el producto es para chicos, así que
+persistir un identificador por navegador no es un detalle de implementación: está
+registrada, con su disparador y su regla interina, en
+[`docs/decisiones-pendientes.md`](docs/decisiones-pendientes.md).
 
 ### Después del MVP
 
@@ -103,13 +111,15 @@ git clone https://github.com/luciano-stefano-meloclaps/platform-argentum.git
 cd platform-argentum
 pnpm install
 
-cp .env.example .env.local        # completar DATABASE_URL
-docker compose up -d              # PostgreSQL local
+cp .env.example .env              # completar DATABASE_URL y DATABASE_URL_DIRECT
+docker compose up -d              # PostgreSQL 18 local
 
 pnpm db:migrate                   # aplica las migraciones
-pnpm content:import               # carga el contenido de content/ a la base
 pnpm dev                          # http://localhost:3000
 ```
+
+Los valores de la base local salen de `docker-compose.yml`. El archivo es `.env`
+—no `.env.local`—: es el que leen `pnpm db:ping` y `drizzle.config.ts`.
 
 ### Comandos
 
@@ -117,27 +127,53 @@ pnpm dev                          # http://localhost:3000
 | ------- | -------- |
 | `pnpm dev` | Servidor de desarrollo |
 | `pnpm build` | Compila para producción |
+| `pnpm typecheck` | `next typegen` y `tsc --noEmit` |
+| `pnpm lint` | ESLint |
 | `pnpm test` | Tests con Vitest |
+| `pnpm db:ping` | Verifica que la base responda |
 | `pnpm db:generate` | Genera migraciones a partir del esquema |
 | `pnpm db:migrate` | Aplica las migraciones pendientes |
-| `pnpm content:import` | Valida e importa el contenido a la base |
+
+Antes de dar por terminado un cambio: `pnpm typecheck && pnpm lint && pnpm test`.
+
+*Previsto, todavía sin comando:* la **importación** que carga `contenido/` en la
+base ([ADR 0004](docs/adr/0004-contenido-en-archivos-versionados.md)).
 
 ## Cómo agregar contenido
 
-El contenido vive en `content/`, en Markdown con *frontmatter*: los campos
-estructurados van arriba y la descripción en el cuerpo.
+El contenido vive en `contenido/<tipo>/<slug>.ts`: **un archivo TypeScript por
+entidad**, tipado por el descriptor de su tipo
+([ADR 0009](docs/adr/0009-formato-del-contenido-curado.md)). El directorio es el
+**tipo** y el nombre del archivo es el **slug**; la prosa larga va en template
+literals.
 
-```markdown
----
-tipo: procer
-slug: manuel-belgrano
-nombre: Manuel Belgrano
-nacimiento: 1770-06-03
-fallecimiento: 1820-06-20
----
-
-Abogado, economista y militar. Creó la bandera argentina en 1812…
+```ts
+// contenido/procer/manuel-belgrano.ts
+export default {
+  nombre: "Manuel Belgrano",
+  datos: {
+    nombreCompleto: "Manuel José Joaquín del Corazón de Jesús Belgrano",
+    anioDeNacimiento: 1770,
+    anioDeMuerte: 1820,
+    resumen: "Abogado, economista y militar. Creó la bandera argentina en 1812.",
+    semblanza: `…`,
+    imagen: {
+      textoAlternativo: "Retrato de Manuel Belgrano",
+      credito: "Museo Histórico Nacional",
+      licencia: "dominio-publico",
+    },
+  },
+};
 ```
+
+Se eligió TypeScript y no Markdown ni JSON por una razón concreta: **el error
+aparece en el editor**, antes de correr nada. Las alternativas y sus trade-offs
+están en el ADR 0009.
+
+La imagen va en `public/contenido/<tipo>/<slug>.webp` y el archivo **no** declara
+su ruta —se deriva del tipo y del slug—, pero sí su texto alternativo, su crédito
+y su **licencia**, que es un conjunto cerrado: una imagen sin derechos declarados
+no compila.
 
 Se abre un *pull request*, se revisa y se aprueba. La importación **valida cada
 ficha contra el descriptor de su tipo**: si no cumple el esquema, falla y el
@@ -145,18 +181,26 @@ contenido no entra.
 
 ## Cómo se trabaja
 
-Por **rebanadas verticales**: cada tanda de trabajo es una funcionalidad
-completa —de los datos hasta la pantalla— que termina desplegada y usable. No se
-construye "todo el backend" y después "todo el frontend".
+Por **rebanadas**: cada una es una funcionalidad completa —de los datos hasta la
+pantalla— que termina desplegada y usable por sí sola. No se construye "todo el
+backend" y después "todo el frontend".
+
+Cada rebanada se corta en **tickets**, que son issues de este repositorio, y
+**nada entra al historial sin un ticket que lo explique**. El trabajo lo hacen
+agentes de Claude Code con roles y límites definidos en
+[`CLAUDE.md`](CLAUDE.md); el push y el despliegue los hace una persona.
 
 ## Documentación
 
 | Ruta | Qué contiene |
 | ---- | ------------ |
 | [`CONTEXT.md`](CONTEXT.md) | Glosario del dominio: el vocabulario del proyecto |
-| [`.claude/skills/`](.claude/skills/) | Skills del proyecto: convenciones de Git y revisión de interfaz |
 | [`docs/adr/`](docs/adr/) | Decisiones arquitectónicas, con su contexto y sus alternativas |
-| [`CLAUDE.md`](CLAUDE.md) | Contexto del proyecto para Claude Code |
+| [`docs/decisiones-pendientes.md`](docs/decisiones-pendientes.md) | Lo que **todavía no** se decidió, con su disparador y su regla interina |
+| [`docs/marca/sistema-de-diseno.md`](docs/marca/sistema-de-diseno.md) | La identidad **Argentum**: paleta, tipografía y reglas de aplicación |
+| [`docs/tickets-del-arranque.md`](docs/tickets-del-arranque.md) | El corte del arranque en diez cimientos, y su razonamiento |
+| [`.claude/skills/`](.claude/skills/) | Skills del proyecto: convenciones de Git y revisión de interfaz |
+| [`CLAUDE.md`](CLAUDE.md) | Contexto del proyecto para Claude Code, y el equipo de agentes |
 
 **Antes de proponer un cambio que contradiga una decisión registrada, leé el ADR
 correspondiente.** Si la decisión cambia, se escribe un ADR nuevo que supersede

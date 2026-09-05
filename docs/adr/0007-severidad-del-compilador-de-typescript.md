@@ -1,6 +1,6 @@
 # 0007 — Severidad del compilador de TypeScript
 
-- **Estado:** Propuesto
+- **Estado:** Aceptado
 - **Fecha:** 2026-09-01
 - **Decide:** Luciano Melo Claps
 

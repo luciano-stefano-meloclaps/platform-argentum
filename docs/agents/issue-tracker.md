@@ -13,9 +13,9 @@ Lo impone el hook `.claude/hooks/limitar-gh.sh`, no la buena voluntad:
 
 | Quién | Puede |
 | ----- | ----- |
-| Sesión principal y `super-architect` | Todo, sin restricción |
+| Sesión principal | Todo, sin restricción: es donde está el usuario |
 | `delivery-specialist` | Leer, y `issue create/edit/comment/close/reopen` |
-| Cualquier otro subagente | Solo lectura (`issue view`, `issue list`, `pr view`…) |
+| Cualquier otro subagente, **el arquitecto incluido** | Solo lectura (`issue view`, `issue list`, `pr view`…) |
 
 Denegado para **todo** subagente: `gh pr`, `gh repo`, `gh release`,
 `gh label create`, `gh api` con método de escritura, y `gh` envuelto en otro

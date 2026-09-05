@@ -17,9 +17,9 @@ pregunta por qué las cosas están así.
 | [0004](0004-contenido-en-archivos-versionados.md) | Contenido curado en archivos versionados, importado a la base | Aceptado |
 | [0005](0005-acceso-a-datos-drizzle.md) | Acceso a datos con Drizzle ORM | Aceptado |
 | [0006](0006-infraestructura-vercel-neon.md) | Infraestructura: Vercel y Neon, con PostgreSQL local en Docker | Aceptado |
-| [0007](0007-severidad-del-compilador-de-typescript.md) | Severidad del compilador de TypeScript | Propuesto |
-| [0008](0008-identidad-visual-argentum.md) | Identidad visual Argentum | Propuesto |
-| [0009](0009-formato-del-contenido-curado.md) | Formato, ubicación e imágenes del contenido curado | Propuesto |
+| [0007](0007-severidad-del-compilador-de-typescript.md) | Severidad del compilador de TypeScript | Aceptado |
+| [0008](0008-identidad-visual-argentum.md) | Identidad visual Argentum | Aceptado |
+| [0009](0009-formato-del-contenido-curado.md) | Formato, ubicación e imágenes del contenido curado | Aceptado |
 
 ## Cuándo escribir un ADR
 

@@ -33,7 +33,12 @@ Antes de proponer o escribir nada:
 2. Leé los ADR de `docs/adr/`. Como mínimo el **0001** (entidad única con JSONB),
    el **0004** (contenido en archivos, importado), el **0005** (Drizzle) y el
    **0006** (Neon y Docker local).
-3. Mirá el esquema y las migraciones que ya existen antes de proponer un cambio.
+3. Leé `docs/decisiones-pendientes.md`. La entrada de la **identidad del
+   visitante** te toca de lleno: fija la clave de la tabla de **eventos** y
+   **bloquea la rebanada de progreso entera**. Su regla interina es que hasta
+   esa rebanada **no se persiste nada de progreso**; no inventes una tabla de
+   eventos "mínima" antes de que exista el ADR.
+4. Mirá el esquema y las migraciones que ya existen antes de proponer un cambio.
 
 Si vas a contradecir un ADR, **no lo hagas**: decilo y esperá.
 

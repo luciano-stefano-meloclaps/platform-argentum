@@ -5,8 +5,34 @@ cada sesión y en cada subagente, así que se mantiene corto y factual.
 
 ## Estado actual
 
-**Proyecto greenfield: todavía no hay código.** La arquitectura y el stack ya
-están decididos y documentados en `docs/adr/`.
+**El arranque ya está hecho: el proyecto compila, corre y está desplegado.** La
+arquitectura y el stack están decididos y documentados en `docs/adr/`.
+
+Lo que existe hoy en el árbol:
+
+- Esqueleto de Next.js 16 con Tailwind v4, ESLint 9 y Vitest.
+- PostgreSQL 18 local en Docker (`docker-compose.yml`), la base gestionada en
+  Neon y la aplicación desplegada en Vercel.
+- Tabla `entidad` con su primera migración, en `drizzle/`.
+- El **registro de descriptores** y el descriptor de `procer`, en
+  `src/catalogo/descriptores/`, con la columna `datos` tipada por él.
+
+Lo que **todavía no existe**: ninguno de los cinco módulos, ninguna pantalla más
+allá de la de arranque, y el directorio `contenido/`. La primera rebanada de
+producto —la ficha de un prócer, de archivo a pantalla— ya está cortada y
+publicada en el tracker.
+
+**El árbol se entrega verde.** Estos son los comandos que verifican una entrega,
+y quien termina un ticket los corre antes de decir que terminó:
+
+```bash
+pnpm typecheck   # next typegen && tsc --noEmit
+pnpm lint        # eslint .
+pnpm test        # vitest run
+```
+
+`pnpm build` cuando el ticket toque el build; `pnpm db:generate` y
+`pnpm db:migrate` cuando toque el esquema.
 
 **Producto.** Catálogo sobre Argentina para que chicos aprendan: fichas
 (próceres, monumentos, animales, comida, fechas patrias…), tarjetas de repaso,
@@ -27,7 +53,13 @@ lleguen las cuentas: el MVP no tiene cuentas.
   interfaz.
 - Catálogo: una sola tabla `entidad` con discriminador `tipo` y columna `datos`
   JSONB; los campos de cada tipo viven en descriptores en código (ADR 0001).
-- Contenido curado en archivos versionados, importado a la base (ADR 0004).
+- Contenido curado en archivos versionados, importado a la base (ADR 0004), en
+  `contenido/<tipo>/<slug>.ts` y tipado por el descriptor de su tipo (ADR 0009).
+- **Severidad del compilador cerrada** (ADR 0007): `strict` más
+  `noUncheckedIndexedAccess`, `erasableSyntaxOnly`, `verbatimModuleSyntax`,
+  `noImplicitReturns` y `noFallthroughCasesInSwitch`. Están en `tsconfig.json`
+  con un comentario cada una: **no se aflojan para que compile algo**, se
+  resuelve el código.
 - **Identidad visual decidida:** la marca **Argentum** —celeste, dorado y
   neutrales cálidos, Cormorant Garamond y Montserrat— está cerrada y
   versionada en `docs/marca/sistema-de-diseno.md`, adoptada con correcciones
@@ -204,8 +236,11 @@ ticket.
 **Qué no pueden:** **commitear** —eso es del nivel 2—, `git push` —bloqueado por
 un hook para **todo** subagente, ver abajo—, escribir en el remoto con `gh`,
 cambiar una decisión ya tomada, instalar dependencias o contradecir un ADR. Eso
-se propone y se espera. `AskUserQuestion` no existe para ningún subagente: si
-algo los bloquea de verdad, terminan el turno con las preguntas escritas.
+se propone y se espera. **Ninguno de ellos declara `AskUserQuestion`**: si algo
+los bloquea de verdad, terminan el turno con las preguntas escritas. El único
+que la declara es el arquitecto, y es para cuando corre como sesión principal
+(`claude --agent super-architect`); delegado como subagente pregunta igual que
+los demás, terminando el turno.
 
 Salvedad sobre "qué pueden hacer solos": no vale para todos. El `ui-reviewer` y
 el `typescript-specialist` no escriben archivos. Y **ninguno commitea**: desde
@@ -326,6 +361,12 @@ Ante la duda: la opción más simple que pueda evolucionar.
   mientras tanto. Si vas a escribir código que roza una de esas entradas,
   **respetá la regla interina y no decidas por tu cuenta**: cuando el disparador
   se cumple, la entrada se va de ahí y nace un ADR.
+- `docs/tickets-del-arranque.md` — índice y memoria del corte del arranque (los
+  diez cimientos, #5 a #14). El cuerpo de cada ticket vive en su issue; este
+  archivo guarda el razonamiento del corte.
+- `README.md` — el proyecto explicado para una persona: alcance, stack y puesta
+  en marcha. **No es fuente de decisiones**: donde diga algo distinto de un ADR
+  o de `docs/decisiones-pendientes.md`, gana el ADR y el README está viejo.
 
 ## Agent skills
 
@@ -449,163 +490,77 @@ el viejo en silencio.
   que el repo funcione al clonarlo sin instalar nada.
 - `.claude/hooks/bloquear-git-push.sh` — impide que **cualquier subagente**
   publique en el remoto. Es una lista negra por defecto, así que un agente nuevo
-  queda cubierto sin tocar el hook. Solo pasan la sesión principal y el
-  arquitecto.
+  queda cubierto sin tocar el hook. **Solo pasa la sesión principal**, que es
+  donde está el usuario: el arquitecto tampoco publica. Se declara **sin el
+  campo `if`** en `settings.json`, y eso es parte del bloqueo: con
+  `if: "Bash(git *)"` el hook no corría sobre `rtk git push` —la forma que este
+  mismo archivo manda usar— porque el comando no empieza con `git`.
 - `.claude/hooks/limitar-gh.sh` — el mismo criterio para `gh`, porque publicar un
   issue es tan "hacia afuera" como un push. Acá la lista es **blanca por
   comando**, al revés que en el otro: lectura para todos, escritura de issues
   solo para el `delivery-specialist`, y todo lo demás denegado —`gh pr`,
   `gh repo`, `gh release`, `gh label create`, `gh api` de escritura—. Un
   subcomando nuevo de `gh` **nace denegado**, que es lo correcto para algo que
-  toca el remoto.
+  toca el remoto. El arquitecto **no** está exento: lee el tracker como
+  cualquiera y no escribe en él.
 - `.claude/hooks/limitar-vercel.sh` — el tercero de la familia, y el que hace
   que el plugin de Vercel salga barato. Lista **blanca** como el de `gh`:
   lectura (`ls`, `inspect`, `logs`, `whoami`, `env ls`) para todo subagente,
-  todo lo demás denegado. Dos diferencias deliberadas: el subcomando **vacío se
-  deniega**, porque `vercel` a secas despliega el directorio actual y es el caso
-  que más fácil se escapa; y el **arquitecto no está exento**, al revés que en
-  `gh`, porque acá no hay nada que coordinar —desplegar es del usuario (#7 y
-  ADR 0006)—. Desenvuelve `rtk`, `npx`, `bunx` y `pnpm dlx/exec` antes de
-  clasificar, y `vercel env pull` queda del lado denegado aunque sea lectura:
-  materializa credenciales de producción en el disco.
+  todo lo demás denegado. Una diferencia deliberada con los otros dos: el
+  subcomando **vacío se deniega**, porque `vercel` a secas despliega el
+  directorio actual y es el caso que más fácil se escapa. Desplegar es del
+  usuario (#7 y ADR 0006). Desenvuelve `rtk`, `npx`, `bunx` y `pnpm dlx/exec`
+  antes de clasificar, y `vercel env pull` queda del lado denegado aunque sea
+  lectura: materializa credenciales de producción en el disco.
 - `.claude/settings.local.json` — configuración personal, ignorada por git.
 
 <!-- rtk-instructions v2 -->
-# RTK (Rust Token Killer) - Token-Optimized Commands
+# RTK (Rust Token Killer)
 
-## Golden Rule
+**MODIFICADO LOCALMENTE.** `rtk init` escribe acá un catálogo de unos sesenta
+comandos —cargo, go, pytest, rspec, prisma, docker, kubectl, curl, wget— de los
+que este proyecto usa menos de la cuarta parte. Este archivo se carga entero en
+cada sesión **y en cada subagente**, así que el catálogo completo se paga en
+todos los turnos de todos los agentes a cambio de nada. Queda solo lo que el
+repositorio corre de verdad. **Al volver a correr `rtk init` hay que recortarlo
+otra vez**: reescribe todo lo que hay entre los dos marcadores HTML. Mismo
+criterio que las skills parcheadas de la sección "Skills".
 
-**Always prefix commands with `rtk`**. If RTK has a dedicated filter, it uses it. If not, it passes through unchanged. This means RTK is always safe to use.
+## La regla
 
-**Important**: Even in command chains with `&&`, use `rtk`:
+**Poné `rtk` adelante de cualquier comando.** Si RTK tiene un filtro para ese
+comando lo aplica y ahorra tokens; si no lo tiene, pasa el comando tal cual.
+Nunca cambia lo que el comando hace.
+
+En una línea compuesta, `rtk` va en **cada** tramo:
+
 ```bash
-# ❌ Wrong
-git add . && git commit -m "msg" && git push
+# ❌
+git add src/db/esquema.ts && git commit -m "msg"
 
-# ✅ Correct
-rtk git add . && rtk git commit -m "msg" && rtk git push
+# ✅
+rtk git add src/db/esquema.ts && rtk git commit -m "msg"
 ```
 
-## RTK Commands by Workflow
+**`rtk` no es una autorización.** `rtk git push` está denegado para todo
+subagente exactamente igual que `git push`: los tres hooks desenvuelven el
+prefijo antes de clasificar el comando.
 
-### Build & Compile (80-90% savings)
+## Los comandos de este proyecto
+
 ```bash
-rtk cargo build         # Cargo build output
-rtk cargo check         # Cargo check output
-rtk cargo clippy        # Clippy warnings grouped by file (80%)
-rtk tsc                 # TypeScript errors grouped by file/code (83%)
-rtk lint                # ESLint/Biome violations grouped (84%)
-rtk prettier --check    # Files needing format only (70%)
-rtk next build          # Next.js build with route metrics (87%)
+rtk pnpm typecheck      # tsc, errores agrupados por archivo
+rtk pnpm lint           # ESLint, violaciones agrupadas
+rtk pnpm test           # Vitest, solo lo que falla
+rtk pnpm build          # next build con métricas por ruta
+rtk pnpm install
+
+rtk git status | log | diff | show | add | commit | branch
+rtk gh issue list | issue view <n>
+
+rtk ls <ruta> | read <archivo> | grep <patrón> | find <patrón>
+rtk docker ps           # el contenedor de PostgreSQL local
+rtk err <cmd>           # filtra solo los errores de cualquier comando
+rtk proxy <cmd>         # corre sin filtrar, para depurar el filtro mismo
 ```
-
-### Test (60-99% savings)
-```bash
-rtk cargo test          # Cargo test failures only (90%)
-rtk go test             # Go test failures only (90%)
-rtk jest                # Jest failures only (99.5%)
-rtk vitest              # Vitest failures only (99.5%)
-rtk playwright test     # Playwright failures only (94%)
-rtk pytest              # Python test failures only (90%)
-rtk rake test           # Ruby test failures only (90%)
-rtk rspec               # RSpec test failures only (60%)
-rtk test <cmd>          # Generic test wrapper - failures only
-```
-
-### Git (59-80% savings)
-```bash
-rtk git status          # Compact status
-rtk git log             # Compact log (works with all git flags)
-rtk git diff            # Compact diff (80%)
-rtk git show            # Compact show (80%)
-rtk git add             # Ultra-compact confirmations (59%)
-rtk git commit          # Ultra-compact confirmations (59%)
-rtk git push            # Ultra-compact confirmations
-rtk git pull            # Ultra-compact confirmations
-rtk git branch          # Compact branch list
-rtk git fetch           # Compact fetch
-rtk git stash           # Compact stash
-rtk git worktree        # Compact worktree
-```
-
-Note: Git passthrough works for ALL subcommands, even those not explicitly listed.
-
-### GitHub (26-87% savings)
-```bash
-rtk gh pr view <num>    # Compact PR view (87%)
-rtk gh pr checks        # Compact PR checks (79%)
-rtk gh run list         # Compact workflow runs (82%)
-rtk gh issue list       # Compact issue list (80%)
-rtk gh api              # Compact API responses (26%)
-```
-
-### JavaScript/TypeScript Tooling (70-90% savings)
-```bash
-rtk pnpm list           # Compact dependency tree (70%)
-rtk pnpm outdated       # Compact outdated packages (80%)
-rtk pnpm install        # Compact install output (90%)
-rtk npm run <script>    # Compact npm script output
-rtk npx <cmd>           # Compact npx command output
-rtk prisma              # Prisma without ASCII art (88%)
-rtk uv run <cmd>        # Compact uv project command output
-```
-
-### Files & Search (60-75% savings)
-```bash
-rtk ls <path>           # Tree format, compact (65%)
-rtk read <file>         # Code reading with filtering (60%)
-rtk grep <pattern>      # Search grouped by file (75%). Format flags (-c, -l, -L, -o, -Z) run raw.
-rtk find <pattern>      # Find grouped by directory (70%)
-```
-
-### Analysis & Debug (70-90% savings)
-```bash
-rtk err <cmd>           # Filter errors only from any command
-rtk log <file>          # Deduplicated logs with counts
-rtk json <file>         # JSON structure without values
-rtk deps                # Dependency overview
-rtk env                 # Environment variables compact
-rtk summary <cmd>       # Smart summary of command output
-rtk diff                # Ultra-compact diffs
-```
-
-### Infrastructure (85% savings)
-```bash
-rtk docker ps           # Compact container list
-rtk docker images       # Compact image list
-rtk docker logs <c>     # Deduplicated logs
-rtk kubectl get         # Compact resource list
-rtk kubectl logs        # Deduplicated pod logs
-```
-
-### Network (65-70% savings)
-```bash
-rtk curl <url>          # Compact HTTP responses (70%)
-rtk wget <url>          # Compact download output (65%)
-```
-
-### Meta Commands
-```bash
-rtk gain                # View token savings statistics
-rtk gain --history      # View command history with savings
-rtk discover            # Analyze Claude Code sessions for missed RTK usage
-rtk proxy <cmd>         # Run command without filtering (for debugging)
-rtk init                # Add RTK instructions to CLAUDE.md
-rtk init --global       # Add RTK to ~/.claude/CLAUDE.md
-```
-
-## Token Savings Overview
-
-| Category | Commands | Typical Savings |
-|----------|----------|-----------------|
-| Tests | vitest, playwright, cargo test | 90-99% |
-| Build | next, tsc, lint, prettier | 70-87% |
-| Git | status, log, diff, add, commit | 59-80% |
-| GitHub | gh pr, gh run, gh issue | 26-87% |
-| Package Managers | pnpm, npm, npx | 70-90% |
-| Files | ls, read, grep, find | 60-75% |
-| Infrastructure | docker, kubectl | 85% |
-| Network | curl, wget | 65-70% |
-
-Overall average: **60-90% token reduction** on common development operations.
 <!-- /rtk-instructions -->

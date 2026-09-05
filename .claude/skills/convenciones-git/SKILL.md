@@ -94,9 +94,9 @@ remoto—.
 [Feat] Importación de contenido desde archivos
 
 Cambios:
-- Script de importación que lee `content/` y escribe en la base.
+- Script de importación que lee `contenido/` y escribe en la base.
 - Validación de cada ficha contra el descriptor Zod de su tipo.
-- Comando `pnpm content:import`.
+- Su comando en `package.json`.
 
 Razones:
 - El contenido curado vive en archivos versionados (ADR 0004) y hacía falta

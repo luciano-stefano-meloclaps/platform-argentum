@@ -3,8 +3,363 @@
  * `src/app/layout.tsx`.
  *
  * Este `@import` trae el preflight y el motor de utilidades de Tailwind v4.
- * Acá va a vivir después el bloque `@theme` con los tokens de la identidad
- * Argentum (ADR 0008), que son de otro ticket y los define el
- * `brand-specialist`: hoy no hay ni paleta ni tipografía propias.
  */
 @import "tailwindcss";
+
+/*
+ * ============================================================================
+ * Tokens de la identidad Argentum — ticket #26 (ADR 0008)
+ * ============================================================================
+ * Fuente: docs/marca/sistema-de-diseno.md (v1.0), sección 11, con las
+ * seis correcciones de contraste, los tres pesos tipográficos y las dos
+ * reglas de uso del ADR 0008 ya aplicados. Donde el ADR corrige a la marca,
+ * el valor de acá es el vigente y va marcado con ⚠️, igual que en los dos
+ * documentos fuente.
+ *
+ * Dueño: `brand-specialist` (ADR 0008, punto 7). No se edita desde una
+ * pantalla ni desde un componente: un color, una tipografía o un espaciado
+ * nuevo se propone acá, nunca se escribe a mano en una clase de utilidad.
+ *
+ * Nota de sintaxis (Tailwind v4, verificado con Context7 — no es
+ * `tailwind.config.js`): cada namespace de variable dentro de `@theme`
+ * genera las utilidades correspondientes:
+ *   --color-*   → bg-*, text-*, border-*, fill-*, etc.
+ *   --font-*    → font-* (familia)
+ *   --text-*    → text-* (tamaño; admite line-height, letter-spacing y
+ *                 font-weight emparejados con --text-<n>--<propiedad>)
+ *   --spacing-* → p-*, m-*, gap-*, w-*, h-*, space-*, etc.
+ *   --radius-*  → rounded-*
+ *   --shadow-*  → shadow-*
+ *
+ * Los nombres de la marca (`--celeste-400`, `--texto-titulo`, `--type-h1`,
+ * `--space-md`, `--sombra-sm`, `--borde-default`) no traen ese prefijo, así
+ * que quedan traducidos, no copiados. Resumen de las adaptaciones:
+ *
+ *   --celeste-400   → --color-celeste-400   (namespace --color-*)
+ *   --texto-titulo  → --color-texto-titulo  (namespace --color-*)
+ *   --type-h1       → --text-h1             (--type-* no es un namespace de
+ *                                            Tailwind; --text-* sí lo es, y
+ *                                            es justo el namespace de
+ *                                            tamaño de fuente)
+ *   --space-md      → --spacing-md          (el namespace se llama
+ *                                            "spacing", no "space")
+ *   --sombra-sm     → --shadow-sombra-sm    (se conserva "sombra" en vez de
+ *                                            traducirlo a "shadow": es el
+ *                                            nombre que eligió la marca,
+ *                                            igual que "borde" en vez de
+ *                                            "border" más abajo)
+ *   --radius-sm     → --radius-sm           (el namespace ya se llama
+ *                                            "radius": sin cambio de
+ *                                            nombre, pero sobrescribe el
+ *                                            valor por defecto de Tailwind)
+ *   --font-titulo   → --font-titulo         (el namespace ya se llama
+ *                                            "font": sin cambio)
+ *   --borde-default → sin namespace propio: Tailwind v4 no tiene un
+ *                     namespace de borde compuesto (ancho + estilo + color
+ *                     en un solo valor). Se descompone — ver la sección
+ *                     "Bordes" más abajo.
+ *
+ * Lo que NO hace este archivo: no carga las fuentes (eso es
+ * `next/font/google` en `src/app/layout.tsx`, ADR 0008 corrección 5) y no
+ * aplica el fondo de página ni la familia tipográfica por defecto al
+ * `<body>` — eso es una decisión de página/layout, no de tokens, y la
+ * escribe el `frontend-specialist`. `--font-titulo` y `--font-cuerpo`
+ * asumen que `layout.tsx` expone `--font-cormorant-garamond` y
+ * `--font-montserrat` vía la opción `variable` de `next/font`; si todavía
+ * no lo hace, caen al fallback (Georgia / system-ui) sin romper nada.
+ * ============================================================================
+ */
+@theme {
+  /* --- Celeste — primario (sistema de diseño, §3) --- */
+  --color-celeste-50:  #EAF4FE; /* fondos de página, cabeceras suaves */
+  --color-celeste-150: #BFE0FC; /* bordes sobre fondos celeste */
+
+  /*
+   * --celeste-400 es el color de marca, protagonista visual — pero es
+   * SUPERFICIE, nunca fondo de texto (ADR 0008). Blanco encima da 2.46:1 y
+   * no hay corrección de hex que lo salve sin perder el color de marca: la
+   * franja de la tarjeta de contenido es decorativa. Si alguna vez lleva
+   * texto, va en --color-texto-titulo (4.77:1) o --color-celeste-900
+   * (4.56:1) — nunca blanco, y nunca --color-texto-sobre-celeste.
+   */
+  --color-celeste-400: #5DADE2;
+
+  /*
+   * --celeste-600 queda para superficies y bordes SIN texto encima: blanco
+   * a 13–14px sobre #1E96F5 da 3.12:1 y no pasa AA. El botón primario usa
+   * --celeste-700, no este.
+   */
+  --color-celeste-600: #1E96F5;
+
+  /*
+   * --celeste-700 (ADR 0008 — no existía en la marca original). Fondo del
+   * botón primario. Blanco encima: 4.56:1, medido con la fórmula WCAG
+   * (luminancia relativa, canales linealizados) — ver "Contraste
+   * verificado" en el informe del ticket #26.
+   */
+  --color-celeste-700: #0978D0;
+
+  --color-celeste-text: #0A5FA8; /* texto y links sobre blanco o crema */
+
+  /*
+   * Texto oscuro sobre celeste claro, uso mínimo como superficie. También
+   * el fondo del dorso de la tarjeta de repaso (§7): ahí, y solo ahí, el
+   * dorado convive con celeste (excepción escrita en la marca).
+   */
+  --color-celeste-900: #0A3D66;
+
+  /* --- Dorado — acento 1: logros y ligas (§3) --- */
+  --color-dorado-bg:     #FFF8E8; /* fondo de tarjeta de liga — NUNCA sobre celeste */
+  --color-dorado-borde:  #F0DFB8;
+  --color-dorado-filete: #F2D488; /* filete decorativo; también la respuesta en el dorso de la tarjeta de repaso */
+
+  /*
+   * --dorado-text (ADR 0008): #C98A00 → #9A6900. Verificado: sobre
+   * --color-dorado-bg da 4.52:1 (coincide con el número del ADR). Sobre
+   * --color-blanco da ~4.78:1. Medido también sobre --color-crema —el
+   * propio documento de marca declara ese contexto en su §3 ("texto
+   * dorado sobre fondo crema o blanco")— y da ~4.48:1: por debajo del
+   * piso AA para texto normal (aunque muy por encima del piso AA-large,
+   * 3:1). El ADR presenta este valor como si resolviera los dos contextos
+   * a la vez, pero mi medición sobre --crema queda corta. Hasta que se
+   * revise: restringir este token a --color-dorado-bg o --color-blanco;
+   * no usarlo como texto corrido sobre --color-crema.
+   */
+  --color-dorado-text: #9A6900;
+
+  /* --- Verde laurel — acento 2: logros, próceres, estados positivos (§3) --- */
+  --color-laurel-bg:    #EAF0DF;
+  --color-laurel-borde: #D6E2C2;
+  --color-laurel-text:  #4B6A2C;
+  --color-laurel-dark:  #33471F;
+
+  /*
+   * --- Categorías de contenido (§3) ---
+   * Nota: el sistema de diseño solo declara paleta para seis categorías.
+   * "Eventos históricos" tiene ícono asignado (§9, ti-timeline-event) pero
+   * no tiene bg/borde/text propios acá — no invento uno: se deriva del
+   * mismo patrón (tono pastel + versión oscura) cuando haya una pantalla
+   * que lo necesite, siguiendo la nota del propio documento en su §3.
+   */
+  --color-cat-proceres-bg:      #EAF0DF;
+  --color-cat-proceres-borde:   #D6E2C2;
+  --color-cat-proceres-text:    #4B6A2C;
+
+  --color-cat-monumentos-bg:    #EAF4FE;
+  --color-cat-monumentos-borde: #CFE4F8;
+  --color-cat-monumentos-text:  #0A5FA8;
+
+  --color-cat-comidas-bg:       #FBECE4;
+  --color-cat-comidas-borde:    #F2D6C7;
+  --color-cat-comidas-text:     #A8492A;
+
+  --color-cat-fechas-bg:        #FBE9EF;
+  --color-cat-fechas-borde:     #F2CFDC;
+  --color-cat-fechas-text:      #96324F;
+
+  --color-cat-animales-bg:      #EFEAFB;
+  --color-cat-animales-borde:   #DDD2F4;
+  --color-cat-animales-text:    #5A45A0;
+
+  --color-cat-naturaleza-bg:    #E4F4EF;
+  --color-cat-naturaleza-borde: #C2E2D6;
+  --color-cat-naturaleza-text:  #1F7A5C;
+
+  /* --- Neutrales cálidos (§3) — la clave anti-gubernamental --- */
+  --color-crema:             #FBF7F0; /* fondo de página principal — nunca blanco puro */
+  --color-blanco:            #FFFFFF; /* tarjetas y superficies elevadas */
+  --color-arena-borde:       #EDE4D6; /* bordes de tarjetas sobre blanco/crema */
+  --color-arena-borde-suave: #F5EFE4; /* divisores finos */
+
+  /* --- Textos (§3) --- */
+  --color-texto-titulo:     #1F3B4D; /* títulos, nombres, valores destacados */
+  --color-texto-cuerpo:     #4A4235; /* párrafos de contenido */
+  --color-texto-secundario: #6B5D4A; /* subtítulos, descripciones */
+
+  /* --texto-terciario (ADR 0008): #8A7B66 → #7E705D. Sobre --color-crema: 4.51:1 (medido). */
+  --color-texto-terciario: #7E705D;
+
+  /*
+   * ADR 0008: deja de ser válido sobre --color-celeste-400 (blanco ahí da
+   * 2.46:1). Solo aplica sobre --color-celeste-700 o --color-celeste-900.
+   */
+  --color-texto-sobre-celeste: #FFFFFF;
+
+  /* --- Feedback (§3) — reservados, no usar para categorías --- */
+  /* --ok (ADR 0008): #2E7D5B → #2E7C5A. Sobre --color-ok-bg: 4.53:1 (medido). */
+  --color-ok:    #2E7C5A;
+  --color-ok-bg: #E9F5EF;
+
+  /* --error (ADR 0008): #C94A4A → #C23A3A. Sobre --color-error-bg: 4.53:1 (medido). */
+  --color-error:    #C23A3A;
+  --color-error-bg: #FBE9E9;
+
+  /* --alerta (ADR 0008): #B26A00 → #9F5F00. Sobre --color-alerta-bg: 4.52:1 (según el ADR; no remedido en este ticket). */
+  --color-alerta:    #9F5F00;
+  --color-alerta-bg: #FBF0DA;
+
+  /* --- Sistema de ligas — metales argentinos (§3; nombres fijados por ADR 0008 punto 6, CONTEXT.md) --- */
+  --color-liga-cobre-bg: #FBEDE4; --color-liga-cobre-text: #8A4E1F; /* 0–500 pts */
+  --color-liga-plata-bg: #F1F3F5; --color-liga-plata-text: #5B666F; /* 501–1500 pts */
+  --color-liga-oro-bg:   #F0E2C4; --color-liga-oro-text:   #83590A; /* 1501–3000 pts */
+  --color-liga-litio-bg: #EAF0DF; --color-liga-litio-text: #4B6A2C; /* 3001+ pts */
+
+  /*
+   * ==========================================================================
+   * Tipografía (§4)
+   * ==========================================================================
+   */
+
+  /*
+   * Familias. El namespace ya se llama "font", así que los nombres de la
+   * marca quedan sin cambios. Las variables `--font-cormorant-garamond` y
+   * `--font-montserrat` las expone `layout.tsx` con `next/font/google`
+   * (ADR 0008, corrección 5) — no viven en este archivo.
+   */
+  --font-titulo: var(--font-cormorant-garamond), Georgia, serif; /* logotipo, H1–H3, números destacados */
+  --font-cuerpo: var(--font-montserrat), system-ui, sans-serif; /* todo lo demás: párrafos, labels, botones, nav */
+
+  /*
+   * Escala tipográfica. Namespace --text-* (no --type-*: es el namespace
+   * de font-size de Tailwind v4, verificado con Context7). Cada tamaño
+   * empareja line-height, letter-spacing y font-weight con la sintaxis
+   * --text-<nombre>--<propiedad>, así que la utilidad `text-h1` aplica los
+   * cuatro de una sola vez. OJO: no incluye font-family — un título
+   * necesita además la clase `font-titulo`.
+   *
+   * ⚠️ ADR 0008: --text-display, --text-h1 y --text-h2 van en peso 700,
+   * no 900. Cormorant Garamond no tiene peso 900: pedirlo produce negrita
+   * sintética y arruina el contraste fino/grueso de la tipografía.
+   */
+  --text-display: 36px;
+  --text-display--line-height: 1.1;
+  --text-display--font-weight: 700; /* ⚠️ ADR 0008: la marca decía 900 */
+
+  --text-h1: 30px;
+  --text-h1--line-height: 1.15;
+  --text-h1--font-weight: 700; /* ⚠️ ADR 0008: la marca decía 900 */
+
+  --text-h2: 24px;
+  --text-h2--line-height: 1.2;
+  --text-h2--font-weight: 700; /* ⚠️ ADR 0008: la marca decía 900 */
+
+  --text-h3: 18px;
+  --text-h3--line-height: 1.3;
+  --text-h3--font-weight: 600; /* sin corrección: la marca ya pedía 600 */
+
+  /* Cuerpo e interfaz — Montserrat (font-cuerpo) */
+  --text-body-lg: 16px;
+  --text-body-lg--line-height: 1.75;
+  --text-body-lg--font-weight: 400;
+
+  --text-body: 14px;
+  --text-body--line-height: 1.7;
+  --text-body--font-weight: 400;
+
+  --text-caption: 13px;
+  --text-caption--line-height: 1.6;
+  --text-caption--font-weight: 400;
+
+  --text-label: 13px;
+  --text-label--line-height: 1.4;
+  --text-label--font-weight: 600;
+
+  --text-button: 13px;
+  --text-button--line-height: 1;
+  --text-button--font-weight: 600;
+
+  /*
+   * type-chip: el documento de marca se contradice consigo mismo en el
+   * letter-spacing — §4 (escala tipográfica) declara 0.06em, el
+   * componente "Chip de categoría" en §7 declara 0.05em. Uso el valor de
+   * §4 porque es la escala tipográfica, que es la fuente de este token; si
+   * el chip construido necesita 0.05em, es una corrección al documento de
+   * marca, no a este archivo. §4 tampoco declara line-height para este
+   * token: asumo 1 (mismo criterio que --text-button). La versalita
+   * ("VERSALITA" en el documento) no es una propiedad que Tailwind
+   * empareje en --text-*: se aplica en el componente con la utilidad
+   * `uppercase`, que es la aproximación disponible sin instalar nada ni
+   * escribir una utilidad nueva.
+   */
+  --text-chip: 11px;
+  --text-chip--line-height: 1;
+  --text-chip--font-weight: 600;
+  --text-chip--letter-spacing: 0.06em;
+
+  --text-meta: 12px;
+  --text-meta--line-height: 1.5;
+  --text-meta--font-weight: 500;
+
+  /*
+   * ==========================================================================
+   * Espaciado (§5)
+   * ==========================================================================
+   * Namespace --spacing-* (no --space-*: el namespace de Tailwind v4 se
+   * llama "spacing", verificado con Context7 — no coincide letra por letra
+   * con el "space" de la marca). No toca la variable base `--spacing` de
+   * Tailwind, la que multiplica p-4, gap-8, w-17, etc.: esto es aditivo.
+   */
+  --spacing-xs:  4px;
+  --spacing-sm:  8px;
+  --spacing-md:  12px;
+  --spacing-lg:  16px;
+  --spacing-xl:  22px;
+  --spacing-2xl: 32px;
+
+  /*
+   * ==========================================================================
+   * Radios (§5)
+   * ==========================================================================
+   * Namespace --radius-*: coincide letra por letra con el nombre de la
+   * marca. OJO: esto SOBRESCRIBE los valores por defecto de Tailwind para
+   * rounded-sm/md/lg/xl (que traen 4/6/8/12px de fábrica) — es
+   * intencional: cualquier `rounded-md` en el código va a usar el radio de
+   * Argentum, no el genérico de Tailwind. --radius-full es documentación
+   * de referencia: `rounded-full` de Tailwind ya usa
+   * `calc(infinity * 1px)` sin leer esta variable (verificado con
+   * Context7), así que definirla acá no cambia esa utilidad — queda
+   * disponible como `var(--radius-full)` para el caso puntual que la
+   * necesite explícita.
+   */
+  --radius-sm:   8px;  /* chips, badges, botones chicos */
+  --radius-md:   12px; /* tarjetas de categoría */
+  --radius-lg:   14px; /* tarjetas de estadística */
+  --radius-xl:   16px; /* tarjeta principal de contenido */
+  --radius-full: 9999px; /* pills y avatares — ver nota arriba */
+
+  /*
+   * ==========================================================================
+   * Bordes (§6)
+   * ==========================================================================
+   * La marca declara --borde-default y --borde-strong como shorthand
+   * compuesto ("1px solid #hex"). Tailwind v4 no tiene un namespace de
+   * borde compuesto (ancho + estilo + color en una sola utilidad): el
+   * color de borde es lo único que vive en un namespace (--color-*), y el
+   * ancho/estilo los aporta la utilidad estática `border` de Tailwind
+   * (1px solid por defecto). Uso: `border border-borde-default`.
+   *
+   * El sistema de diseño también documenta --borde-celeste en su §6
+   * (1px solid #CFE4F8, el mismo valor que --color-celeste-150), pero no
+   * está en la lista de la sección 11 y ninguna pantalla lo pide todavía:
+   * no lo agrego acá. Cuando haga falta, sigue el mismo patrón:
+   * --color-borde-celeste: var(--color-celeste-150).
+   */
+  --color-borde-default: #EDE4D6; /* tarjetas sobre crema */
+  --color-borde-strong:  #D6CAB8; /* énfasis, hover */
+
+  /*
+   * ==========================================================================
+   * Sombras (§6)
+   * ==========================================================================
+   * Namespace --shadow-*. Se conserva la palabra "sombra" en vez de
+   * traducirla a "shadow": es el nombre que eligió la marca, igual que
+   * "borde" en vez de "border" más arriba — los nombres de la marca son
+   * los nombres de los tokens. Esto además deja intactos los shadow-sm/md/lg
+   * por defecto de Tailwind en vez de pisarlos con valores tintados de
+   * celeste que no coinciden con lo que ese nombre significa en el resto
+   * del ecosistema Tailwind.
+   */
+  --shadow-sombra-sm: 0 1px 3px rgba(31, 59, 77, 0.06), 0 1px 2px rgba(31, 59, 77, 0.04);
+  --shadow-sombra-md: 0 2px 8px rgba(31, 59, 77, 0.07);
+  --shadow-sombra-lg: 0 4px 14px rgba(93, 173, 226, 0.12); /* sombra teñida de celeste */
+}

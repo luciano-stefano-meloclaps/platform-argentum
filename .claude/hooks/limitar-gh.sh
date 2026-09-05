@@ -22,8 +22,13 @@
 # deniega sin analizar: la lista blanca solo sabe leer fragmentos que empiezan
 # con `gh`, y lo que no puede leer no lo puede autorizar.
 #
-# Sin restricción: la sesión principal (agent_type vacío), que es donde está
-# el usuario, y el arquitecto, que coordina el repositorio.
+# Sin restricción: solo la sesión principal (agent_type vacío), que es donde
+# está el usuario. El arquitecto **no** está exento, y antes lo estaba: la
+# excepción le daba `gh pr`, `gh repo`, `gh release` y `gh label create`, que
+# `CLAUDE.md` y `docs/agents/issue-tracker.md` declaran denegados "para todo
+# subagente". No pierde nada de lo que necesita: la lectura del tracker está
+# permitida para todos más abajo, y escribir en él es del delivery-specialist
+# —la regla ya era esa, solo que la sostenía la prosa y no el hook—.
 #
 # `rtk` (github.com/rtk-ai/rtk) antepone su nombre a comandos para filtrar su
 # salida y ahorrar tokens (`rtk gh pr view 123`). Sin desenvolverlo acá, el
@@ -37,9 +42,8 @@ ENTRADA=$(cat)
 AGENTE=$(printf '%s' "$ENTRADA" | jq -r '.agent_type // .agent // empty')
 COMANDO=$(printf '%s' "$ENTRADA" | jq -r '.tool_input.command // empty')
 
-case "$AGENTE" in
-  ""|super-architect) exit 0 ;;
-esac
+# Solo la sesión principal, donde está el usuario.
+[ -z "$AGENTE" ] && exit 0
 
 denegar() {
   jq -n --arg a "$AGENTE" --arg c "$1" '{

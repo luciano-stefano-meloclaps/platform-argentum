@@ -198,8 +198,9 @@ cada lote su propio ticket, con el árbol verde entre lote y lote; al final se
 borra la forma vieja, bloqueada por todos los lotes. Está en `to-tickets` con
 más detalle.
 
-**Hoy no aplica: no hay código.** Está escrito acá para que lo reconozcas cuando
-aparezca y no lo fuerces a rebanada.
+**Todavía no hizo falta**: el código que hay es chico y el único refactor hasta
+hoy (#28, tipar la columna `datos`) entró en un ticket solo. Está escrito acá
+para que lo reconozcas cuando aparezca y no lo fuerces a rebanada.
 
 ---
 
@@ -343,14 +344,27 @@ tres que deja algo difícil de deshacer para quien no sabe git.
    ciegas.**
 3. **Verificá el árbol contra el ticket.** Cada archivo cambiado tiene que
    explicarse por lo que el ticket pedía. Ver la sección 10.
-4. **Buscá lo que no puede entrar**: secretos, claves, tokens, correos, rutas
+4. **Verificá que el árbol esté verde.** Los tres comandos, siempre, aunque el
+   especialista diga que ya los corrió:
+
+   ```bash
+   rtk pnpm typecheck && rtk pnpm lint && rtk pnpm test
+   ```
+
+   Y `pnpm build` si el ticket toca el build. **Si algo falla, no commitees**:
+   se lo devolvés al especialista con la salida del comando. Esto es barato —son
+   segundos— y es la mitad de por qué existe una puerta de salida: la otra mitad
+   —que el diff tenga una sola intención— la mira el paso 3. Un commit que no
+   compila obliga a un segundo commit para arreglarlo, y ahí ya hay dos commits
+   para una intención.
+5. **Buscá lo que no puede entrar**: secretos, claves, tokens, correos, rutas
    absolutas, `.env`, archivos de configuración personal, artefactos de build,
    `node_modules`.
-5. **Agregá por camino explícito.** `git add <archivo> <archivo>`. **Nunca
+6. **Agregá por camino explícito.** `git add <archivo> <archivo>`. **Nunca
    `git add -A` ni `git add .`**: barren cosas que no son del ticket y ese es
    exactamente el error que venís a evitar.
-6. **Escribí el mensaje** con `convenciones-git`, y agregá la línea del ticket.
-7. **Comentá el issue** con el sha y el título del commit.
+7. **Escribí el mensaje** con `convenciones-git`, y agregá la línea del ticket.
+8. **Comentá el issue** con el sha y el título del commit.
 
 **Formato del mensaje**, tal cual la convención, más la referencia:
 
@@ -602,6 +616,7 @@ Nunca:
 - Commitees algo que el ticket no pide, o cambios que ya estaban en el árbol
   cuando llegaste.
 - Commitees sin haber leído `git diff` entero.
+- Commitees un árbol que no pasa `pnpm typecheck`, `pnpm lint` y `pnpm test`.
 - Metas un secreto, una clave, un correo o una ruta absoluta en un commit.
 - Cierres un ticket cuyo commit todavía no esté en el remoto.
 - Crees etiquetas, ramas remotas, PRs, releases ni nada que cambie la
@@ -648,6 +663,7 @@ Nunca:
 ```
 ## Ticket                       (número y título)
 ## Verificación del árbol       (qué cambió y cómo se explica por el ticket)
+## Árbol verde                  (typecheck, lint y test, con su resultado)
 ## Lo que NO commiteé y por qué (archivos ajenos al ticket, con su dueño)
 ## Commit                       (sha y título)
 ## Listo para publicar          (qué rama, y qué falta para cerrar el ticket)
