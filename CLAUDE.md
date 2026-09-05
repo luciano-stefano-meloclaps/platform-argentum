@@ -253,6 +253,32 @@ y el `frontend-specialist` **nunca** toca la base — le pide al módulo. El
 costuras** entre ellas, que es donde un tipo duplicado a los dos lados es
 invisible desde cada lado por separado.
 
+#### Agentes del plugin de Vercel
+
+El plugin trae tres agentes. **No son del organigrama**: son consultores de
+plataforma, así que no se les reparte un ticket y no dejan archivos. Cada uno
+tiene un **responsable** que es el único que lo convoca y el que se hace cargo
+de lo que traiga.
+
+| Agente | Lo convoca | Para qué |
+| ------ | ---------- | -------- |
+| `vercel:performance-optimizer` | `frontend-specialist` | Core Web Vitals, estrategia de renderizado, caché, imágenes, tipografías, tamaño del paquete |
+| `vercel:ai-architect` | `super-architect` | Alternativas de plataforma cuando aparezca alcance de AI, que hoy no existe |
+| `vercel:deployment-expert` | `super-architect` | Diagnosticar un despliegue, un build o una variable de entorno |
+
+**Responsable quiere decir dueño de la conclusión, no mensajero.** Lo que el
+agente devuelve es una recomendación de vendor: la traduce a una decisión del
+proyecto el que lo convocó, y contra los ADR. En particular
+`performance-optimizer` tensiona con la salvedad ya escrita de
+`vercel-react-best-practices` —micro-optimizaciones solo con medición concreta—,
+y ahí gana la salvedad.
+
+**Ninguno despliega.** `limitar-vercel.sh` les deja leer estado de Vercel y les
+deniega toda escritura, igual que a cualquier otro subagente. `deployment-expert`
+diagnostica y dice qué habría que ejecutar; **ejecuta el usuario**. El #7 y el
+ADR 0006 quedan intactos: ningún agente tiene credenciales de escritura de
+Vercel, y el flujo de OAuth del servidor MCP del plugin **no se completa**.
+
 #### Previsto, todavía no existe
 
 Un **agente de testing**, que el usuario ya anunció. Cuando llegue va al **nivel
@@ -338,7 +364,10 @@ el viejo en silencio.
   biblioteca de componentes para terceros.
 - `vercel-react-best-practices` — aplicar las reglas estructurales (`async-`,
   `bundle-`, `server-`) desde el principio; las micro-optimizaciones (`js-`)
-  solo con una medición concreta que las justifique.
+  solo con una medición concreta que las justifique. Es además **la** fuente
+  sobre React y Next.js: si aparece otra que se superponga —el plugin de Vercel
+  trae una `react-best-practices`—, gana esta, que está versionada en
+  `.agents/skills/` y fijada en `skills-lock.json` y no cambia sola.
 - `improve-codebase-architecture` — **es del arquitecto**, ningún otro agente la
   usa. Necesita historial de commits y código real, así que no sirve hasta que
   haya varias rebanadas hechas. Está **modificada localmente** para que se pueda
@@ -391,10 +420,21 @@ el viejo en silencio.
    estar en el entorno del proceso o en un settings file. Nunca la pongas en
    `.claude/settings.json` ni en `.mcp.json`, que sí se commitean.
 
+3. **El plugin `vercel@claude-plugins-official` está habilitado a propósito**, y
+   el repositorio lo deja explícito en `.claude/settings.json` para que valga
+   igual al clonar, sin depender de la configuración personal de cada uno. Trae
+   tres agentes que sí usamos —ver "Agentes del plugin de Vercel"— y, como es
+   todo o nada, también trae `/deploy` y compañía. Eso lo contiene un hook, no
+   un párrafo: `limitar-vercel.sh`.
+
 ## Configuración compartida
 
 - `.claude/agents/` — agentes del proyecto (versionados).
-- `.claude/settings.json` — permisos y MCP habilitados para todo el equipo.
+- `.claude/settings.json` — permisos, MCP y plugins habilitados para todo el
+  equipo. Ahí vive `enabledPlugins`, que deja el plugin
+  `vercel@claude-plugins-official` en `true`. Se declara acá y no en el settings
+  personal de cada uno porque el ajuste del proyecto **pisa** al de usuario, y
+  así el equipo ve lo mismo al clonar.
 - `.mcp.json` — servidor MCP Context7, sin secretos: la key se expande
   desde la variable de entorno `CONTEXT7_API_KEY` de cada desarrollador.
 - `.claude/skills/` — skills propias del proyecto (`convenciones-git`,
@@ -412,6 +452,16 @@ el viejo en silencio.
   `gh repo`, `gh release`, `gh label create`, `gh api` de escritura—. Un
   subcomando nuevo de `gh` **nace denegado**, que es lo correcto para algo que
   toca el remoto.
+- `.claude/hooks/limitar-vercel.sh` — el tercero de la familia, y el que hace
+  que el plugin de Vercel salga barato. Lista **blanca** como el de `gh`:
+  lectura (`ls`, `inspect`, `logs`, `whoami`, `env ls`) para todo subagente,
+  todo lo demás denegado. Dos diferencias deliberadas: el subcomando **vacío se
+  deniega**, porque `vercel` a secas despliega el directorio actual y es el caso
+  que más fácil se escapa; y el **arquitecto no está exento**, al revés que en
+  `gh`, porque acá no hay nada que coordinar —desplegar es del usuario (#7 y
+  ADR 0006)—. Desenvuelve `rtk`, `npx`, `bunx` y `pnpm dlx/exec` antes de
+  clasificar, y `vercel env pull` queda del lado denegado aunque sea lectura:
+  materializa credenciales de producción en el disco.
 - `.claude/settings.local.json` — configuración personal, ignorada por git.
 
 <!-- rtk-instructions v2 -->
