@@ -58,5 +58,6 @@ supersede al anterior — no se ignora el viejo en silencio.
 | Ruta | Qué contiene |
 | ---- | ------------ |
 | [`../../CONTEXT.md`](../../CONTEXT.md) | Glosario del dominio: el vocabulario del proyecto |
+| [`../decisiones-pendientes.md`](../decisiones-pendientes.md) | Lo que todavía **no** se decidió, con su disparador y su regla interina |
 | [`../marca/sistema-de-diseno.md`](../marca/sistema-de-diseno.md) | La identidad visual Argentum, adoptada por el ADR 0008 |
 | [`../../CLAUDE.md`](../../CLAUDE.md) | Estado, stack y decisiones resumidas, para agentes |
