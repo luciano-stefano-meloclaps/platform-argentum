@@ -15,6 +15,13 @@
     "noImplicitReturns": true,
     // ADR 0007: la más floja de las cinco, entra porque el switch sobre "tipo" es central y el seguro cuesta cero.
     "noFallthroughCasesInSwitch": true,
+    // ADR 0011: el script de importación del contenido curado corre con `node`
+    // directo (ADR 0009) y ESM no adivina extensiones, así que los imports
+    // relativos de valor llevan `.ts`. No afloja ninguna de las cinco de
+    // arriba: TS5097 es un guardarraíl de emisión, y acá `tsc` solo verifica.
+    // Si algún día hiciera falta emitir, lo reemplaza
+    // `rewriteRelativeImportExtensions`, sin tocar el código.
+    "allowImportingTsExtensions": true,
     "noEmit": true,
     "esModuleInterop": true,
     "module": "esnext",

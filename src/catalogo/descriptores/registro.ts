@@ -1,7 +1,7 @@
 import type * as z from "zod";
 
 import type { Descriptor } from "./descriptor";
-import { procer } from "./procer";
+import { procer } from "./procer.ts";
 
 /**
  * El **registro de descriptores** (ADR 0001): la estructura en código que reúne

@@ -2,7 +2,7 @@ import "server-only";
 
 import { drizzle } from "drizzle-orm/node-postgres";
 
-import * as esquema from "./esquema";
+import * as esquema from "./esquema.ts";
 
 /**
  * Cliente de Drizzle sobre PostgreSQL, único punto del proyecto donde se

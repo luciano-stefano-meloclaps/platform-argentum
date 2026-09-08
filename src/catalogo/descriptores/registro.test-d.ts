@@ -1,6 +1,6 @@
 import { expectTypeOf } from "vitest";
 
-import { validarDatos, type Datos, type DatosDe, type Tipo } from "./registro";
+import { validarDatos, type Datos, type DatosDe, type Tipo } from "./registro.ts";
 
 /**
  * Pruebas de tipos del registro de descriptores.
