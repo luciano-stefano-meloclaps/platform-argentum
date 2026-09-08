@@ -20,6 +20,7 @@ pregunta por qué las cosas están así.
 | [0007](0007-severidad-del-compilador-de-typescript.md) | Severidad del compilador de TypeScript | Aceptado |
 | [0008](0008-identidad-visual-argentum.md) | Identidad visual Argentum | Aceptado |
 | [0009](0009-formato-del-contenido-curado.md) | Formato, ubicación e imágenes del contenido curado | Aceptado |
+| [0011](0011-extension-explicita-en-imports-relativos-de-valor.md) | Extensión explícita en los imports relativos de valor | Aceptado |
 
 ## Cuándo escribir un ADR
 

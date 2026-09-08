@@ -59,7 +59,11 @@ lleguen las cuentas: el MVP no tiene cuentas.
   `noUncheckedIndexedAccess`, `erasableSyntaxOnly`, `verbatimModuleSyntax`,
   `noImplicitReturns` y `noFallthroughCasesInSwitch`. Están en `tsconfig.json`
   con un comentario cada una: **no se aflojan para que compile algo**, se
-  resuelve el código.
+  resuelve el código. Lo mismo vale para el linter: **todo import de valor
+  lleva su extensión** —`./boton.tsx`, `@/catalogo/descriptores/registro.ts`—
+  y los `import type` **no** la llevan (ADR 0011). Si `pnpm lint` marca
+  `import/extensions`, la regla es deliberada: se corrige el import, nunca la
+  regla.
 - **Identidad visual decidida:** la marca **Argentum** —celeste, dorado y
   neutrales cálidos, Cormorant Garamond y Montserrat— está cerrada y
   versionada en `docs/marca/sistema-de-diseno.md`, adoptada con correcciones

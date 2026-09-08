@@ -101,6 +101,36 @@ const configuracion = [
   },
 
   {
+    // ADR 0011: la extensión `.ts` explícita en los imports relativos de
+    // **valor** es lo que permite que el script de importación del contenido
+    // curado corra con `node` directo, sin compilador en el camino (ADR 0009):
+    // ESM no adivina extensiones, y Node resuelve exactamente lo que sobrevive
+    // al borrado de tipos. Los `import type` quedan afuera a propósito —Node
+    // nunca los resuelve— y así la extensión conserva un significado: "esto
+    // existe en tiempo de ejecución", la misma señal que el ADR 0007 le pidió a
+    // `verbatimModuleSyntax`. Esa exención es el default de la regla
+    // (`checkTypeImports: false`).
+    //
+    // Sin la regla, el invariante se rompe en silencio: `tsc`, Turbopack y
+    // Vitest resuelven igual con o sin extensión, y la única que falla es la
+    // importación, en tiempo de ejecución y fuera de CI.
+    //
+    // La regla es de `eslint-plugin-import`, que `eslint-config-next` ya
+    // registra bajo la clave `import`: se toma la regla sin volver a declarar el
+    // plugin, mismo patrón que este archivo usa para `jsx-a11y`. Si alguna vez
+    // dejara de traerlo, ESLint falla ruidosamente con "regla desconocida" y
+    // ahí se agrega `eslint-plugin-import` como dependencia directa.
+    files: archivosTypeScript,
+    rules: {
+      "import/extensions": [
+        "error",
+        "ignorePackages",
+        { ts: "always", tsx: "always", mts: "always", cts: "always" },
+      ],
+    },
+  },
+
+  {
     // jsx-a11y recomendado completo, en "error": `eslint-config-next` por
     // defecto solo trae seis de estas reglas y en "warn". Hoy no hay una sola
     // pantalla escrita, así que subir la severidad cuesta cero errores — el

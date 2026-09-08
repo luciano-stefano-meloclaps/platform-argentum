@@ -6,7 +6,7 @@ import {
   registroDeDescriptores,
   validarDatos,
   type EntradaDe,
-} from "./registro";
+} from "./registro.ts";
 
 /**
  * Una ficha correcta. Tipada con `EntradaDe<"procer">`, que es lo mismo que va
