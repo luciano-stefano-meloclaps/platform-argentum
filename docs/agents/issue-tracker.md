@@ -14,12 +14,15 @@ Lo impone el hook `.claude/hooks/limitar-gh.sh`, no la buena voluntad:
 | Quién | Puede |
 | ----- | ----- |
 | Sesión principal | Todo, sin restricción: es donde está el usuario |
-| `delivery-specialist` | Leer, y `issue create/edit/comment/close/reopen` |
+| `delivery-specialist` | Leer, `issue create/edit/comment/close/reopen`, y `pr create`/`pr merge` contra `development` (con verificación del usuario en cada paso, ver `.claude/agents/delivery-specialist.md`) |
 | Cualquier otro subagente, **el arquitecto incluido** | Solo lectura (`issue view`, `issue list`, `pr view`…) |
 
-Denegado para **todo** subagente: `gh pr`, `gh repo`, `gh release`,
-`gh label create`, `gh api` con método de escritura, y `gh` envuelto en otro
-comando. `git push` está bloqueado aparte, para todos.
+Denegado para **todo** subagente: `gh repo`, `gh release`, `gh label create`,
+`gh api` con método de escritura, y `gh` envuelto en otro comando. Para el
+`delivery-specialist`, `gh pr create` sin `--base development` explícito
+también se deniega —el default de `gh` es `main`—. `git push` está bloqueado
+aparte, para todos salvo el `delivery-specialist` empujando una rama que no sea
+`main`.
 
 Si algo hay que publicar y no te toca, terminá el turno diciendo qué hay que
 publicar y quién debería hacerlo.
@@ -89,7 +92,10 @@ cantidad de tickets que maneja este proyecto, eso se lee de un vistazo.
 **PRs as a request surface: no.** _(Ponelo en `yes` solo si este repositorio
 empieza a tratar los PR externos como pedidos de funcionalidad.)_
 
-Hoy no hay contribuciones externas y `gh pr` está denegado para los subagentes.
+Hoy no hay contribuciones externas. Esto es sobre PR *externos* como fuente de
+pedidos, no sobre el PR interno que el `delivery-specialist` abre contra
+`development` para publicar una rebanada — ese es otro mecanismo, ver
+"Quién puede escribir acá" arriba.
 
 ## Idioma y vocabulario
 

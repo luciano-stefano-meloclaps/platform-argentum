@@ -15,8 +15,13 @@
 #     permitida para todos;
 #   - escritura de issues (create, edit, comment, close, reopen): SOLO para
 #     delivery-specialist, que es el dueño del tracker;
-#   - todo lo demás (pr, repo, release, workflow, secret, label create,
-#     `gh api` con método de escritura): denegado para todo subagente.
+#   - `pr create` y `pr merge`: SOLO para delivery-specialist, y solo contra
+#     `development` — `pr create` sin `--base development` explícito se
+#     deniega, porque sin esa bandera `gh pr create` apunta al branch por
+#     defecto del repositorio, que es `main`, y el push que lo hizo posible ya
+#     viene acotado a no tocar `main` (bloquear-git-push.sh);
+#   - todo lo demás (repo, release, workflow, secret, label create, `gh api`
+#     con método de escritura): denegado para todo subagente.
 #
 # Un `gh` envuelto en otro comando (`bash -c`, `eval`, `$(...)`, `xargs`) se
 # deniega sin analizar: la lista blanca solo sabe leer fragmentos que empiezan
@@ -129,10 +134,17 @@ while IFS= read -r FRAG; do
     search|help|--help|--version|-h|"") continue ;;
   esac
 
-  # Escritura de issues: solo el dueño del tracker.
+  # Escritura de issues, y PR contra development: solo el delivery-specialist.
   if [ "$AGENTE" = "delivery-specialist" ]; then
     case "$SUB $VERBO" in
       "issue create"|"issue edit"|"issue comment"|"issue close"|"issue reopen") continue ;;
+      "pr merge") continue ;;
+      "pr create")
+        if printf '%s' "$FRAG" | grep -Eq '(^|[[:space:]])(--base|-B)[[:space:]=]+development([[:space:]]|$)'; then
+          continue
+        fi
+        denegar "pr create sin --base development explícito"
+        ;;
     esac
   fi
 

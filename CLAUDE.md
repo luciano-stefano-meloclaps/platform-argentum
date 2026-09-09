@@ -131,8 +131,18 @@ requerimiento  → arquitecto:    alcance, ADR
                → entrega:       reparte UN ticket
                → especialista:  escribe el código, deja el árbol, termina
                → entrega:       verifica contra el ticket → commit → comenta
-               → usuario:       push y despliegue → se cierra el ticket
+               → usuario:       verifica el commit → entrega: push + PR a development
+               → usuario:       verifica el PR → entrega: merge a development → se cierra el ticket
+               → usuario:       mergea development a main y despliega, cuando quiere
 ```
+
+`main` dejó de ser la rama a la que se publica. Desde ahora existe una rama
+**`development`**, y es ahí donde llega el trabajo con ticket: el
+`delivery-specialist` pushea la rama de la rebanada y abre el PR contra
+`development` —nunca contra `main`—, y lo mergea, siempre con la verificación
+explícita del usuario en cada uno de los dos pasos (push y merge son portones
+distintos, ver `.claude/agents/delivery-specialist.md`). Mergear `development`
+a `main` y desplegar sigue siendo enteramente del usuario, en su propio tiempo.
 
 ### Nivel 1 — Arquitectura
 
@@ -163,7 +173,7 @@ detalle le come el espacio donde vive esa visión.
 
 | Agente | Dueño de | No toca |
 | ------ | -------- | ------- |
-| `delivery-specialist` | El corte en rebanadas, los tickets, las ramas, el reparto y **todos los commits del trabajo con ticket** | Código, alcance, decisiones de producto |
+| `delivery-specialist` | El corte en rebanadas, los tickets, las ramas, el reparto, **todos los commits del trabajo con ticket** y el push + PR + merge contra `development` | Código, alcance, decisiones de producto, `main` |
 
 **No es dueño de ningún archivo del árbol de trabajo, y justamente por eso puede
 ser dueño del historial** —que hasta ahora era el único artefacto con cuatro
@@ -197,9 +207,10 @@ Sus límites de herramientas, todos deliberados:
   revisarlo: si el tracker pasa a ser markdown local bajo `.scratch/`, se le da
   `Write` acotado ahí.*
 - **Con `Bash`**, porque `git` y `gh` son toda su herramienta. Lo usa para
-  commitear y consultar, **nunca para escribir archivos**: un `cat >` o un
-  `sed -i` rompe el límite de arriba y encima contamina el commit que está por
-  hacer.
+  commitear, pushear la rama de la rebanada, abrir y mergear el PR contra
+  `development`, y consultar — **nunca para escribir archivos**: un `cat >` o
+  un `sed -i` rompe el límite de arriba y encima contamina el commit que está
+  por hacer.
 - **Con `Agent` sobre los tres especialistas**, porque sin eso "estar por
   encima" no significaría nada. Reparte **un ticket por vez**: dos especialistas
   sobre el mismo árbol producen un diff que después no se puede separar en dos
@@ -210,10 +221,19 @@ Sus límites de herramientas, todos deliberados:
 **Puede crear issues en el repositorio real.** Es una excepción explícita a
 "publicar lo decide el usuario", y se sostiene en que un issue es barato y
 reversible y en que **el corte se aprueba antes de publicarse**, así que el
-portón humano existe igual. Todo lo demás lo impide un hook
-(`.claude/hooks/limitar-gh.sh`): nada de `gh pr`, `gh repo`, `gh release`,
-`gh label create` ni `gh api` de escritura, para ningún subagente. `git push`
-sigue bloqueado para todos.
+portón humano existe igual.
+
+**También puede pushear y publicar el PR de una rebanada, y es la segunda
+excepción a esa misma regla.** Se sostiene en el mismo portón humano, aplicado
+dos veces: no pushea sin que el usuario verifique el commit, y no mergea sin
+que el usuario apruebe el PR (sección 9-bis de su propio archivo). El límite
+duro es `development`: puede pushear cualquier rama menos `main`, y `gh pr
+create` sin `--base development` explícito se deniega —el default de `gh` es
+el branch por defecto del repositorio, que sigue siendo `main`—. Todo lo demás
+lo impide un hook (`.claude/hooks/limitar-gh.sh`): nada de `gh repo`,
+`gh release`, `gh label create` ni `gh api` de escritura, para ningún
+subagente, y `git push` contra `main` sigue bloqueado para todos, sin
+excepción (`.claude/hooks/bloquear-git-push.sh`).
 
 **Etiquetas: solo las diez que trae GitHub por defecto.** No hay vocabulario
 propio, y la skill `triage` no está instalada, así que no se aplica
@@ -305,7 +325,8 @@ mandándole un mensaje a `main` con `SendMessage` sin cortar el trabajo. Termina
 ticket.
 
 **Qué no pueden:** **commitear** —eso es del nivel 2—, `git push` —bloqueado por
-un hook para **todo** subagente, ver abajo—, escribir en el remoto con `gh`,
+un hook para todo subagente que no sea el `delivery-specialist`, ver abajo—,
+escribir en el remoto con `gh`,
 cambiar una decisión ya tomada, instalar dependencias o contradecir un ADR. Eso
 se propone y se espera. **Ninguno de ellos declara `AskUserQuestion`**: si algo
 los bloquea de verdad, terminan el turno con las preguntas escritas. El único
@@ -582,20 +603,23 @@ el viejo en silencio.
 - `.agents/skills/` y `skills-lock.json` — skills de terceros, versionadas para
   que el repo funcione al clonarlo sin instalar nada.
 - `.claude/hooks/bloquear-git-push.sh` — impide que **cualquier subagente**
-  publique en el remoto. Es una lista negra por defecto, así que un agente nuevo
-  queda cubierto sin tocar el hook. **Solo pasa la sesión principal**, que es
-  donde está el usuario: el arquitecto tampoco publica. Se declara **sin el
-  campo `if`** en `settings.json`, y eso es parte del bloqueo: con
-  `if: "Bash(git *)"` el hook no corría sobre `rtk git push` —la forma que este
-  mismo archivo manda usar— porque el comando no empieza con `git`.
+  publique en el remoto, con una sola excepción: el `delivery-specialist` puede
+  pushear, pero nunca contra `main`, y nunca con `--force`. Es una lista negra
+  por defecto, así que un agente nuevo queda cubierto sin tocar el hook. **Solo
+  pasa sin restricción la sesión principal**, que es donde está el usuario: el
+  arquitecto tampoco publica. Se declara **sin el campo `if`** en
+  `settings.json`, y eso es parte del bloqueo: con `if: "Bash(git *)"` el hook
+  no corría sobre `rtk git push` —la forma que este mismo archivo manda usar—
+  porque el comando no empieza con `git`.
 - `.claude/hooks/limitar-gh.sh` — el mismo criterio para `gh`, porque publicar un
   issue es tan "hacia afuera" como un push. Acá la lista es **blanca por
   comando**, al revés que en el otro: lectura para todos, escritura de issues
-  solo para el `delivery-specialist`, y todo lo demás denegado —`gh pr`,
-  `gh repo`, `gh release`, `gh label create`, `gh api` de escritura—. Un
+  solo para el `delivery-specialist`, `pr create`/`pr merge` también solo para
+  él y solo con `--base development` explícito, y todo lo demás denegado
+  —`gh repo`, `gh release`, `gh label create`, `gh api` de escritura—. Un
   subcomando nuevo de `gh` **nace denegado**, que es lo correcto para algo que
   toca el remoto. El arquitecto **no** está exento: lee el tracker como
-  cualquiera y no escribe en él.
+  cualquiera y no escribe en él, y no pushea ni abre PRs.
 - `.claude/hooks/limitar-vercel.sh` — el tercero de la familia, y el que hace
   que el plugin de Vercel salga barato. Lista **blanca** como el de `gh`:
   lectura (`ls`, `inspect`, `logs`, `whoami`, `env ls`) para todo subagente,
@@ -635,8 +659,9 @@ git add src/db/esquema.ts && git commit -m "msg"
 rtk git add src/db/esquema.ts && rtk git commit -m "msg"
 ```
 
-**`rtk` no es una autorización.** `rtk git push` está denegado para todo
-subagente exactamente igual que `git push`: los tres hooks desenvuelven el
+**`rtk` no es una autorización.** `rtk git push` sigue las mismas reglas que
+`git push`: denegado para todo subagente salvo el `delivery-specialist` —y para
+él, denegado igual si el destino es `main`—. Los tres hooks desenvuelven el
 prefijo antes de clasificar el comando.
 
 ## Los comandos de este proyecto
