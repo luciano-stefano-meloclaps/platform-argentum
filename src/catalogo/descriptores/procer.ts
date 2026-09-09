@@ -76,6 +76,16 @@ export const procer = z.object({
 
   /** Una o dos frases, para el listado y para la tarjeta de repaso. */
   resumen: z.string().min(1).max(280),
+  /**
+   * El escenario en el que apareció el personaje —el mundo, no la persona—.
+   *
+   * Opcional (ADR 0007): la ficha que ya existe no lo tiene y sigue
+   * validando. `.min(1)` impide que entre un contexto vacío disfrazado de
+   * campo presente. Mientras no esté, el escenario se escribe aparte y
+   * **nunca** se funde dentro de `semblanza` (deuda declarada en el ADR
+   * 0012).
+   */
+  contexto: z.string().min(1).optional(),
   /** La prosa de la ficha. En el archivo de contenido va en un template literal. */
   semblanza: z.string().min(1),
 
