@@ -1,7 +1,12 @@
 # platform-argentum
 
-Aplicación web para que los chicos aprendan sobre Argentina: un catálogo de
-contenido curado con tarjetas de repaso, un quiz y un panel de progreso.
+Aplicación web para aprender sobre Argentina: un catálogo de contenido curado
+con tarjetas de repaso, un quiz y un panel de progreso.
+
+El lector son **chicos grandes y adultos**, y la prosa del catálogo es épica, de
+registro alto (ADR 0012). Una versión para chicos, con otra lengua y quizás otro
+diseño, está **pospuesta** y tiene su entrada en
+[`docs/decisiones-pendientes.md`](docs/decisiones-pendientes.md).
 
 Este archivo define el **vocabulario del proyecto**. Usá estos términos exactos
 en el código, en los commits, en los tickets y en la interfaz. Cuando hay varias

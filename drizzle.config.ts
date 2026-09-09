@@ -13,13 +13,14 @@ import { defineConfig } from "drizzle-kit";
  * En este proyecto no se usa `drizzle-kit push`: saltea las migraciones
  * versionadas, que son la mitad de lo que el ADR 0005 fue a buscar.
  */
-const url = process.env.DATABASE_URL_DIRECT;
+const url = process.env.DATABASE_URL_UNPOOLED;
 
 if (!url) {
   // Nombra la variable que falta y no imprime ningún valor.
   throw new Error(
-    "Falta la variable de entorno DATABASE_URL_DIRECT. En desarrollo sale de " +
-      "`.env`, copiado de `.env.example`; en producción, del panel de Neon.",
+    "Falta la variable de entorno DATABASE_URL_UNPOOLED. En desarrollo sale " +
+      "de `.env`, copiado de `.env.example`; en producción, la inyecta sola " +
+      "la integración de Neon en Vercel.",
   );
 }
 

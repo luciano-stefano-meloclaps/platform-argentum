@@ -100,3 +100,63 @@ rebanada por completo: no se corta en tickets hasta que exista el ADR.
 persiste nada de progreso.** Las **tarjetas** de la rebanada 3 se diseñan sin
 guardar resultados. Si aparece la tentación de guardar "algo mínimo" antes de
 tiempo, es señal de que el disparador ya se cumplió y toca escribir el ADR.
+
+**Nota del ADR 0012.** La dimensión no técnica de arriba —«el producto es para
+chicos, así que persistir un identificador por navegador es una decisión sobre
+datos de menores»— **se aflojó, pero no desapareció**. La audiencia inmediata
+pasó a ser de doce años en adelante, y a los doce se sigue siendo menor. Deja de
+ser el nudo de esta decisión; no deja de ser una consideración.
+
+---
+
+## 3. La versión para chicos
+
+**Qué está pendiente.** El ADR 0012 dio vuelta la audiencia y pospuso la versión
+para chicos; el usuario aclaró después que va a vivir **dentro de la misma
+aplicación**. El **ADR 0013 ya cerró la parte de modelo**: una entidad es una
+fila con un solo slug, el registro de lectura es un parámetro de lectura y las
+dos prosas viven dentro de `datos`. Lo que queda abierto es más chico y más
+concreto:
+
+1. **La forma exacta dentro de `datos`.** Dos candidatas vivas: campos paralelos
+   planos (`semblanzaChicos`) u objeto anidado (`prosa: { epico, chicos }`).
+2. **Quién elige el registro**: el lector con un control, o el producto por él.
+3. **Si el progreso y las tarjetas se comparten** entre los dos registros o se
+   separan. Una **entidad** es la misma; un **evento** de progreso sobre ella,
+   no está claro.
+4. **Si la identidad visual se bifurca** —«quizás otro diseño», dijo el usuario—,
+   lo que reabriría la sección 8 del ADR 0008, que hoy quedó sin objeto.
+
+**Por qué no se decide hoy.** Porque decidirla ahora sería diseñar para un
+producto que todavía no existe. **No hay ninguna pantalla de catálogo
+construida** y hay **una sola** ficha escrita, en el registro que se acaba de
+abandonar. Elegir hoy entre «campo paralelo» y «aplicación aparte» significa
+fijar la forma de los **datos** y la de la navegación sin haber visto funcionar
+ninguna de las dos, que es el error caro. El propio motivo del vuelco —«es lo más
+rápido a lo inmediato»— dice que primero hay que llegar rápido a algo, y esta
+decisión no está en ese camino.
+
+**Disparador.** El primero de estos dos hechos que ocurra:
+
+1. **Alguien pide una ficha en registro para chicos.** El usuario, un lector, o
+   un ticket. En ese momento hay un caso concreto y deja de ser hipotético.
+2. **Hay diez fichas publicadas en registro épico.** Con diez, ya se sabe cuánto
+   cuesta escribir una, cómo se ve en pantalla y si el formato aguanta — que es
+   justamente la información que hoy falta para elegir la forma.
+
+En cualquiera de los dos casos, el ADR se escribe **antes** de redactar la
+primera ficha para chicos, no durante.
+
+**Regla interina.** La del **ADR 0013**, que es citable y verificable, más dos de
+prosa:
+
+1. **Se escribe una sola versión de cada texto, en registro épico**, con las
+   reglas de la skill `voz-narrativa`.
+2. **No se escribe prosa intermedia.** Un texto que intente servirle a las dos
+   audiencias no le sirve a ninguna. Si un párrafo parece «más accesible», es
+   señal de que se está bajando el registro, no de que se esté anticipando la
+   versión para chicos.
+3. **Las prohibiciones interinas del ADR 0013**: ninguna columna `registro`,
+   ninguna segunda fila ni segundo slug, ningún campo `*Chicos` en el descriptor
+   y ningún registro en la ruta. Preparar el terreno para una forma que todavía
+   no se eligió es elegirla en silencio.

@@ -25,56 +25,78 @@ y configuración están fuera del circuito de tickets a propósito.
 
 Recién con esto en orden, escribí el mensaje.
 
-## Intenciones
+## Tipos
 
-Toda rama y todo commit se clasifican con una de estas seis:
+Toda rama y todo commit se clasifican con uno de estos once tipos:
 
-| Intención | Cuándo |
-| --------- | ------ |
-| `Feat` | Funcionalidad nueva |
-| `Bugfix` | Corrección de un error |
-| `Refactor` | Cambio interno sin alterar el comportamiento |
-| `Test` | Pruebas |
-| `Doc` | Documentación |
-| `Design` | Interfaz, estilos, experiencia de uso |
+| Tipo | Cuándo |
+| ---- | ------ |
+| `feat` | Funcionalidad nueva |
+| `fix` | Corrección de un error |
+| `refactor` | Cambio interno sin alterar el comportamiento |
+| `style` | Interfaz, estilos, experiencia de uso |
+| `docs` | Documentación |
+| `chore` | Mantenimiento que no encaja en los demás (dependencias, configuración) |
+| `test` | Pruebas |
+| `ci` | Integración continua |
+| `build` | Sistema de build o dependencias externas |
+| `perf` | Mejoras de rendimiento |
+| `revert` | Revertir un commit anterior |
 
-## Las intenciones también titulan los issues
+Siempre en minúscula, tanto en la rama como en el commit.
+
+## Los tipos también titulan los issues
 
 Un ticket y el commit que lo cierra describen el mismo trabajo, así que el título
-de un issue usa **esta misma tabla**, con el mismo formato:
-`[Intención] Mensaje breve`. Ver `docs/agents/issue-tracker.md`.
+de un issue usa **la misma convención que el título del commit** (ver más abajo):
+`tipo(alcance): mensaje breve`. Ver `docs/agents/issue-tracker.md`.
 
 ## Nombre de rama
 
 ```
-<intención-en-minúscula>/<descripción-en-kebab-case>
+<tipo>/<número-de-ticket>-<descripción-en-kebab-case>
 ```
 
-Ejemplos: `feat/quiz-de-preguntas` · `bugfix/importacion-de-fichas` ·
-`doc/adr-de-arquitectura` · `design/ficha-de-procer`
+El número es el del ticket que **abre** la rebanada — si la rebanada cubre
+varios tickets, va solo el primero; los demás quedan referenciados en los
+commits, no en el nombre de rama. La descripción va **en inglés**, en
+minúsculas, con guiones, y nombra **el alcance del trabajo**, no la tarea
+puntual.
 
-La descripción va en minúsculas, con guiones, sin tildes ni ñ, y nombra **el
-alcance del trabajo**, no la tarea puntual.
+Ejemplos: `feat/29-curated-content-import` · `fix/31-catalog-search` ·
+`docs/40-architecture-adr` · `style/26-hero-card`
+
+Las ramas que ya existen con el formato viejo (sin número, o con descripción en
+español, o con `bugfix`/`design` como tipo) no se renombran: la regla rige
+desde acá en adelante, para las ramas nuevas.
 
 ## Mensaje de commit
 
 **Título:**
 
 ```
-[Intención] Mensaje breve del commit
+tipo(alcance): descripción corta en minúscula
 ```
 
-- La intención va entre corchetes, con la primera letra en mayúscula, tal cual
-  figura en la tabla.
-- El mensaje es **muy breve** y dice qué se hizo.
-- Sin punto final.
+- El tipo es uno de la tabla de arriba, en minúscula, sin corchetes.
+- El alcance va entre paréntesis y nombra el módulo o área que toca el commit
+  (`catalogo`, `moderacion`, `aprendizaje`, `progreso`, `identidad`, `db`,
+  `web`, `contenido`, `config`…). Si el commit no cae en un área puntual, se
+  omite el alcance: `tipo: descripción`.
+- La descripción va en minúscula y dice qué se hizo, sin punto final.
 
-**Descripción:** dice exclusivamente dos cosas, en este orden.
+**Descripción:** dice exclusivamente dos cosas, en este orden, **en español y
+en ítems**.
 
 1. **Listado de las cosas que cambiaron.**
 2. **Razones por las que estas cosas cambiaron.**
 
 Nada más: ni instrucciones de uso, ni planes a futuro, ni comentarios.
+
+**Sin sujeto.** Cada ítem describe el cambio, no a quien lo hizo: nunca "hice",
+"agregué" ni "el agente implementó". Se redacta en impersonal o pasiva
+refleja —"se estableció", "se agregó", "se corrigió", "quedó resuelto"—, porque
+el commit documenta el estado del árbol, no la autoría de una sesión.
 
 **Referencia al ticket:** si el commit corresponde a un ticket, cerrá el
 mensaje con una última línea que lo referencie.
@@ -90,13 +112,16 @@ remoto—.
 
 ## Ejemplo
 
+Rama: `feat/29-curated-content-import`
+
 ```
-[Feat] Importación de contenido desde archivos
+feat(contenido): importación de contenido desde archivos
 
 Cambios:
-- Script de importación que lee `contenido/` y escribe en la base.
-- Validación de cada ficha contra el descriptor Zod de su tipo.
-- Su comando en `package.json`.
+- Se agregó el script de importación que lee `contenido/` y escribe en la
+  base.
+- Se validó cada ficha contra el descriptor Zod de su tipo.
+- Se agregó su comando en `package.json`.
 
 Razones:
 - El contenido curado vive en archivos versionados (ADR 0004) y hacía falta

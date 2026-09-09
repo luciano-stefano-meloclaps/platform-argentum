@@ -14,30 +14,35 @@ Lo impone el hook `.claude/hooks/limitar-gh.sh`, no la buena voluntad:
 | Quién | Puede |
 | ----- | ----- |
 | Sesión principal | Todo, sin restricción: es donde está el usuario |
-| `delivery-specialist` | Leer, y `issue create/edit/comment/close/reopen` |
+| `delivery-specialist` | Leer, `issue create/edit/comment/close/reopen`, y `pr create`/`pr merge` contra `development` (con verificación del usuario en cada paso, ver `.claude/agents/delivery-specialist.md`) |
 | Cualquier otro subagente, **el arquitecto incluido** | Solo lectura (`issue view`, `issue list`, `pr view`…) |
 
-Denegado para **todo** subagente: `gh pr`, `gh repo`, `gh release`,
-`gh label create`, `gh api` con método de escritura, y `gh` envuelto en otro
-comando. `git push` está bloqueado aparte, para todos.
+Denegado para **todo** subagente: `gh repo`, `gh release`, `gh label create`,
+`gh api` con método de escritura, y `gh` envuelto en otro comando. Para el
+`delivery-specialist`, `gh pr create` sin `--base development` explícito
+también se deniega —el default de `gh` es `main`—. `git push` está bloqueado
+aparte, para todos salvo el `delivery-specialist` empujando una rama que no sea
+`main`.
 
 Si algo hay que publicar y no te toca, terminá el turno diciendo qué hay que
 publicar y quién debería hacerlo.
 
 ## Título: la misma convención que un commit
 
-El título de un issue se escribe con **las mismas seis intenciones que un
-commit**, definidas en la skill `convenciones-git`:
+El título de un issue se escribe con **los mismos tipos que un commit**,
+definidos en la skill `convenciones-git`:
 
 ```
-[Intención] Mensaje breve
+tipo(alcance): mensaje breve
 ```
 
-`Feat` · `Bugfix` · `Refactor` · `Test` · `Doc` · `Design`. Primera letra en
-mayúscula, mensaje muy breve, sin punto final.
+`feat` · `fix` · `refactor` · `style` · `docs` · `chore` · `test` · `ci` ·
+`build` · `perf` · `revert`. Todo en minúscula, sin corchetes, mensaje muy
+breve, sin punto final. El alcance es opcional: se omite si el ticket no cae
+en un área puntual.
 
 El motivo es que el ticket y el commit que lo cierra describen **el mismo
-trabajo**, así que declarar la intención en los dos lugares —y que coincida— hace
+trabajo**, así que declarar el tipo en los dos lugares —y que coincida— hace
 visible de un vistazo cuando no coinciden, que es exactamente el caso que hay que
 mirar.
 
@@ -87,7 +92,10 @@ cantidad de tickets que maneja este proyecto, eso se lee de un vistazo.
 **PRs as a request surface: no.** _(Ponelo en `yes` solo si este repositorio
 empieza a tratar los PR externos como pedidos de funcionalidad.)_
 
-Hoy no hay contribuciones externas y `gh pr` está denegado para los subagentes.
+Hoy no hay contribuciones externas. Esto es sobre PR *externos* como fuente de
+pedidos, no sobre el PR interno que el `delivery-specialist` abre contra
+`development` para publicar una rebanada — ese es otro mecanismo, ver
+"Quién puede escribir acá" arriba.
 
 ## Idioma y vocabulario
 
