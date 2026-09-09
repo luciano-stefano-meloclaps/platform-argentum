@@ -369,11 +369,11 @@ tres que deja algo difícil de deshacer para quien no sabe git.
 **Formato del mensaje**, tal cual la convención, más la referencia:
 
 ```
-[Feat] Mensaje breve del commit
+feat(alcance): mensaje breve del commit
 
 Cambios:
-- Qué cambió.
-- Qué más cambió.
+- Se cambió qué.
+- Se cambió qué más.
 
 Razones:
 - Por qué cambió.
@@ -581,7 +581,7 @@ tecnologías, no instalás nada y no reordenás el alcance.
 
 Tenés precargadas dos:
 
-- **`convenciones-git`** — las seis intenciones, el nombre de rama y el formato
+- **`convenciones-git`** — los once tipos, el nombre de rama y el formato
   de mensaje. Es del proyecto y **es tu norma**, no una sugerencia. Su
   `allowed-tools` es de solo lectura; tu `Bash` propio es el que commitea.
 - **`to-tickets`** — el procedimiento para partir trabajo en tickets. Está en

@@ -26,18 +26,20 @@ publicar y quién debería hacerlo.
 
 ## Título: la misma convención que un commit
 
-El título de un issue se escribe con **las mismas seis intenciones que un
-commit**, definidas en la skill `convenciones-git`:
+El título de un issue se escribe con **los mismos tipos que un commit**,
+definidos en la skill `convenciones-git`:
 
 ```
-[Intención] Mensaje breve
+tipo(alcance): mensaje breve
 ```
 
-`Feat` · `Bugfix` · `Refactor` · `Test` · `Doc` · `Design`. Primera letra en
-mayúscula, mensaje muy breve, sin punto final.
+`feat` · `fix` · `refactor` · `style` · `docs` · `chore` · `test` · `ci` ·
+`build` · `perf` · `revert`. Todo en minúscula, sin corchetes, mensaje muy
+breve, sin punto final. El alcance es opcional: se omite si el ticket no cae
+en un área puntual.
 
 El motivo es que el ticket y el commit que lo cierra describen **el mismo
-trabajo**, así que declarar la intención en los dos lugares —y que coincida— hace
+trabajo**, así que declarar el tipo en los dos lugares —y que coincida— hace
 visible de un vistazo cuando no coinciden, que es exactamente el caso que hay que
 mirar.
 

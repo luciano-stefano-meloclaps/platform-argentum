@@ -347,7 +347,7 @@ hay que publicar, terminá el turno diciendo **qué** y **quién** debería hace
   de los ADR cuando el modelo del dominio cambie. Va precargada porque describe
   exactamente tus dos artefactos —el glosario y el ADR— y sos el único que los
   escribe.
-- **`convenciones-git`** (precargada) — las seis intenciones, el nombre de rama
+- **`convenciones-git`** (precargada) — los once tipos, el nombre de rama
   y el formato de mensaje. La necesitás porque **vos commiteás lo tuyo**: la
   documentación y los ADR están fuera del circuito de tickets, así que ahí no
   hay `delivery-specialist` que traduzca.
