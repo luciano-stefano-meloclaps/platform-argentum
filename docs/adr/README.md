@@ -21,6 +21,13 @@ pregunta por qué las cosas están así.
 | [0008](0008-identidad-visual-argentum.md) | Identidad visual Argentum | Aceptado |
 | [0009](0009-formato-del-contenido-curado.md) | Formato, ubicación e imágenes del contenido curado | Aceptado |
 | [0011](0011-extension-explicita-en-imports-relativos-de-valor.md) | Extensión explícita en los imports relativos de valor | Aceptado |
+| [0012](0012-audiencia-adulta-y-registro-epico.md) | Audiencia de chicos grandes y adultos, con registro épico | Aceptado |
+| [0013](0013-el-registro-de-lectura-no-es-una-entidad.md) | El registro de lectura no es una entidad: dos prosas, una fila | Aceptado |
+
+**El 0010 no existe y no se reutiliza.** Hubo un
+`0010-agentes-pueden-escribir-en-vercel-con-confirmacion.md` que se retiró y se
+borró del árbol; sigue en el historial de git. El número queda quemado para que
+una referencia vieja al 0010 no apunte a una decisión distinta.
 
 ## Cuándo escribir un ADR
 
