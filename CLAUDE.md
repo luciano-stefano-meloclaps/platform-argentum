@@ -34,10 +34,26 @@ pnpm test        # vitest run
 `pnpm build` cuando el ticket toque el build; `pnpm db:generate` y
 `pnpm db:migrate` cuando toque el esquema.
 
-**Producto.** Catálogo sobre Argentina para que chicos aprendan: fichas
-(próceres, monumentos, animales, comida, fechas patrias…), tarjetas de repaso,
-quiz individual y panel de progreso. Más adelante: cuentas, y propuestas de
-usuarios con moderación.
+**Producto.** Catálogo sobre Argentina para aprender: fichas (próceres,
+monumentos, animales, comida, fechas patrias…), tarjetas de repaso, quiz
+individual y panel de progreso. Más adelante: cuentas, y propuestas de usuarios
+con moderación.
+
+**Audiencia y voz (ADR 0012).** El lector son **chicos grandes y adultos**, de
+doce años en adelante, y la prosa del catálogo es **épica, de registro alto**:
+escenario dramático, período amplio, léxico rico y metáfora sostenida. **No se
+simplifica y no se baja de tono.** La regla verificable vive en la skill
+`voz-narrativa`, calibrada contando las muestras del usuario. Una **versión para
+chicos** —otra lengua y quizás otro diseño— está **pospuesta, no cancelada**, con
+su disparador y su regla interina en `docs/decisiones-pendientes.md`.
+
+Ese cambio es reciente y **queda documentación vieja**: el `README.md` y las
+secciones de audiencia del `frontend-specialist`, el `ui-reviewer`, el
+`brand-specialist` y la skill `revision-de-ui` todavía dicen «lo usan chicos de
+ocho años». Sus **requisitos** siguen vigentes —contraste AA, objetivos táctiles,
+`prefers-reduced-motion`, el color como no-único portador de significado—; lo que
+envejeció es la justificación. Igual que el ADR 0008, cuyos valores no se tocan y
+cuya sección 8 quedó sin objeto.
 
 **Stack decidido:** Next.js 16 · React 19 · TypeScript · PostgreSQL · Drizzle
 ORM · Zod · Tailwind v4 · Vitest (ADR 0003 y 0005). Despliegue en Vercel, base
@@ -53,6 +69,12 @@ lleguen las cuentas: el MVP no tiene cuentas.
   interfaz.
 - Catálogo: una sola tabla `entidad` con discriminador `tipo` y columna `datos`
   JSONB; los campos de cada tipo viven en descriptores en código (ADR 0001).
+- **Una entidad es una fila con un solo slug** (ADR 0013). El **registro de
+  lectura** —épico o para chicos— es un **parámetro de lectura**, no parte de la
+  identidad: nunca una columna de `entidad`, nunca una segunda fila, nunca un
+  segundo slug. Cuando llegue la versión para chicos, las dos prosas van dentro
+  de `datos`; **los hechos no se duplican jamás**. Hoy **no se toca nada**: ni
+  columna, ni campo `*Chicos`, ni registro en la ruta.
 - Contenido curado en archivos versionados, importado a la base (ADR 0004), en
   `contenido/<tipo>/<slug>.ts` y tipado por el descriptor de su tipo (ADR 0009).
 - **Severidad del compilador cerrada** (ADR 0007): `strict` más
@@ -92,11 +114,11 @@ El equipo tiene **tres niveles**, y cada uno decide una cosa distinta:
       ▼                 ▼                 ▼
   backend-          frontend-         database-      cómo se resuelve
   specialist        specialist        specialist
-                        │
-              ┌─────────┴─────────┐
-              ▼                   ▼
-   brand-                   ui-reviewer      ← equipo del frontend
-   specialist
+      │                 │
+      ▼        ┌────────┴────────┐
+  narrative-   ▼                 ▼
+  specialist   brand-        ui-reviewer     ← equipos de área
+               specialist
 ```
 
 Fuera de la jerarquía, transversal y a demanda: `typescript-specialist`.
@@ -216,6 +238,51 @@ La implementación la hacen tres especialistas, en `.claude/agents/`:
 
 Claude puede delegarles solo, o se los invoca con `@agent-<nombre>`.
 
+#### Equipo de backend
+
+| Agente | Dueño de | No toca |
+| ------ | -------- | ------- |
+| `narrative-specialist` | La **voz** de la prosa del catálogo y su redacción: el contexto, la semblanza, el resumen y las fuentes de cada ficha de `contenido/` | Los hechos, el descriptor, los campos estructurados, `src/`, la interfaz |
+
+**No es par** de los tres especialistas: trabaja dentro del área del
+`backend-specialist`, que es el dueño de `contenido/`, y lo convoca él. Es el
+mismo patrón que el `brand-specialist`, y por el mismo motivo: **es un custodio
+de algo cerrado y versionado** —ahí la identidad Argentum, acá la voz, escrita
+en la skill `voz-narrativa` con sus muestras adentro del repositorio—.
+
+Sus límites de herramientas, todos deliberados:
+
+- **Con `Write` y `Edit`, acotados por regla a `contenido/<tipo>/<slug>.ts` y a
+  sus campos de prosa.** La prosa es su artefacto, y hacerla pasar por el
+  copiado y pegado de otro agente es donde se pierde una tilde, un salto de
+  línea o una raya de inciso sin dejar rastro: una errata de tipos la ve el
+  compilador, una de prosa no la ve nadie. El acotamiento es de conducta, no de
+  sistema, igual que el del arquitecto sobre `docs/`.
+- **Con `Bash`**, y solo para verificar: la prosa vive en un *template literal*
+  de TypeScript (ADR 0009), así que una comilla invertida o un `${` en el texto
+  rompen el build, y quien lo rompe tiene que poder correr `pnpm typecheck`.
+  Nunca para escribir archivos ni para commitear.
+- **Sin `WebFetch` ni `WebSearch`**, y es su límite más importante. Un narrador
+  con acceso a la web deja de ser narrador y pasa a investigador, y el resultado
+  previsible es el peor que este rol puede producir: **prosa excelente alrededor
+  de un hecho falso**, que nadie nota porque suena bien. **Los hechos los
+  entrega el usuario**; la exactitud histórica sigue siendo suya, igual que los
+  derechos de imagen.
+- **Sin `Agent`**, como el revisor y el de marca: lo convocan, no convoca.
+- **Sin Context7** — nada de lo que hace depende de la versión de una librería.
+
+**El registro lo fija el ADR 0012 y es el alto.** Las muestras del usuario, que
+están versionadas en `.claude/skills/voz-narrativa/muestras.md`, son **el
+destino**: se escribe como ellas, no parecido a ellas. Un solo registro para toda
+la ficha —el único campo que baja es el `resumen`, que es una etiqueta de listado
+y no narración—.
+
+Dos consecuencias que arrastra y conviene tener presentes: **la semblanza
+publicada de `contenido/procer/manuel-belgrano.ts` está en el registro viejo y
+hay que reescribirla**, y **el criterio de aceptación del ticket #30 —«redactado
+para chicos»— quedó falso** y lo corrige el `delivery-specialist` cuando el
+usuario se lo lleve.
+
 #### Equipo de frontend
 
 El `frontend-specialist` planificó y creó su propio equipo. **No son pares** de
@@ -247,8 +314,10 @@ que la declara es el arquitecto, y es para cuando corre como sesión principal
 los demás, terminando el turno.
 
 Salvedad sobre "qué pueden hacer solos": no vale para todos. El `ui-reviewer` y
-el `typescript-specialist` no escriben archivos. Y **ninguno commitea**: desde
-que existe el nivel 2, el historial tiene un solo dueño.
+el `typescript-specialist` no escriben archivos. El `brand-specialist`, el
+`ui-reviewer` y el `narrative-specialist` **no tienen `Agent`**: los convocan, no
+convocan. Y **ninguno commitea**: desde que existe el nivel 2, el historial tiene
+un solo dueño.
 
 #### Transversal
 
@@ -295,8 +364,19 @@ invisible desde cada lado por separado.
 El **contenido curado** de `contenido/` (ADR 0009) es del `backend-specialist`,
 aunque viva fuera de `src/`: el único que abre esos archivos es el script de
 importación, que valida cada ficha contra el **descriptor** de su tipo, y ambas
-cosas son suyas. Lo que **no** es suyo es decidir qué fichas entran ni redactar
-su texto: eso es trabajo editorial del usuario.
+cosas son suyas. Lo que **no** es suyo es el contenido en sí, y ahí hay tres
+dueños distintos, que es la razón por la que conviene escribirlo:
+
+- **Qué** fichas entran, y **los hechos** —fechas, cifras, anécdotas, citas— son
+  del **usuario**. También los derechos de imagen. Nada de eso lo decide un
+  agente.
+- **Cómo se redacta** la prosa —contexto, semblanza, resumen— es del
+  **`narrative-specialist`**, con la skill `voz-narrativa` como regla.
+- **Que una ficha inválida no entre** es del `backend-specialist`, vía el
+  descriptor y la importación.
+
+El **visto bueno explícito del usuario sobre el texto de cada ficha sigue siendo
+condición de cierre**: que ahora exista un narrador no lo cambia.
 
 #### Agentes del plugin de Vercel
 
@@ -444,6 +524,15 @@ el viejo en silencio.
 - `revision-dos-ejes` es la revisión de código en dos ejes (convenciones y
   especificación). Se llama así, y no `code-review`, para no pisar el comando
   integrado de Claude Code.
+- `voz-narrativa` es **nuestra** y es la fuente de la voz **épica** del catálogo:
+  registro, ritmo, léxico, metáfora, estructura y prohibiciones. Su dueño es el
+  `narrative-specialist`, pero **cualquier agente que escriba o revise prosa del
+  catálogo la cita**. Sus muestras están versionadas en
+  `.claude/skills/voz-narrativa/muestras.md`, con el mismo criterio que
+  `revision-de-ui`: no se baja nada de internet. Sus números —media de oración,
+  techo y cadencia— están **calibrados contando esas cuatro muestras**, así que
+  se cuentan, no se estiman. La ficha de Belgrano figura ahí como
+  **contraejemplo**: es el registro llano que el ADR 0012 dejó atrás.
 
 ## Setup al clonar
 
@@ -489,7 +578,7 @@ el viejo en silencio.
 - `.mcp.json` — servidor MCP Context7, sin secretos: la key se expande
   desde la variable de entorno `CONTEXT7_API_KEY` de cada desarrollador.
 - `.claude/skills/` — skills propias del proyecto (`convenciones-git`,
-  `revision-de-ui`) y enlaces a las de terceros.
+  `revision-de-ui`, `voz-narrativa`) y enlaces a las de terceros.
 - `.agents/skills/` y `skills-lock.json` — skills de terceros, versionadas para
   que el repo funcione al clonarlo sin instalar nada.
 - `.claude/hooks/bloquear-git-push.sh` — impide que **cualquier subagente**

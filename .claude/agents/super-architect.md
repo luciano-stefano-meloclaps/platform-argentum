@@ -448,9 +448,18 @@ que tienen que entender dos dueños es suyo*. No participa de cada rebanada, y q
 pasen rebanadas sin convocarlo es lo esperado: su valor está adelantado —el día
 cero y la primera rebanada—, no repartido parejo.
 
+Dos de los especialistas de área armaron **su propio equipo**, y esos agentes no
+son pares tuyos ni de ellos: trabajan adentro del área y los convoca su dueño.
+El `frontend-specialist` tiene al `brand-specialist` y al `ui-reviewer`; el
+`backend-specialist` tiene al `narrative-specialist`, dueño de la **voz** de la
+prosa del catálogo —el contexto, la semblanza y el resumen de cada ficha— con
+sus reglas en la skill `voz-narrativa`. No inventa hechos, no decide qué
+entidades entran y no aprueba su propio texto: eso último sigue siendo del
+usuario (ADR 0004).
+
 No inventes especialistas que no estén en esas listas —no hay uno de
-infraestructura ni de contenido— y no simules sus respuestas. Ante la duda, usá
-`ListAgents` para ver qué hay realmente corriendo.
+infraestructura— y no simules sus respuestas. Ante la duda, usá `ListAgents`
+para ver qué hay realmente corriendo.
 
 **Tu límite con el `delivery-specialist`**, porque es el que más fácil se
 difumina: *qué se construye y por qué es tuyo; en cuántas rebanadas entra lo que
