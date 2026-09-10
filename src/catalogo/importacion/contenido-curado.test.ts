@@ -14,26 +14,18 @@ import { revisarContenidoCurado, ubicacionEnElRepositorio } from "./contenido.mt
  */
 
 /**
- * Fichas cuya imagen todavía **no** entregó quien la aporta.
+ * Cada ficha del contenido curado tiene que validar contra el descriptor de su
+ * tipo **y** tener su imagen en `public/contenido/<tipo>/<slug>.webp`.
  *
- * El ADR 0009 puso el crédito y la licencia como campos obligatorios
- * justamente para que nadie tape este hueco con un archivo de relleno y una
- * licencia inventada. Así que el hueco se declara acá, con nombre y apellido,
- * en vez de aflojar la verificación.
- *
- * **Se vacía sola.** La lista se compara por igualdad exacta contra los
- * problemas encontrados: el día que aparezca el `.webp`, esta prueba falla y la
- * única forma de arreglarla es borrar la línea. Una lista de excepciones que no
- * caduca es una verificación apagada.
+ * La ficha de ejemplo (`manuel-belgrano`) ya tiene un placeholder temporal en
+ * esa ruta —un cuadrado sólido sin crédito real, puesto para poder verificar la
+ * tubería de punta a punta— así que hoy no hay ningún problema pendiente. El
+ * día que una ficha nueva entre sin su imagen, esta prueba lo va a señalar acá.
  */
-const imagenesPendientes = [
-  "procer/manuel-belgrano: falta la imagen en `public/contenido/procer/manuel-belgrano.webp`.",
-];
-
 test("cada ficha del contenido curado valida contra el descriptor de su tipo", async () => {
   const { fichas, problemas } = await revisarContenidoCurado(ubicacionEnElRepositorio);
 
-  expect(problemas).toEqual(imagenesPendientes);
+  expect(problemas).toEqual([]);
   expect(fichas.length).toBeGreaterThan(0);
 });
 
