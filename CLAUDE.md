@@ -115,10 +115,10 @@ El equipo tiene **tres niveles**, y cada uno decide una cosa distinta:
   backend-          frontend-         database-      cómo se resuelve
   specialist        specialist        specialist
       │                 │
-      ▼        ┌────────┴────────┐
-  narrative-   ▼                 ▼
-  specialist   brand-        ui-reviewer     ← equipos de área
-               specialist
+ ┌────┴────┐   ┌────────┴────────┐
+ ▼         ▼   ▼                 ▼
+narrative- historiador- brand-  ui-reviewer  ← equipos de área
+specialist specialist   specialist
 ```
 
 Fuera de la jerarquía, transversal y a demanda: `typescript-specialist`.
@@ -263,6 +263,7 @@ Claude puede delegarles solo, o se los invoca con `@agent-<nombre>`.
 | Agente | Dueño de | No toca |
 | ------ | -------- | ------- |
 | `narrative-specialist` | La **voz** de la prosa del catálogo y su redacción: el contexto, la semblanza, el resumen y las fuentes de cada ficha de `contenido/` | Los hechos, el descriptor, los campos estructurados, `src/`, la interfaz |
+| `historiador-specialist` | Investigar y contrastar fuentes sobre los hechos de una ficha, y detectar cuándo un tema entra en disputa política vigente | Escribir prosa, decidir qué entidades entran, cualquier archivo del árbol |
 
 **No es par** de los tres especialistas: trabaja dentro del área del
 `backend-specialist`, que es el dueño de `contenido/`, y lo convoca él. Es el
@@ -282,11 +283,14 @@ Sus límites de herramientas, todos deliberados:
   de TypeScript (ADR 0009), así que una comilla invertida o un `${` en el texto
   rompen el build, y quien lo rompe tiene que poder correr `pnpm typecheck`.
   Nunca para escribir archivos ni para commitear.
-- **Sin `WebFetch` ni `WebSearch`**, y es su límite más importante. Un narrador
-  con acceso a la web deja de ser narrador y pasa a investigador, y el resultado
-  previsible es el peor que este rol puede producir: **prosa excelente alrededor
-  de un hecho falso**, que nadie nota porque suena bien. **Los hechos los
-  entrega el usuario**; la exactitud histórica sigue siendo suya, igual que los
+- **Sin `WebFetch` ni `WebSearch`**, y es su límite más importante, sin cambios
+  desde el ADR 0014. Un narrador con acceso a la web deja de ser narrador y pasa
+  a investigador, y el resultado previsible es el peor que este rol puede
+  producir: **prosa excelente alrededor de un hecho falso**, que nadie nota
+  porque suena bien. **Los hechos los entrega el usuario o el
+  `historiador-specialist`**; ninguno de los dos los narra, y la exactitud
+  histórica sigue siendo, en última instancia, responsabilidad del usuario —el
+  visto bueno explícito sobre cada ficha sigue siendo suyo—, igual que los
   derechos de imagen.
 - **Sin `Agent`**, como el revisor y el de marca: lo convocan, no convoca.
 - **Sin Context7** — nada de lo que hace depende de la versión de una librería.
@@ -302,6 +306,33 @@ publicada de `contenido/procer/manuel-belgrano.ts` está en el registro viejo y
 hay que reescribirla**, y **el criterio de aceptación del ticket #30 —«redactado
 para chicos»— quedó falso** y lo corrige el `delivery-specialist` cuando el
 usuario se lo lleve.
+
+**`historiador-specialist` (ADR 0014).** Igual que el narrador, **no es par**
+de los tres especialistas: trabaja dentro del área del `backend-specialist`, y
+lo convoca él. Se activa en tres casos, y solo en esos tres: el usuario lo pide
+explícitamente, el tema cae en la lista acotada de disputas políticas de
+`voz-narrativa`, o el narrador señala —vía `backend-specialist`— que le falta
+un dato. Entrega un **dossier** —hechos, fuentes, y posturas en disputa cuando
+corresponde— y **nunca narra ni decide qué entidades entran**.
+
+Sus límites de herramientas, también deliberados:
+
+- **Con `WebFetch` y `WebSearch`**, al revés que el narrador: es exactamente
+  la separación que motiva su existencia. Investigar y narrar en el mismo turno
+  del mismo agente reintroduciría el riesgo de prosa persuasiva sobre un hecho
+  no verificado; separarlos deja el dossier como punto de revisión intermedio.
+- **Sin `Write` ni `Edit`**, como el `ui-reviewer` y el `typescript-specialist`:
+  su artefacto es el dossier de su informe, no un archivo del árbol.
+- **Sin `Bash`**: no compila ni verifica código, así que no lo necesita.
+- **Sin `Agent`**: lo convocan, no convoca.
+
+**La neutralidad ante disputas políticas** es una regla de redacción, no de
+investigación, y por eso vive en `voz-narrativa` (sección 7) y no en la skill
+propia del historiador, `investigacion-historica`. El historiador detecta la
+disputa y documenta las posturas con sus fuentes; el narrador escribe el
+contrapunto sin tomar partido. El hecho duro se narra igual que siempre —la
+regla no suaviza nada—: se puede, por ejemplo, nombrar a Montoneros como lo que
+fue, una organización guerrillera, porque es un hecho, no una interpretación.
 
 #### Equipo de frontend
 
@@ -334,11 +365,12 @@ que la declara es el arquitecto, y es para cuando corre como sesión principal
 (`claude --agent super-architect`); delegado como subagente pregunta igual que
 los demás, terminando el turno.
 
-Salvedad sobre "qué pueden hacer solos": no vale para todos. El `ui-reviewer` y
-el `typescript-specialist` no escriben archivos. El `brand-specialist`, el
-`ui-reviewer` y el `narrative-specialist` **no tienen `Agent`**: los convocan, no
-convocan. Y **ninguno commitea**: desde que existe el nivel 2, el historial tiene
-un solo dueño.
+Salvedad sobre "qué pueden hacer solos": no vale para todos. El `ui-reviewer`,
+el `typescript-specialist` y el `historiador-specialist` no escriben archivos.
+El `brand-specialist`, el `ui-reviewer`, el `narrative-specialist` y el
+`historiador-specialist` **no tienen `Agent`**: los convocan, no convocan. Y
+**ninguno commitea**: desde que existe el nivel 2, el historial tiene un solo
+dueño.
 
 #### Transversal
 
@@ -553,7 +585,16 @@ el viejo en silencio.
   `revision-de-ui`: no se baja nada de internet. Sus números —media de oración,
   techo y cadencia— están **calibrados contando esas cuatro muestras**, así que
   se cuentan, no se estiman. La ficha de Belgrano figura ahí como
-  **contraejemplo**: es el registro llano que el ADR 0012 dejó atrás.
+  **contraejemplo**: es el registro llano que el ADR 0012 dejó atrás. Desde el
+  ADR 0014 incluye también la regla de **neutralidad ante disputas políticas**
+  (sección 7): se narra el hecho duro sin eufemismo, y se agrega un contrapunto
+  breve para las interpretaciones en disputa de una lista acotada, sin tomar
+  partido.
+- `investigacion-historica` es **nuestra** y es la metodología del
+  `historiador-specialist` (ADR 0014): cómo evaluar una fuente, cuántas hacen
+  falta según el caso, y el criterio para reconocer cuándo un tema entra en la
+  lista de disputas políticas de `voz-narrativa`. Es investigación, no
+  redacción: no decide cómo se narra una disputa, solo la documenta.
 
 ## Setup al clonar
 
@@ -599,7 +640,8 @@ el viejo en silencio.
 - `.mcp.json` — servidor MCP Context7, sin secretos: la key se expande
   desde la variable de entorno `CONTEXT7_API_KEY` de cada desarrollador.
 - `.claude/skills/` — skills propias del proyecto (`convenciones-git`,
-  `revision-de-ui`, `voz-narrativa`) y enlaces a las de terceros.
+  `revision-de-ui`, `voz-narrativa`, `investigacion-historica`) y enlaces a las
+  de terceros.
 - `.agents/skills/` y `skills-lock.json` — skills de terceros, versionadas para
   que el repo funcione al clonarlo sin instalar nada.
 - `.claude/hooks/bloquear-git-push.sh` — impide que **cualquier subagente**

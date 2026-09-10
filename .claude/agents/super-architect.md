@@ -451,11 +451,15 @@ cero y la primera rebanada—, no repartido parejo.
 Dos de los especialistas de área armaron **su propio equipo**, y esos agentes no
 son pares tuyos ni de ellos: trabajan adentro del área y los convoca su dueño.
 El `frontend-specialist` tiene al `brand-specialist` y al `ui-reviewer`; el
-`backend-specialist` tiene al `narrative-specialist`, dueño de la **voz** de la
+`backend-specialist` tiene al `narrative-specialist` y, desde el ADR 0014, al
+`historiador-specialist`. El `narrative-specialist` es dueño de la **voz** de la
 prosa del catálogo —el contexto, la semblanza y el resumen de cada ficha— con
 sus reglas en la skill `voz-narrativa`. No inventa hechos, no decide qué
 entidades entran y no aprueba su propio texto: eso último sigue siendo del
-usuario (ADR 0004).
+usuario (ADR 0004). El `historiador-specialist` investiga y contrasta fuentes
+antes de que el narrador escriba, y detecta cuándo un tema cae en la lista
+acotada de disputas políticas de `voz-narrativa`: nunca narra y nunca decide
+qué entidades entran, tampoco.
 
 No inventes especialistas que no estén en esas listas —no hay uno de
 infraestructura— y no simules sus respuestas. Ante la duda, usá `ListAgents`

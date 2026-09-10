@@ -229,7 +229,64 @@ rechazar un texto.
 
 ---
 
-## 7. Marcas de cita y procedencia
+## 7. Neutralidad ante disputas políticas
+
+Esta regla la agregó el **ADR 0014**. No es una regla de estilo: es de
+contenido, igual que las prohibiciones de la sección 6, y vive acá porque es su
+vecina directa.
+
+> **Se cuenta la verdad aunque sea dura. Lo que no se hace es tomar partido en
+> una disputa política vigente sobre cómo calificar un hecho.**
+
+**Alcance acotado, no todo el catálogo.** Aplica solo a temas donde existe hoy
+una discusión política activa sobre cómo leer un hecho, no sobre si ocurrió.
+Lista de arranque —abierta, no cerrada—:
+
+- Los conflictos entre unitarios y federales.
+- La anarquía del año 20.
+- La Campaña del Desierto.
+- La última dictadura militar y sus actores, incluida la guerrilla de los años
+  setenta.
+
+La mayoría del catálogo —los próceres de baja polémica real— **no** cae bajo
+esta regla y se escribe como siempre. Si aparece un tema nuevo que te parece
+igual de disputado, decilo en tu informe: la lista se amplía, no se decide sola.
+
+**No es una regla para suavizar.** Es lo opuesto a la sección 6, que ya permite
+—y sigue permitiendo, sin cambios— juzgar los actos concretos de una persona
+con dureza. El hecho duro se narra sin eufemismo: se puede nombrar a
+**Montoneros** como lo que fue, una organización guerrillera, porque es un
+hecho, no una interpretación. Se puede narrar el sometimiento de los pueblos
+originarios en la Campaña del Desierto sin blindarlo.
+
+**Lo que cambia es la etiqueta, no el hecho.** El patrón:
+
+> Se narra el hecho duro sin eufemismo, y se agrega un contrapunto breve que
+> reconoce que existe una lectura en disputa sobre cómo calificarlo — sin que la
+> prosa falle a favor de ninguna. Ejemplo, con la Campaña del Desierto: se
+> cuenta el sometimiento de los pueblos originarios tal cual fue, y se suma que
+> para algunos esa expansión fue una consolidación territorial necesaria, y
+> para otros un genocidio — sin que el texto se quede con una de las dos.
+
+El contrapunto es **breve**: una frase, no un segundo párrafo. Si necesita más
+espacio que eso, probablemente el tema merece que el `historiador-specialist`
+entregue un dossier más detallado antes de escribirlo, no que la prosa se
+alargue para sostenerlo.
+
+**Es indiferente a la mirada de quien redacta.** Una posición personal —de
+cualquier signo— no se traduce en prosa que favorezca un lado de una disputa
+concreta. El registro puede seguir siendo épico y honrar el sacrificio humano
+en general —eso ya lo permite la sección 6—, pero esta regla es específica: no
+tomar partido en la lectura política de un hecho puntual de la lista.
+
+**A quién obliga.** Al `narrative-specialist`, que escribe la prosa final. El
+`historiador-specialist` hace la mitad anterior: detecta que un tema cae en la
+lista y documenta las posturas con sus fuentes en el dossier; no redacta el
+contrapunto, lo hace posible.
+
+---
+
+## 8. Marcas de cita y procedencia
 
 **En la prosa no van marcas de cita.** Las muestras traen `[2], [3]`: vienen de
 la herramienta con la que se generaron, apuntan a una bibliografía que este
@@ -256,7 +313,7 @@ falta.
 
 ---
 
-## 8. El archivo es TypeScript
+## 9. El archivo es TypeScript
 
 La prosa vive en un *template literal* dentro de `contenido/<tipo>/<slug>.ts`
 (ADR 0009). Dos caracteres rompen el build sin decir nada útil:
@@ -270,9 +327,9 @@ texto que no compila no es un texto entregado.
 
 ---
 
-## 9. Pasada final
+## 10. Pasada final
 
-Diez controles. Cada uno se responde con sí o no sobre el texto que tenés
+Once controles. Cada uno se responde con sí o no sobre el texto que tenés
 adelante, no sobre la intención.
 
 1. ¿Conté las oraciones? Media entre 22 y 42, ninguna sobre 55, una corta cada
@@ -290,8 +347,10 @@ adelante, no sobre la intención.
 9. ¿Todo hecho viene del material del usuario, sin una sola invención?
 10. ¿Cero moraleja, cero segunda persona, cero santificación, sin marcas de
     cita, y sin `` ` `` ni `${` en la prosa?
+11. Si el tema está en la lista de la sección 7, ¿el hecho está narrado sin
+    eufemismo y el contrapunto reconoce la disputa sin tomar partido?
 
-Un texto que falla uno de los diez no está terminado.
+Un texto que falla uno de los once no está terminado.
 
 ---
 
