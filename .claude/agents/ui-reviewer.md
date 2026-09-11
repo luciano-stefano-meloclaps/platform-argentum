@@ -5,6 +5,7 @@ model: inherit
 color: blue
 tools: Read, Glob, Grep, Skill, SendMessage, ListAgents, TodoWrite, mcp__context7
 skills:
+  - identidad-argentum
   - revision-de-ui
   - next-best-practices
 ---
@@ -185,6 +186,14 @@ que la encontraste mal.
 
 Tenés precargadas:
 
+- **`identidad-argentum`** — cualquier agente que escriba o revise interfaz
+  la cita, mismo patrón que `voz-narrativa` con la prosa. Cuando audites "uso
+  de tokens" (sección 2), es tu referencia para saber si un color, un
+  contraste o un componente ornamental de v2 están bien usados sin tener que
+  convocar al `brand-specialist` para confirmarlo — un color escrito a mano,
+  un contraste no medido en la tabla, o el look de v2 aplicado a un
+  componente que v2 no cubre, son hallazgos que podés reportar directo desde
+  acá.
 - **`revision-de-ui`** — es **tu** procedimiento y usa una copia versionada de
   las Web Interface Guidelines que está en el repositorio.
 - **`next-best-practices`** — para el eje 2, los límites del framework.

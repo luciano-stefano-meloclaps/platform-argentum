@@ -354,7 +354,7 @@
    */
   --radius-sm:   8px;  /* chips, badges, botones chicos */
   --radius-md:   12px; /* tarjetas de categoría */
-  --radius-lg:   14px; /* tarjetas de estadística */
+  --radius-lg:   14px; /* bloques de estadística */
   --radius-xl:   16px; /* tarjeta principal de contenido */
   --radius-full: 9999px; /* pills y avatares — ver nota arriba */
 

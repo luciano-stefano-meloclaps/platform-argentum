@@ -1,8 +1,17 @@
 # 0008 — Identidad visual Argentum
 
-- **Estado:** Aceptado
+- **Estado:** Aceptado — corregido parcialmente por el
+  [ADR 0015](0015-identidad-visual-argentum-v2.md)
 - **Fecha:** 2026-09-02
 - **Decide:** el usuario
+
+> **Nota del ADR 0015.** El giro museístico corrige el concepto/encuadre, el
+> logotipo, la paleta de celeste/dorado/error y la tipografía de este ADR.
+> **No toca** el sistema de ligas (punto 6), los íconos (punto 4) ni la carga
+> de fuentes (punto 5), que siguen vigentes tal como están escritos acá. El
+> punto 8 ("no infantil, no gubernamental") queda sin objeto en la parte del
+> encuadre — el giro lo reemplaza a propósito — pero el piso de legibilidad
+> que ese mismo punto fija sigue vigente sin cambios.
 
 ## Decisión
 
