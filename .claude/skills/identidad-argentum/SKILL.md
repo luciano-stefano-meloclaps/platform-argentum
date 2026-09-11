@@ -234,8 +234,11 @@ familia de marca completa.
 | Par | Contraste | Fuente |
 | --- | ---: | --- |
 | `--celeste-text` `#0A5FA8` / `--celeste-50` `#EAF4FE` | 5.87:1 | ADR 0015 |
+| `--texto-titulo` `#1F3B4D` / `--celeste-50` `#EAF4FE` | 10.54:1 | `brand-specialist`, ticket #65 |
+| `--texto-secundario` `#6B5D4A` / `--celeste-50` `#EAF4FE` | 5.74:1 | `brand-specialist`, ticket #65 |
 | Blanco / `--celeste-700` `#0978D0` | 4.56:1 | ADR 0008 |
 | `--dorado-text` `#9A6900` / `--dorado-bg` `#FFF8E8` | 4.52:1 | ADR 0008 |
+| `--dorado-text` `#9A6900` / Blanco `#FFFFFF` | 4.78:1 | `brand-specialist`, ticket #65 (ya medido en `globals.css:117-126`, no estaba en esta tabla) |
 | `--texto-terciario` `#7E705D` / `--crema` `#FBF7F0` | 4.51:1 | ADR 0008 |
 | `--ok` `#2E7C5A` / `--ok-bg` `#E9F5EF` | 4.53:1 | ADR 0008 |
 | `--ok` `#2E7C5A` / `--celeste-900` `#0A3D66` | **2.21:1 — falla** | Hallazgo ADR 0015, deuda abierta |

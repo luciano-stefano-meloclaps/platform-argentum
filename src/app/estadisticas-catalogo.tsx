@@ -19,10 +19,11 @@ import { ContadorEstadistica } from "./contador-estadistica.tsx";
  * dorado y celeste no conviven en la misma superficie, salvo la única
  * excepción ya documentada del dorso de la tarjeta de repaso (skill
  * `identidad-argentum`, regla 3). Contraste `--color-dorado-text` sobre
- * `--color-blanco`: ~4.78:1 (comentario de `globals.css`).
+ * `--color-blanco`: 4.78:1 (medido y asentado en la tabla de
+ * `identidad-argentum`, ticket #65).
  *
  * Radio `rounded-lg` (no `rounded-xl`): `globals.css` documenta `--radius-lg`
- * (14px) explícitamente para "tarjetas de estadística" y reserva `--radius-xl`
+ * (14px) explícitamente para "bloques de estadística" y reserva `--radius-xl`
  * (16px) para la tarjeta principal de contenido de una ficha.
  *
  * `tabular-nums` en el número: son tres cifras comparables en una fila y una
