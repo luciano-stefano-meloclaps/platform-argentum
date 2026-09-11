@@ -5,6 +5,7 @@ model: inherit
 color: pink
 tools: Read, Glob, Grep, Write, Edit, WebFetch, WebSearch, Skill, SendMessage, ListAgents, TodoWrite, mcp__context7
 skills:
+  - identidad-argentum
   - building-components
   - revision-de-ui
 ---
@@ -432,6 +433,14 @@ aunque al que preguntó le guste ese verde — y sigue siéndolo si el color es 
 
 Tenés precargadas:
 
+- **`identidad-argentum`** — es **tuya**: la escribiste vos (con el
+  arquitecto armando el archivo) y la mantenés vos. Consolida en un solo
+  lugar los tokens de v1+v2, las reglas de uso y el contraste verificado, para
+  que `frontend-specialist` y `ui-reviewer` no tengan que convocarte por un
+  lookup. **Es un resumen citable, no una fuente**: si algo de la skill no
+  coincide con los documentos de marca o los ADR, corregís la skill, nunca al
+  revés. Actualizala vos mismo cuando derives un token nuevo o el usuario
+  apruebe otro giro — no dejes que se desactualice en silencio.
 - **`building-components`** — usá `design-tokens.mdx` y `styling.mdx`, que son tu
   área. La mitad sobre distribución (`registry`, `npm`, `marketplaces`, `docs`)
   **no aplica**: hacemos un producto, no una biblioteca de componentes.

@@ -4,6 +4,20 @@
 - **Fecha:** 2026-09-10
 - **Decide:** el usuario
 
+> **Nota posterior (misma fecha) — Lora reemplaza a Montserrat en toda la
+> interfaz.** Este ADR había dejado como interpretación no confirmada que
+> Montserrat seguía rigiendo fuera del cuerpo de ficha. El usuario confirmó
+> explícitamente que **Lora reemplaza a Montserrat en todo el sistema**:
+> labels, botones, chips, navegación, metadatos y cifras de dashboard, no
+> solo el cuerpo de lectura largo. Esto resuelve el punto de "Revisar si" que
+> este mismo ADR había dejado abierto — no lo reabre. El detalle por rol, con
+> los riesgos documentados por el `brand-specialist` (contraste de trazo de
+> Lora a tamaño chico, y `tabular-nums` no verificado en la fuente), está en
+> `sistema-de-diseno-v2.md` §4 y en la sección 5 de este ADR, agregada abajo.
+> También se resolvió, sin ambigüedad, que las **plates/medallón de v2
+> reemplazan al marco de retrato circular de v1** para el mismo caso de uso
+> (el retrato de un prócer): no son dos reglas vigentes en paralelo.
+
 ## Decisión
 
 Adoptamos una **v2 parcial** de la identidad visual Argentum, versionada en
@@ -180,6 +194,35 @@ El documento entregado traía una sección 5 ("Voz y contenido") con un tono
 sección **no es territorio de una identidad visual** y no se adopta por este
 ADR. El ADR 0012 sigue rigiendo la prosa del catálogo sin cambios.
 
+### 6. Lora reemplaza a Montserrat en toda la interfaz
+
+El documento nuevo solo hablaba de "cuerpo... justificado en párrafos largos
+de ficha", que es un alcance más angosto que "todo el cuerpo de texto" de v1.
+Este ADR había dejado como interpretación que Montserrat seguía rigiendo
+fuera de ese cuerpo de lectura. **El usuario confirmó que no es así: Lora
+reemplaza a Montserrat en el sistema completo**, incluida la interfaz
+(labels, botones, chips, navegación, metadatos) y las cifras de dashboard.
+
+Riesgo documentado por el `brand-specialist`, sin evidencia de que existan
+como features OpenType de Lora ni `smcp` (mayúsculas pequeñas) ni `tnum`
+(figuras tabulares):
+
+| Rol | Riesgo |
+| --- | --- |
+| Labels, botones (13–14px) | Medio-alto: contraste de trazo de una serif caligráfica a tamaño chico en pantallas de baja calidad — el mismo escenario que el ADR 0008 ya declaró como contexto real del producto |
+| Chips de categoría (11px, versalita) | Alto: no usar `font-variant-caps: small-caps` sin `smcp` confirmado; usar `text-transform: uppercase` |
+| Nav del header, kickers (11px) | Alto, agravado por el tracking amplio |
+| Cifras con `tabular-nums` en columnas apiladas | Alto: probable no-op sobre Lora, a verificar con una prueba de render real antes de construir cualquier tabla de progreso o ranking |
+
+**Decisión: Lora en todo por defecto, con los riesgos de arriba documentados,
+no resueltos por adelantado.** Si un riesgo se confirma en la práctica (por
+ejemplo, `tabular-nums` efectivamente no funciona), la corrección de menor
+costo es un fallback de fuente monoespaciada del sistema acotado al bloque de
+dígitos afectado — no una segunda familia de marca — y se aplica cuando el
+problema esté confirmado, no antes.
+
+Detalle completo por rol, en `sistema-de-diseno-v2.md` §4.
+
 ## Motivo
 
 Corregimos en el ADR en lugar de devolver el documento al usuario porque el
@@ -210,10 +253,13 @@ explícitamente resolverlos sin volver a preguntarle.
 - Una **inversión de jerarquía de color** respecto a v1 (el dorado pasa a
   protagonizar donde antes protagonizaba el celeste) que hay que sostener
   consistentemente en cada pantalla nueva.
-- Tres **interpretaciones no confirmadas explícitamente por el usuario**
-  (peso de `--type-h3`, permanencia de Montserrat en interfaz, alcance exacto
-  de "cuerpo" en Lora), documentadas como tales en `sistema-de-diseno-v2.md`
-  §4 y §8, resolubles con un cambio barato si están mal.
+- Un **riesgo tipográfico documentado y no resuelto por adelantado**: Lora a
+  11-14px, en versalita o en columnas de `tabular-nums`, sin evidencia de que
+  la fuente tenga los features OpenType que esos usos dan por sentado (ver
+  sección 6). Se corrige si y cuando se confirme en la práctica, no antes.
+- Una **interpretación que sigue sin confirmar**: el peso de `--type-h3`
+  (documentada en `sistema-de-diseno-v2.md` §4 y §8), resoluble con un cambio
+  barato si está mal.
 
 **Obtenemos:**
 
@@ -239,9 +285,12 @@ explícitamente resolverlos sin volver a preguntarle.
 
 **Revisar si:**
 
-- El usuario aclara que Montserrat también se retira de la interfaz (labels,
-  botones, chips, nav) y no solo del cuerpo de ficha — hoy es una
-  interpretación, no una confirmación.
+- **(Resuelto, ver nota posterior arriba y sección 6.)** ~~El usuario aclara
+  que Montserrat también se retira de la interfaz.~~ Confirmado: Lora
+  reemplaza a Montserrat en todo el sistema.
+- Se confirma con una prueba de render real que Lora no tiene `tnum` y una
+  pantalla concreta necesita una columna de cifras apiladas — ahí se aplica
+  la contingencia de fallback monoespaciado acotado (sección 6).
 - Aparece la primera pantalla con panel invertido y feedback de acierto, sin
   `--ok-invertido` resuelto.
 - Se define un sistema de foco consistente, en vez de resolverlo componente

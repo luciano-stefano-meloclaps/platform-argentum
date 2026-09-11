@@ -214,52 +214,57 @@ escribir esa pantalla.
 ## 4. Tipografía
 
 ⚠️ **ADR 0015 — reemplaza los pesos y el rol de las familias en las áreas que
-cubre.** La escala numérica de tamaños de v1 (`--type-display`, `--type-h1`,
-etc.) **no cambia** salvo el peso que se indica abajo.
+cubre. Actualizado: Lora reemplaza a Montserrat en toda la interfaz, no solo
+en el cuerpo de ficha — decisión explícita del usuario, ya no una
+interpretación.** La escala numérica de tamaños de v1 (`--type-display`,
+`--type-h1`, etc.) **no cambia** salvo el peso y la familia que se indican
+abajo.
 
-- **Encabezados grandes** (`--type-display`, `--type-h1`, `--type-h2`):
-  Cormorant Garamond, peso **400** (antes 700, corregido por el ADR 0008 desde
-  el 900 original de v1). Cormorant Garamond sí tiene peso 400 nativo, así que
-  esto no reabre el problema de negrita sintética que motivó esa corrección.
+- **Encabezados grandes** (`--type-display`, `--type-h1`, `--type-h2`),
+  logotipo y cifras del hero: **Cormorant Garamond**, peso **400** (antes 700,
+  corregido por el ADR 0008 desde el 900 original de v1). Cormorant Garamond
+  sí tiene peso 400 nativo, así que esto no reabre el problema de negrita
+  sintética. **Sin riesgo, sin cambio de familia.**
 - **Kickers de sección** ("LAS SALAS DEL CATÁLOGO"): Cormorant Garamond, peso
-  600 — **sin cambios** respecto a v1.
-- **Itálica** para subtítulos y notas ("conocé tu país", leyendas, asides).
-- 🔶 **Interpretación, no estaba explícito — `--type-h3` no se menciona en el
-  documento nuevo.** Se asume que sigue en peso 600 (valor de v1), porque el
-  documento nuevo solo habla de "títulos grandes" al fijar el 400. Si esto es
-  incorrecto, es barato de corregir: es un solo valor.
-- **Cuerpo de lectura de ficha** (`--type-body-lg`, párrafos largos):
-  **Lora**, justificado, `hyphens: auto`. Reemplaza a Montserrat
-  **específicamente en esta superficie** — el documento nuevo dice "cuerpo...
-  justificado en párrafos largos de ficha", que es un alcance más angosto que
-  "todo el cuerpo de texto" de v1.
-- 🔶 **Interpretación, no estaba explícito — la interfaz sigue en Montserrat.**
-  El documento nuevo no menciona qué pasa con labels, botones, chips,
-  metadatos y navegación — la definición de "cuerpo" que trae es la de
-  lectura de ficha, no la de interfaz. Se interpreta que **Montserrat sigue
-  siendo la familia de interfaz** (`--type-body`, `--type-caption`,
-  `--type-label`, `--type-button`, `--type-chip`, `--type-meta`, sin cambios
-  de v1), porque nada en el documento pide reemplazarla ahí y America no
-  quedaría ningún elemento "sans" para uso de UI si se retirara del todo. Si
-  el usuario quiso decir que Lora reemplaza a Montserrat en todos lados, es
-  una corrección barata — un cambio de un `font-family` en `@theme` — pero no
-  se asume sin confirmación porque cambia sesenta componentes, no dos.
+  600 — sin cambios respecto a v1.
+- 🔶 **`--type-h3` no se menciona en el documento nuevo** y se asume en 600
+  (valor de v1) por ahora — sigue sin confirmar, es la única interpretación
+  que queda abierta de esta sección.
+- **Todo lo demás — cuerpo de ficha, labels, botones, chips, nav, metadatos,
+  cifras de dashboard — pasa a Lora.** Reemplaza a Montserrat en el sistema
+  completo. Tabla de riesgo por rol, derivada por el `brand-specialist`:
+
+  | Rol | Tamaño/peso | Riesgo documentado |
+  | --- | --- | --- |
+  | Cuerpo de ficha (`--type-body-lg`) | 16px, 400, justificado, `hyphens:auto` | Ninguno — es el uso nativo de Lora |
+  | Labels, botones (`--type-label`, `--type-button`) | 13–14px, 600 | Medio-alto: el peso 600 existe en el eje variable de Lora, pero el contraste de trazo de una serif caligráfica se degrada en pantallas de baja calidad a este tamaño |
+  | Chips de categoría (`--type-chip`, "VERSALITA") | 11px, 600, uppercase | Alto: **no usar `font-variant-caps: small-caps`** — no hay evidencia de que Lora traiga el feature OpenType `smcp`, y sin él el navegador sintetiza mayúsculas escaladas. Usar `text-transform: uppercase` con las mayúsculas reales, que es lo que "VERSALITA" describe visualmente en v1. El riesgo de legibilidad a 11px con trazo fino no se resuelve con esto, queda documentado |
+  | Nav del header, kickers | 11px, uppercase, `letter-spacing 0.16–0.18em` | Alto, agravado: el tracking amplio separa aún más las serifas finas entre letras a esta escala |
+  | Metadatos (`--type-meta`) | 12px, 500 | Medio |
+  | Cifras con `tabular-nums` en columnas (progreso, ranking) | variable | **Alto y específico**: no hay evidencia de que Lora traiga el feature `tnum` (figuras tabulares). `font-variant-numeric: tabular-nums` sobre Lora es probablemente un no-op — las cifras quedan de ancho proporcional pese al CSS. Sin impacto en una cifra aislada del hero (nada con qué alinear); sí en una columna de varias cifras apiladas. **Verificar con una prueba de render real (comparar ancho de "1" y "8") antes de dar el caso por cerrado** |
+  | Cifras aisladas del hero (`.au`/`.au-dark`) | grande | Bajo — no necesita alinear con nada |
+
+  **Contingencia opcional, no aplicada por defecto:** si al implementar se
+  confirma que Lora no tiene `tnum` y el problema es real en una pantalla
+  concreta (no supuesto), un fallback de fuente monoespaciada del sistema
+  (`ui-monospace`) acotado **solo al bloque de dígitos** de esa tabla o
+  columna es la corrección de menor costo — no una segunda familia de marca.
+  Se decide si y cuando el problema se confirme, no antes.
+
 - **Logotipo:** ver §2.
-- **Kickers/etiquetas** (todas las secciones): 10–11px, uppercase,
-  `letter-spacing: 0.16–0.18em`, color gris neutro o `#0A5FA8` — consolida lo
-  que ya traía v1.
 - **Cifras:** siempre `font-variant-numeric: tabular-nums lining-nums` en
-  números destacados — v1 lo pedía solo para dashboards; se extiende a toda
-  cifra destacada.
+  números destacados — sujeto al riesgo de arriba.
 - **Nunca sans-serif para énfasis dentro de un párrafo editorial:** la
   jerarquía se logra con tamaño, itálica y el gradiente dorado, no con peso
-  bold ni cambio de familia. Esto no afecta el uso de Montserrat 600 como
-  familia de botones/labels, que es un rol de interfaz, no de énfasis
-  editorial.
+  bold ni cambio de familia.
+- **Carga:** `next/font/google` para las dos familias, nunca `@import`
+  (ADR 0008 §5, sigue vigente también para Lora).
 
 **Regla de v1 que este documento deroga expresamente:** "Nunca texto
 justificado" ya no aplica al cuerpo de ficha en Lora. Sigue aplicando a
-cualquier otro texto que no sea ese cuerpo de lectura largo.
+cualquier otro texto que no sea ese cuerpo de lectura largo — en particular,
+no se justifica ningún texto de interfaz (labels, botones, chips, nav) aunque
+esté en Lora.
 
 ---
 
@@ -314,7 +319,11 @@ repetido, equivalente a un fleurón tipográfico. Decorativo: lleva
 ### Plates (imágenes) — reemplaza el marco de retrato circular de v1
 
 ⚠️ **ADR 0015 — reemplaza el "marco de retrato" de v1** (círculo con anillo
-punteado, `sistema-de-diseno.md` §7).
+punteado, `sistema-de-diseno.md` §7). **Resuelto sin ambigüedad:** el retrato
+de un prócer usa **plate/medallón**, no el círculo. Los dos documentos
+definían un tratamiento para el mismo componente porque v1 no anticipó que
+v2 lo redefiniría — no son dos reglas vigentes en paralelo. Donde compitan
+un componente de v1 y otro de v2 para el mismo caso de uso, gana v2.
 
 Wrapper `.plate` + `border-radius: 150px 150px 2px 2px` (arco superior,
 esquina recta abajo — forma de medallón/lápida) para retratos y fichas
@@ -419,10 +428,11 @@ iconografía decorativa" — **ya regía desde v1** y no cambia.
   cambios respecto a v1 (`sistema-de-diseno.md` §7 / ADR 0008 §8): siguen sin
   producirse.
 - **`--type-h3`** — peso asumido en 600 por interpretación, no confirmado
-  explícitamente (ver §4).
-- **Familia tipográfica de interfaz (Montserrat)** — se asume que continúa
-  fuera del cuerpo de ficha, por interpretación del alcance literal del
-  documento, no por confirmación explícita (ver §4).
+  explícitamente (ver §4). Es la única interpretación tipográfica que sigue
+  abierta.
+- **`tabular-nums` sobre Lora** — riesgo alto y no verificado con una prueba
+  de render real (ver tabla de §4). Verificar antes de construir cualquier
+  columna de cifras apiladas (progreso, ranking).
 
 ---
 

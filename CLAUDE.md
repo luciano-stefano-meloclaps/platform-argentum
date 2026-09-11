@@ -91,11 +91,14 @@ lleguen las cuentas: el MVP no tiene cuentas.
   (v1.0, ADR 0008) y `docs/marca/sistema-de-diseno-v2.md` (giro museístico,
   ADR 0015, que **supersede parcialmente** al 0008). v2 reemplaza el
   concepto/encuadre (de "no gubernamental" a "monumento estatal"), el
-  logotipo, la paleta de celeste/dorado/error y la tipografía (Lora se suma
-  como cuerpo de lectura de ficha; Montserrat sigue en interfaz). **No
-  cambian**: el sistema de ligas, la paleta de 6 categorías, el verde laurel,
-  los íconos ni la carga de fuentes — siguen en v1/ADR 0008. **No se propone
-  paleta ni tipografía: ya están elegidas.**
+  logotipo, la paleta de celeste/dorado/error y la tipografía: **Lora
+  reemplaza a Montserrat en todo el sistema**, no solo en el cuerpo de
+  lectura de ficha — con riesgos de legibilidad a tamaño chico y de
+  `tabular-nums` documentados y sin resolver por adelantado en el ADR 0015 y
+  en la skill `identidad-argentum`. **No cambian**: el sistema de ligas, la
+  paleta de 6 categorías, el verde laurel, los íconos ni la carga de
+  fuentes — siguen en v1/ADR 0008. **No se propone paleta ni tipografía: ya
+  están elegidas.**
 
 **Antes de contradecir cualquiera de estos puntos, leé el ADR correspondiente.**
 Si una decisión cambia, se escribe un ADR nuevo que supersede al anterior; no se
@@ -600,6 +603,17 @@ el viejo en silencio.
   falta según el caso, y el criterio para reconocer cuándo un tema entra en la
   lista de disputas políticas de `voz-narrativa`. Es investigación, no
   redacción: no decide cómo se narra una disputa, solo la documenta.
+- `identidad-argentum` es **nuestra** y consolida los tokens y reglas
+  vigentes de la marca (v1.0 + v2, ADR 0008 + ADR 0015) en un solo lugar
+  citable: paleta, tipografía, contraste ya medido y reglas de uso. Su dueño
+  es el `brand-specialist`, pero **cualquier agente que escriba o revise
+  interfaz la cita** — mismo patrón que `voz-narrativa` con la prosa. Es un
+  **resumen citable, no una fuente**: donde no coincida con
+  `docs/marca/sistema-de-diseno.md`, `sistema-de-diseno-v2.md` o los ADR
+  0008/0015, ganan ellos y se corrige la skill. No reemplaza al
+  `brand-specialist` para derivar un token nuevo, resolver un componente que
+  ningún documento cubre, o aprobar un contraste no medido — eso lo sigue
+  decidiendo él.
 
 ## Setup al clonar
 
@@ -645,8 +659,8 @@ el viejo en silencio.
 - `.mcp.json` — servidor MCP Context7, sin secretos: la key se expande
   desde la variable de entorno `CONTEXT7_API_KEY` de cada desarrollador.
 - `.claude/skills/` — skills propias del proyecto (`convenciones-git`,
-  `revision-de-ui`, `voz-narrativa`, `investigacion-historica`) y enlaces a las
-  de terceros.
+  `revision-de-ui`, `voz-narrativa`, `investigacion-historica`,
+  `identidad-argentum`) y enlaces a las de terceros.
 - `.agents/skills/` y `skills-lock.json` — skills de terceros, versionadas para
   que el repo funcione al clonarlo sin instalar nada.
 - `.claude/hooks/bloquear-git-push.sh` — impide que **cualquier subagente**

@@ -5,6 +5,7 @@ model: inherit
 color: purple
 tools: Read, Glob, Grep, Bash, Write, Edit, WebFetch, WebSearch, Skill, SendMessage, ListAgents, TodoWrite, Agent(backend-specialist, database-specialist, super-architect, delivery-specialist, brand-specialist, ui-reviewer, typescript-specialist, vercel:performance-optimizer), mcp__context7
 skills:
+  - identidad-argentum
   - convenciones-git
   - next-best-practices
   - building-components
@@ -218,8 +219,17 @@ suponés que quieren escuchar.
 
 ## 9. Skills
 
-Tenés precargadas `next-best-practices`, `building-components` y
-`revision-de-ui`. Podés invocar otras con `Skill` cuando aporten.
+Tenés precargadas `identidad-argentum`, `next-best-practices`,
+`building-components` y `revision-de-ui`. Podés invocar otras con `Skill`
+cuando aporten.
+
+**`identidad-argentum`** — cualquier agente que escriba o revise interfaz la
+cita, mismo patrón que `voz-narrativa` con la prosa. Es la tabla de tokens y
+reglas de marca (v1+v2 fusionadas) que ya escribió el `brand-specialist`:
+consultala antes de convocarlo por un color, un contraste o una regla de uso
+que probablemente ya esté ahí. Si lo que necesitás no está —un token nuevo,
+un componente que ningún documento cubre, un contraste no medido—, ahí sí
+convocalo: la skill lo dice explícitamente en su última sección.
 
 **Precedencia, siempre:** los ADR de `docs/adr/` y `CONTEXT.md` **ganan** sobre
 cualquier skill externa. De `building-components`, la mitad sobre distribución
