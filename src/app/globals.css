@@ -127,6 +127,30 @@
    */
   --color-dorado-text: #9A6900;
 
+  /*
+   * --- Dorado institucional — acento de marca v2 (ADR 0015, giro
+   * museístico): próceres, cifras destacadas, marcos. Familia de tokens
+   * DISTINTA de `--color-dorado-*` de arriba, que sigue rigiendo sin
+   * cambios para logros y ligas (v1, no se toca). `--color-accent` y
+   * `--color-accent-600` son decorativos —filete, superficie, borde— y
+   * NUNCA van como color de texto: el dorado base sobre `--color-crema` da
+   * 1.93:1, muy por debajo de AA. `--color-accent-700` y `--color-accent-800`
+   * sí son texto, derivados bajando *lightness* en HSL conservando tono y
+   * saturación, mismo método que corrigió `--color-dorado-text` en el ADR
+   * 0008. Valores citados de `sistema-de-diseno-v2.md` §3, no recalculados
+   * acá.
+   */
+  --color-accent:     #E0AC4C; /* decorativo — filete, superficie, ícono; NUNCA fondo de texto */
+  --color-accent-300: #F7DE9B;
+  --color-accent-400: #EDC873;
+  --color-accent-600: #D99A26; /* decorativo/borde — NUNCA texto */
+
+  /* --color-accent-700: texto y borde — sobre --color-crema da 4.58:1 (ADR 0015 §3). */
+  --color-accent-700: #94691A;
+
+  /* --color-accent-800: texto chico / estado hover-activo — sobre --color-crema da 8.43:1 (ADR 0015 §3). */
+  --color-accent-800: #604411;
+
   /* --- Verde laurel — acento 2: logros, próceres, estados positivos (§3) --- */
   --color-laurel-bg:    #EAF0DF;
   --color-laurel-borde: #D6E2C2;
@@ -213,11 +237,18 @@
   /*
    * Familias. El namespace ya se llama "font", así que los nombres de la
    * marca quedan sin cambios. Las variables `--font-cormorant-garamond` y
-   * `--font-montserrat` las expone `layout.tsx` con `next/font/google`
-   * (ADR 0008, corrección 5) — no viven en este archivo.
+   * `--font-lora` las expone `layout.tsx` con `next/font/google` (ADR 0008,
+   * corrección 5) — no viven en este archivo.
+   *
+   * ⚠️ ADR 0015 (giro museístico v2): Lora reemplaza a Montserrat como
+   * `--font-cuerpo` en toda la interfaz —no solo el cuerpo de lectura largo
+   * de una ficha—, con los mismos pesos que ya usaba Montserrat (400/500/600,
+   * ver `layout.tsx`). El fallback pasa de `sans-serif` a `serif`: Lora es
+   * una serif, y un fallback sans-serif produciría un salto de forma visible
+   * durante la carga (`display: "swap"`), no solo de métrica.
    */
   --font-titulo: var(--font-cormorant-garamond), Georgia, serif; /* logotipo, H1–H3, números destacados */
-  --font-cuerpo: var(--font-montserrat), system-ui, sans-serif; /* todo lo demás: párrafos, labels, botones, nav */
+  --font-cuerpo: var(--font-lora), Georgia, serif; /* todo lo demás: párrafos, labels, botones, nav */
 
   /*
    * Escala tipográfica. Namespace --text-* (no --type-*: es el namespace
@@ -307,6 +338,51 @@
   --spacing-2xl: 32px;
 
   /*
+   * --- Corrección de colisión con la escala de contenedor (ticket #73) ---
+   * Tailwind v4 resuelve `max-w-<clave>` probando, en este orden exacto,
+   * `--max-width-<clave>` → `--spacing-<clave>` → `--container-<clave>`
+   * (tabla de prioridades verificada en
+   * `node_modules/tailwindcss/dist/lib.mjs`, build 4.3.3: la entrada
+   * `["max-w", ["--max-width", "--spacing", "--container"], "max-width"]`).
+   * Se queda con la primera que exista y no sigue buscando. Como arriba
+   * definimos `--spacing-xs/sm/md/lg/xl/2xl` para `px-*`/`py-*`/`gap-*`
+   * —y tienen que seguir existiendo, esos tokens son de la marca (§5)—,
+   * `max-w-xs`, `max-w-sm`, `max-w-md`, `max-w-lg`, `max-w-xl` y `max-w-2xl`
+   * quedaban atrapados en el segundo escalón, resolviendo contra el
+   * espaciado (ej. `max-w-2xl` → 32px) en vez de contra el ancho de
+   * contenedor que evidentemente se pretende (42rem). Efecto real: texto
+   * partido palabra por palabra en `src/app/hero.tsx`,
+   * `src/app/catalogo/page.tsx` y `src/app/catalogo/[slug]/not-found.tsx`.
+   *
+   * La corrección: declarar `--max-width-*` explícito para cada clave que
+   * colisiona, apuntando con `var()` al `--container-*` que Tailwind ya
+   * trae por defecto (no hace falta declararlo: lo aporta
+   * `@import "tailwindcss"` de la línea 7). Esto intercepta la resolución
+   * en el primer escalón de la tabla, antes de que llegue a `--spacing`, sin
+   * tocar ni un valor ni una clase de espaciado existente. El CSS
+   * compilado queda `.max-w-2xl { max-width: var(--max-width-2xl) }`, y esa
+   * variable vale a su vez `var(--container-2xl)`: es la única forma
+   * estructural de que `max-w-2xl` "salte" `--spacing` sin renombrar la
+   * escala de espaciado (que sigue rigiendo para `px-lg`, `py-2xl`,
+   * `gap-md`, etc., sin cambios). El resultado visual y funcional es
+   * idéntico a usar `--container-2xl` directo: solo cambia el nombre de la
+   * variable intermedia.
+   *
+   * No cubre `w-*`/`min-w-*` (misma tabla de prioridades, pero sin ningún
+   * `w-lg`/`min-w-lg` hoy en el código que la necesite) ni las utilidades
+   * lógicas `inline-*`/`max-inline-*`/`min-inline-*` (misma ambigüedad
+   * --spacing/--container, pero sin un namespace propio como --max-width
+   * que permita interceptarlas del mismo modo, y sin uso hoy en el
+   * código). Quedan documentados como riesgo residual, no como bug abierto.
+   */
+  --max-width-xs:  var(--container-xs);
+  --max-width-sm:  var(--container-sm);
+  --max-width-md:  var(--container-md);
+  --max-width-lg:  var(--container-lg);
+  --max-width-xl:  var(--container-xl);
+  --max-width-2xl: var(--container-2xl);
+
+  /*
    * ==========================================================================
    * Radios (§5)
    * ==========================================================================
@@ -323,7 +399,7 @@
    */
   --radius-sm:   8px;  /* chips, badges, botones chicos */
   --radius-md:   12px; /* tarjetas de categoría */
-  --radius-lg:   14px; /* tarjetas de estadística */
+  --radius-lg:   14px; /* bloques de estadística */
   --radius-xl:   16px; /* tarjeta principal de contenido */
   --radius-full: 9999px; /* pills y avatares — ver nota arriba */
 
@@ -362,4 +438,52 @@
   --shadow-sombra-sm: 0 1px 3px rgba(31, 59, 77, 0.06), 0 1px 2px rgba(31, 59, 77, 0.04);
   --shadow-sombra-md: 0 2px 8px rgba(31, 59, 77, 0.07);
   --shadow-sombra-lg: 0 4px 14px rgba(93, 173, 226, 0.12); /* sombra teñida de celeste */
+}
+
+/*
+ * ==============================================================================
+ * Dorado institucional — gradiente y filete (v2, ADR 0015 §3 /
+ * sistema-de-diseno-v2.md §3)
+ * ==============================================================================
+ * `--gradiente-filete` no vive dentro de `@theme`: no es un color sólido de
+ * un namespace de Tailwind (--color-*, --font-*, etc.), es un valor de
+ * `background` que un componente consume directo con `var(...)` — mismo
+ * criterio que ya separa `--borde-default` (shorthand compuesto) de los
+ * namespaces de arriba. Queda como variable CSS de :root, fuera del bloque
+ * de tokens de Tailwind.
+ */
+:root {
+  --gradiente-filete: linear-gradient(90deg, #8A5E12, #E0AC4C 20%, #FFF3D0 50%, #E0AC4C 80%, #8A5E12);
+}
+
+/*
+ * `.au` — gradiente metálico de texto (dorado institucional). Los 4 stops
+ * únicos están recalculados por el ADR 0015 §3 a partir de los originales
+ * del documento de marca: el punto crítico del centro pasó de #C79331
+ * (2.57:1, no pasa AA) a #8B6722 (4.85:1 sobre `--color-bg`/`--color-crema`).
+ * No se recalculan acá: se citan tal cual de `sistema-de-diseno-v2.md` §3.
+ *
+ * `color` es el fallback sólido para un navegador que no soporte
+ * `background-clip: text` (ahí el gradiente ni se recorta ni se aplica, y
+ * el texto se ve con este color plano). `-webkit-text-fill-color:
+ * transparent` es lo que efectivamente revela el gradiente recortado en los
+ * navegadores que sí lo soportan — sin esta línea (que el documento de
+ * marca no incluye en su fragmento de CSS) el `color` sólido pintaría por
+ * encima del recorte y el gradiente nunca se vería. Es un requisito de
+ * mecánica CSS, no un valor de marca: no cambia ningún color de los citados
+ * arriba.
+ */
+.au {
+  background: linear-gradient(100deg,
+    #2A1C06 0%,
+    #473109 16%,
+    #4F3600 34%,
+    #8B6722 50%,
+    #4F3600 66%,
+    #473109 84%,
+    #2A1C06 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: var(--color-accent-700); /* fallback sólido si background-clip no aplica */
+  -webkit-text-fill-color: transparent;
 }

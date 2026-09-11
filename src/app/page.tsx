@@ -1,7 +1,16 @@
+import { Hero } from "./hero.tsx";
+import { SalasDelCatalogo } from "./salas-del-catalogo.tsx";
+
+/**
+ * La home de la aplicación: el hero (ticket #65) —eyebrow, título, divisor,
+ * bajada y la barra de estadísticas del catálogo— seguido de "Las salas del
+ * catálogo" (ticket #71), ambos dentro del mismo `<main>`.
+ */
 export default function Home() {
   return (
-    <main className="grid min-h-dvh place-items-center">
-      <div>Hello world!</div>
+    <main>
+      <Hero />
+      <SalasDelCatalogo />
     </main>
   );
 }

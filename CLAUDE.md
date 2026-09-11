@@ -34,10 +34,26 @@ pnpm test        # vitest run
 `pnpm build` cuando el ticket toque el build; `pnpm db:generate` y
 `pnpm db:migrate` cuando toque el esquema.
 
-**Producto.** Catálogo sobre Argentina para que chicos aprendan: fichas
-(próceres, monumentos, animales, comida, fechas patrias…), tarjetas de repaso,
-quiz individual y panel de progreso. Más adelante: cuentas, y propuestas de
-usuarios con moderación.
+**Producto.** Catálogo sobre Argentina para aprender: fichas (próceres,
+monumentos, animales, comida, fechas patrias…), tarjetas de repaso, quiz
+individual y panel de progreso. Más adelante: cuentas, y propuestas de usuarios
+con moderación.
+
+**Audiencia y voz (ADR 0012).** El lector son **chicos grandes y adultos**, de
+doce años en adelante, y la prosa del catálogo es **épica, de registro alto**:
+escenario dramático, período amplio, léxico rico y metáfora sostenida. **No se
+simplifica y no se baja de tono.** La regla verificable vive en la skill
+`voz-narrativa`, calibrada contando las muestras del usuario. Una **versión para
+chicos** —otra lengua y quizás otro diseño— está **pospuesta, no cancelada**, con
+su disparador y su regla interina en `docs/decisiones-pendientes.md`.
+
+Ese cambio es reciente y **queda documentación vieja**: el `README.md` y las
+secciones de audiencia del `frontend-specialist`, el `ui-reviewer`, el
+`brand-specialist` y la skill `revision-de-ui` todavía dicen «lo usan chicos de
+ocho años». Sus **requisitos** siguen vigentes —contraste AA, objetivos táctiles,
+`prefers-reduced-motion`, el color como no-único portador de significado—; lo que
+envejeció es la justificación. Igual que el ADR 0008, cuyos valores no se tocan y
+cuya sección 8 quedó sin objeto.
 
 **Stack decidido:** Next.js 16 · React 19 · TypeScript · PostgreSQL · Drizzle
 ORM · Zod · Tailwind v4 · Vitest (ADR 0003 y 0005). Despliegue en Vercel, base
@@ -53,6 +69,12 @@ lleguen las cuentas: el MVP no tiene cuentas.
   interfaz.
 - Catálogo: una sola tabla `entidad` con discriminador `tipo` y columna `datos`
   JSONB; los campos de cada tipo viven en descriptores en código (ADR 0001).
+- **Una entidad es una fila con un solo slug** (ADR 0013). El **registro de
+  lectura** —épico o para chicos— es un **parámetro de lectura**, no parte de la
+  identidad: nunca una columna de `entidad`, nunca una segunda fila, nunca un
+  segundo slug. Cuando llegue la versión para chicos, las dos prosas van dentro
+  de `datos`; **los hechos no se duplican jamás**. Hoy **no se toca nada**: ni
+  columna, ni campo `*Chicos`, ni registro en la ruta.
 - Contenido curado en archivos versionados, importado a la base (ADR 0004), en
   `contenido/<tipo>/<slug>.ts` y tipado por el descriptor de su tipo (ADR 0009).
 - **Severidad del compilador cerrada** (ADR 0007): `strict` más
@@ -64,11 +86,19 @@ lleguen las cuentas: el MVP no tiene cuentas.
   y los `import type` **no** la llevan (ADR 0011). Si `pnpm lint` marca
   `import/extensions`, la regla es deliberada: se corrige el import, nunca la
   regla.
-- **Identidad visual decidida:** la marca **Argentum** —celeste, dorado y
-  neutrales cálidos, Cormorant Garamond y Montserrat— está cerrada y
-  versionada en `docs/marca/sistema-de-diseno.md`, adoptada con correcciones
-  de contraste por el ADR 0008. **No se propone paleta ni tipografía: ya están
-  elegidas.**
+- **Identidad visual decidida, en dos documentos que se leen juntos.** La
+  marca **Argentum** está cerrada y versionada en `docs/marca/sistema-de-diseno.md`
+  (v1.0, ADR 0008) y `docs/marca/sistema-de-diseno-v2.md` (giro museístico,
+  ADR 0015, que **supersede parcialmente** al 0008). v2 reemplaza el
+  concepto/encuadre (de "no gubernamental" a "monumento estatal"), el
+  logotipo, la paleta de celeste/dorado/error y la tipografía: **Lora
+  reemplaza a Montserrat en todo el sistema**, no solo en el cuerpo de
+  lectura de ficha — con riesgos de legibilidad a tamaño chico y de
+  `tabular-nums` documentados y sin resolver por adelantado en el ADR 0015 y
+  en la skill `identidad-argentum`. **No cambian**: el sistema de ligas, la
+  paleta de 6 categorías, el verde laurel, los íconos ni la carga de
+  fuentes — siguen en v1/ADR 0008. **No se propone paleta ni tipografía: ya
+  están elegidas.**
 
 **Antes de contradecir cualquiera de estos puntos, leé el ADR correspondiente.**
 Si una decisión cambia, se escribe un ADR nuevo que supersede al anterior; no se
@@ -92,11 +122,11 @@ El equipo tiene **tres niveles**, y cada uno decide una cosa distinta:
       ▼                 ▼                 ▼
   backend-          frontend-         database-      cómo se resuelve
   specialist        specialist        specialist
-                        │
-              ┌─────────┴─────────┐
-              ▼                   ▼
-   brand-                   ui-reviewer      ← equipo del frontend
-   specialist
+      │                 │
+ ┌────┴────┐   ┌────────┴────────┐
+ ▼         ▼   ▼                 ▼
+narrative- historiador- brand-  ui-reviewer  ← equipos de área
+specialist specialist   specialist
 ```
 
 Fuera de la jerarquía, transversal y a demanda: `typescript-specialist`.
@@ -109,8 +139,18 @@ requerimiento  → arquitecto:    alcance, ADR
                → entrega:       reparte UN ticket
                → especialista:  escribe el código, deja el árbol, termina
                → entrega:       verifica contra el ticket → commit → comenta
-               → usuario:       push y despliegue → se cierra el ticket
+               → usuario:       verifica el commit → entrega: push + PR a development
+               → usuario:       verifica el PR → entrega: merge a development → se cierra el ticket
+               → usuario:       mergea development a main y despliega, cuando quiere
 ```
+
+`main` dejó de ser la rama a la que se publica. Desde ahora existe una rama
+**`development`**, y es ahí donde llega el trabajo con ticket: el
+`delivery-specialist` pushea la rama de la rebanada y abre el PR contra
+`development` —nunca contra `main`—, y lo mergea, siempre con la verificación
+explícita del usuario en cada uno de los dos pasos (push y merge son portones
+distintos, ver `.claude/agents/delivery-specialist.md`). Mergear `development`
+a `main` y desplegar sigue siendo enteramente del usuario, en su propio tiempo.
 
 ### Nivel 1 — Arquitectura
 
@@ -141,7 +181,7 @@ detalle le come el espacio donde vive esa visión.
 
 | Agente | Dueño de | No toca |
 | ------ | -------- | ------- |
-| `delivery-specialist` | El corte en rebanadas, los tickets, las ramas, el reparto y **todos los commits del trabajo con ticket** | Código, alcance, decisiones de producto |
+| `delivery-specialist` | El corte en rebanadas, los tickets, las ramas, el reparto, **todos los commits del trabajo con ticket** y el push + PR + merge contra `development` | Código, alcance, decisiones de producto, `main` |
 
 **No es dueño de ningún archivo del árbol de trabajo, y justamente por eso puede
 ser dueño del historial** —que hasta ahora era el único artefacto con cuatro
@@ -175,9 +215,10 @@ Sus límites de herramientas, todos deliberados:
   revisarlo: si el tracker pasa a ser markdown local bajo `.scratch/`, se le da
   `Write` acotado ahí.*
 - **Con `Bash`**, porque `git` y `gh` son toda su herramienta. Lo usa para
-  commitear y consultar, **nunca para escribir archivos**: un `cat >` o un
-  `sed -i` rompe el límite de arriba y encima contamina el commit que está por
-  hacer.
+  commitear, pushear la rama de la rebanada, abrir y mergear el PR contra
+  `development`, y consultar — **nunca para escribir archivos**: un `cat >` o
+  un `sed -i` rompe el límite de arriba y encima contamina el commit que está
+  por hacer.
 - **Con `Agent` sobre los tres especialistas**, porque sin eso "estar por
   encima" no significaría nada. Reparte **un ticket por vez**: dos especialistas
   sobre el mismo árbol producen un diff que después no se puede separar en dos
@@ -188,10 +229,19 @@ Sus límites de herramientas, todos deliberados:
 **Puede crear issues en el repositorio real.** Es una excepción explícita a
 "publicar lo decide el usuario", y se sostiene en que un issue es barato y
 reversible y en que **el corte se aprueba antes de publicarse**, así que el
-portón humano existe igual. Todo lo demás lo impide un hook
-(`.claude/hooks/limitar-gh.sh`): nada de `gh pr`, `gh repo`, `gh release`,
-`gh label create` ni `gh api` de escritura, para ningún subagente. `git push`
-sigue bloqueado para todos.
+portón humano existe igual.
+
+**También puede pushear y publicar el PR de una rebanada, y es la segunda
+excepción a esa misma regla.** Se sostiene en el mismo portón humano, aplicado
+dos veces: no pushea sin que el usuario verifique el commit, y no mergea sin
+que el usuario apruebe el PR (sección 9-bis de su propio archivo). El límite
+duro es `development`: puede pushear cualquier rama menos `main`, y `gh pr
+create` sin `--base development` explícito se deniega —el default de `gh` es
+el branch por defecto del repositorio, que sigue siendo `main`—. Todo lo demás
+lo impide un hook (`.claude/hooks/limitar-gh.sh`): nada de `gh repo`,
+`gh release`, `gh label create` ni `gh api` de escritura, para ningún
+subagente, y `git push` contra `main` sigue bloqueado para todos, sin
+excepción (`.claude/hooks/bloquear-git-push.sh`).
 
 **Etiquetas: solo las diez que trae GitHub por defecto.** No hay vocabulario
 propio, y la skill `triage` no está instalada, así que no se aplica
@@ -216,6 +266,82 @@ La implementación la hacen tres especialistas, en `.claude/agents/`:
 
 Claude puede delegarles solo, o se los invoca con `@agent-<nombre>`.
 
+#### Equipo de backend
+
+| Agente | Dueño de | No toca |
+| ------ | -------- | ------- |
+| `narrative-specialist` | La **voz** de la prosa del catálogo y su redacción: el contexto, la semblanza, el resumen y las fuentes de cada ficha de `contenido/` | Los hechos, el descriptor, los campos estructurados, `src/`, la interfaz |
+| `historiador-specialist` | Investigar y contrastar fuentes sobre los hechos de una ficha, y detectar cuándo un tema entra en disputa política vigente | Escribir prosa, decidir qué entidades entran, cualquier archivo del árbol |
+
+**No es par** de los tres especialistas: trabaja dentro del área del
+`backend-specialist`, que es el dueño de `contenido/`, y lo convoca él. Es el
+mismo patrón que el `brand-specialist`, y por el mismo motivo: **es un custodio
+de algo cerrado y versionado** —ahí la identidad Argentum, acá la voz, escrita
+en la skill `voz-narrativa` con sus muestras adentro del repositorio—.
+
+Sus límites de herramientas, todos deliberados:
+
+- **Con `Write` y `Edit`, acotados por regla a `contenido/<tipo>/<slug>.ts` y a
+  sus campos de prosa.** La prosa es su artefacto, y hacerla pasar por el
+  copiado y pegado de otro agente es donde se pierde una tilde, un salto de
+  línea o una raya de inciso sin dejar rastro: una errata de tipos la ve el
+  compilador, una de prosa no la ve nadie. El acotamiento es de conducta, no de
+  sistema, igual que el del arquitecto sobre `docs/`.
+- **Con `Bash`**, y solo para verificar: la prosa vive en un *template literal*
+  de TypeScript (ADR 0009), así que una comilla invertida o un `${` en el texto
+  rompen el build, y quien lo rompe tiene que poder correr `pnpm typecheck`.
+  Nunca para escribir archivos ni para commitear.
+- **Sin `WebFetch` ni `WebSearch`**, y es su límite más importante, sin cambios
+  desde el ADR 0014. Un narrador con acceso a la web deja de ser narrador y pasa
+  a investigador, y el resultado previsible es el peor que este rol puede
+  producir: **prosa excelente alrededor de un hecho falso**, que nadie nota
+  porque suena bien. **Los hechos los entrega el usuario o el
+  `historiador-specialist`**; ninguno de los dos los narra, y la exactitud
+  histórica sigue siendo, en última instancia, responsabilidad del usuario —el
+  visto bueno explícito sobre cada ficha sigue siendo suyo—, igual que los
+  derechos de imagen.
+- **Sin `Agent`**, como el revisor y el de marca: lo convocan, no convoca.
+- **Sin Context7** — nada de lo que hace depende de la versión de una librería.
+
+**El registro lo fija el ADR 0012 y es el alto.** Las muestras del usuario, que
+están versionadas en `.claude/skills/voz-narrativa/muestras.md`, son **el
+destino**: se escribe como ellas, no parecido a ellas. Un solo registro para toda
+la ficha —el único campo que baja es el `resumen`, que es una etiqueta de listado
+y no narración—.
+
+Dos consecuencias que arrastra y conviene tener presentes: **la semblanza
+publicada de `contenido/procer/manuel-belgrano.ts` está en el registro viejo y
+hay que reescribirla**, y **el criterio de aceptación del ticket #30 —«redactado
+para chicos»— quedó falso** y lo corrige el `delivery-specialist` cuando el
+usuario se lo lleve.
+
+**`historiador-specialist` (ADR 0014).** Igual que el narrador, **no es par**
+de los tres especialistas: trabaja dentro del área del `backend-specialist`, y
+lo convoca él. Se activa en tres casos, y solo en esos tres: el usuario lo pide
+explícitamente, el tema cae en la lista acotada de disputas políticas de
+`voz-narrativa`, o el narrador señala —vía `backend-specialist`— que le falta
+un dato. Entrega un **dossier** —hechos, fuentes, y posturas en disputa cuando
+corresponde— y **nunca narra ni decide qué entidades entran**.
+
+Sus límites de herramientas, también deliberados:
+
+- **Con `WebFetch` y `WebSearch`**, al revés que el narrador: es exactamente
+  la separación que motiva su existencia. Investigar y narrar en el mismo turno
+  del mismo agente reintroduciría el riesgo de prosa persuasiva sobre un hecho
+  no verificado; separarlos deja el dossier como punto de revisión intermedio.
+- **Sin `Write` ni `Edit`**, como el `ui-reviewer` y el `typescript-specialist`:
+  su artefacto es el dossier de su informe, no un archivo del árbol.
+- **Sin `Bash`**: no compila ni verifica código, así que no lo necesita.
+- **Sin `Agent`**: lo convocan, no convoca.
+
+**La neutralidad ante disputas políticas** es una regla de redacción, no de
+investigación, y por eso vive en `voz-narrativa` (sección 7) y no en la skill
+propia del historiador, `investigacion-historica`. El historiador detecta la
+disputa y documenta las posturas con sus fuentes; el narrador escribe el
+contrapunto sin tomar partido. El hecho duro se narra igual que siempre —la
+regla no suaviza nada—: se puede, por ejemplo, nombrar a Montoneros como lo que
+fue, una organización guerrillera, porque es un hecho, no una interpretación.
+
 #### Equipo de frontend
 
 El `frontend-specialist` planificó y creó su propio equipo. **No son pares** de
@@ -238,7 +364,8 @@ mandándole un mensaje a `main` con `SendMessage` sin cortar el trabajo. Termina
 ticket.
 
 **Qué no pueden:** **commitear** —eso es del nivel 2—, `git push` —bloqueado por
-un hook para **todo** subagente, ver abajo—, escribir en el remoto con `gh`,
+un hook para todo subagente que no sea el `delivery-specialist`, ver abajo—,
+escribir en el remoto con `gh`,
 cambiar una decisión ya tomada, instalar dependencias o contradecir un ADR. Eso
 se propone y se espera. **Ninguno de ellos declara `AskUserQuestion`**: si algo
 los bloquea de verdad, terminan el turno con las preguntas escritas. El único
@@ -246,9 +373,12 @@ que la declara es el arquitecto, y es para cuando corre como sesión principal
 (`claude --agent super-architect`); delegado como subagente pregunta igual que
 los demás, terminando el turno.
 
-Salvedad sobre "qué pueden hacer solos": no vale para todos. El `ui-reviewer` y
-el `typescript-specialist` no escriben archivos. Y **ninguno commitea**: desde
-que existe el nivel 2, el historial tiene un solo dueño.
+Salvedad sobre "qué pueden hacer solos": no vale para todos. El `ui-reviewer`,
+el `typescript-specialist` y el `historiador-specialist` no escriben archivos.
+El `brand-specialist`, el `ui-reviewer`, el `narrative-specialist` y el
+`historiador-specialist` **no tienen `Agent`**: los convocan, no convocan. Y
+**ninguno commitea**: desde que existe el nivel 2, el historial tiene un solo
+dueño.
 
 #### Transversal
 
@@ -295,8 +425,19 @@ invisible desde cada lado por separado.
 El **contenido curado** de `contenido/` (ADR 0009) es del `backend-specialist`,
 aunque viva fuera de `src/`: el único que abre esos archivos es el script de
 importación, que valida cada ficha contra el **descriptor** de su tipo, y ambas
-cosas son suyas. Lo que **no** es suyo es decidir qué fichas entran ni redactar
-su texto: eso es trabajo editorial del usuario.
+cosas son suyas. Lo que **no** es suyo es el contenido en sí, y ahí hay tres
+dueños distintos, que es la razón por la que conviene escribirlo:
+
+- **Qué** fichas entran, y **los hechos** —fechas, cifras, anécdotas, citas— son
+  del **usuario**. También los derechos de imagen. Nada de eso lo decide un
+  agente.
+- **Cómo se redacta** la prosa —contexto, semblanza, resumen— es del
+  **`narrative-specialist`**, con la skill `voz-narrativa` como regla.
+- **Que una ficha inválida no entre** es del `backend-specialist`, vía el
+  descriptor y la importación.
+
+El **visto bueno explícito del usuario sobre el texto de cada ficha sigue siendo
+condición de cierre**: que ahora exista un narrador no lo cambia.
 
 #### Agentes del plugin de Vercel
 
@@ -444,6 +585,35 @@ el viejo en silencio.
 - `revision-dos-ejes` es la revisión de código en dos ejes (convenciones y
   especificación). Se llama así, y no `code-review`, para no pisar el comando
   integrado de Claude Code.
+- `voz-narrativa` es **nuestra** y es la fuente de la voz **épica** del catálogo:
+  registro, ritmo, léxico, metáfora, estructura y prohibiciones. Su dueño es el
+  `narrative-specialist`, pero **cualquier agente que escriba o revise prosa del
+  catálogo la cita**. Sus muestras están versionadas en
+  `.claude/skills/voz-narrativa/muestras.md`, con el mismo criterio que
+  `revision-de-ui`: no se baja nada de internet. Sus números —media de oración,
+  techo y cadencia— están **calibrados contando esas cuatro muestras**, así que
+  se cuentan, no se estiman. La ficha de Belgrano figura ahí como
+  **contraejemplo**: es el registro llano que el ADR 0012 dejó atrás. Desde el
+  ADR 0014 incluye también la regla de **neutralidad ante disputas políticas**
+  (sección 7): se narra el hecho duro sin eufemismo, y se agrega un contrapunto
+  breve para las interpretaciones en disputa de una lista acotada, sin tomar
+  partido.
+- `investigacion-historica` es **nuestra** y es la metodología del
+  `historiador-specialist` (ADR 0014): cómo evaluar una fuente, cuántas hacen
+  falta según el caso, y el criterio para reconocer cuándo un tema entra en la
+  lista de disputas políticas de `voz-narrativa`. Es investigación, no
+  redacción: no decide cómo se narra una disputa, solo la documenta.
+- `identidad-argentum` es **nuestra** y consolida los tokens y reglas
+  vigentes de la marca (v1.0 + v2, ADR 0008 + ADR 0015) en un solo lugar
+  citable: paleta, tipografía, contraste ya medido y reglas de uso. Su dueño
+  es el `brand-specialist`, pero **cualquier agente que escriba o revise
+  interfaz la cita** — mismo patrón que `voz-narrativa` con la prosa. Es un
+  **resumen citable, no una fuente**: donde no coincida con
+  `docs/marca/sistema-de-diseno.md`, `sistema-de-diseno-v2.md` o los ADR
+  0008/0015, ganan ellos y se corrige la skill. No reemplaza al
+  `brand-specialist` para derivar un token nuevo, resolver un componente que
+  ningún documento cubre, o aprobar un contraste no medido — eso lo sigue
+  decidiendo él.
 
 ## Setup al clonar
 
@@ -489,24 +659,28 @@ el viejo en silencio.
 - `.mcp.json` — servidor MCP Context7, sin secretos: la key se expande
   desde la variable de entorno `CONTEXT7_API_KEY` de cada desarrollador.
 - `.claude/skills/` — skills propias del proyecto (`convenciones-git`,
-  `revision-de-ui`) y enlaces a las de terceros.
+  `revision-de-ui`, `voz-narrativa`, `investigacion-historica`,
+  `identidad-argentum`) y enlaces a las de terceros.
 - `.agents/skills/` y `skills-lock.json` — skills de terceros, versionadas para
   que el repo funcione al clonarlo sin instalar nada.
 - `.claude/hooks/bloquear-git-push.sh` — impide que **cualquier subagente**
-  publique en el remoto. Es una lista negra por defecto, así que un agente nuevo
-  queda cubierto sin tocar el hook. **Solo pasa la sesión principal**, que es
-  donde está el usuario: el arquitecto tampoco publica. Se declara **sin el
-  campo `if`** en `settings.json`, y eso es parte del bloqueo: con
-  `if: "Bash(git *)"` el hook no corría sobre `rtk git push` —la forma que este
-  mismo archivo manda usar— porque el comando no empieza con `git`.
+  publique en el remoto, con una sola excepción: el `delivery-specialist` puede
+  pushear, pero nunca contra `main`, y nunca con `--force`. Es una lista negra
+  por defecto, así que un agente nuevo queda cubierto sin tocar el hook. **Solo
+  pasa sin restricción la sesión principal**, que es donde está el usuario: el
+  arquitecto tampoco publica. Se declara **sin el campo `if`** en
+  `settings.json`, y eso es parte del bloqueo: con `if: "Bash(git *)"` el hook
+  no corría sobre `rtk git push` —la forma que este mismo archivo manda usar—
+  porque el comando no empieza con `git`.
 - `.claude/hooks/limitar-gh.sh` — el mismo criterio para `gh`, porque publicar un
   issue es tan "hacia afuera" como un push. Acá la lista es **blanca por
   comando**, al revés que en el otro: lectura para todos, escritura de issues
-  solo para el `delivery-specialist`, y todo lo demás denegado —`gh pr`,
-  `gh repo`, `gh release`, `gh label create`, `gh api` de escritura—. Un
+  solo para el `delivery-specialist`, `pr create`/`pr merge` también solo para
+  él y solo con `--base development` explícito, y todo lo demás denegado
+  —`gh repo`, `gh release`, `gh label create`, `gh api` de escritura—. Un
   subcomando nuevo de `gh` **nace denegado**, que es lo correcto para algo que
   toca el remoto. El arquitecto **no** está exento: lee el tracker como
-  cualquiera y no escribe en él.
+  cualquiera y no escribe en él, y no pushea ni abre PRs.
 - `.claude/hooks/limitar-vercel.sh` — el tercero de la familia, y el que hace
   que el plugin de Vercel salga barato. Lista **blanca** como el de `gh`:
   lectura (`ls`, `inspect`, `logs`, `whoami`, `env ls`) para todo subagente,
@@ -546,8 +720,9 @@ git add src/db/esquema.ts && git commit -m "msg"
 rtk git add src/db/esquema.ts && rtk git commit -m "msg"
 ```
 
-**`rtk` no es una autorización.** `rtk git push` está denegado para todo
-subagente exactamente igual que `git push`: los tres hooks desenvuelven el
+**`rtk` no es una autorización.** `rtk git push` sigue las mismas reglas que
+`git push`: denegado para todo subagente salvo el `delivery-specialist` —y para
+él, denegado igual si el destino es `main`—. Los tres hooks desenvuelven el
 prefijo antes de clasificar el comando.
 
 ## Los comandos de este proyecto

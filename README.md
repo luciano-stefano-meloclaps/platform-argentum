@@ -111,7 +111,7 @@ git clone https://github.com/luciano-stefano-meloclaps/platform-argentum.git
 cd platform-argentum
 pnpm install
 
-cp .env.example .env              # completar DATABASE_URL y DATABASE_URL_DIRECT
+cp .env.example .env              # completar DATABASE_URL y DATABASE_URL_UNPOOLED
 docker compose up -d              # PostgreSQL 18 local
 
 pnpm db:migrate                   # aplica las migraciones
