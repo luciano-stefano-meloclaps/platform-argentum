@@ -86,11 +86,16 @@ lleguen las cuentas: el MVP no tiene cuentas.
   y los `import type` **no** la llevan (ADR 0011). Si `pnpm lint` marca
   `import/extensions`, la regla es deliberada: se corrige el import, nunca la
   regla.
-- **Identidad visual decidida:** la marca **Argentum** —celeste, dorado y
-  neutrales cálidos, Cormorant Garamond y Montserrat— está cerrada y
-  versionada en `docs/marca/sistema-de-diseno.md`, adoptada con correcciones
-  de contraste por el ADR 0008. **No se propone paleta ni tipografía: ya están
-  elegidas.**
+- **Identidad visual decidida, en dos documentos que se leen juntos.** La
+  marca **Argentum** está cerrada y versionada en `docs/marca/sistema-de-diseno.md`
+  (v1.0, ADR 0008) y `docs/marca/sistema-de-diseno-v2.md` (giro museístico,
+  ADR 0015, que **supersede parcialmente** al 0008). v2 reemplaza el
+  concepto/encuadre (de "no gubernamental" a "monumento estatal"), el
+  logotipo, la paleta de celeste/dorado/error y la tipografía (Lora se suma
+  como cuerpo de lectura de ficha; Montserrat sigue en interfaz). **No
+  cambian**: el sistema de ligas, la paleta de 6 categorías, el verde laurel,
+  los íconos ni la carga de fuentes — siguen en v1/ADR 0008. **No se propone
+  paleta ni tipografía: ya están elegidas.**
 
 **Antes de contradecir cualquiera de estos puntos, leé el ADR correspondiente.**
 Si una decisión cambia, se escribe un ADR nuevo que supersede al anterior; no se

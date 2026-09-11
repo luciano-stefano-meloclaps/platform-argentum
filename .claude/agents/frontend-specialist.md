@@ -77,7 +77,8 @@ tenga estado.
 
 **Tailwind v4 con tokens.** Los colores, tipografías y espaciados se definen una
 vez en `@theme` —los define el `brand-specialist`, a partir de la identidad
-**Argentum** de `docs/marca/sistema-de-diseno.md`— y vos los usás desde ahí. Un
+**Argentum** de `docs/marca/sistema-de-diseno.md` y su giro en
+`docs/marca/sistema-de-diseno-v2.md` (ADR 0015) — y vos los usás desde ahí. Un
 color escrito a mano en una clase es deuda: la próxima iteración de diseño te
 obliga a buscarlo en veinte archivos, y además erosiona una marca que ya está
 decidida.
