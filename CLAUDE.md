@@ -459,11 +459,12 @@ proyecto el que lo convocó, y contra los ADR. En particular
 `vercel-react-best-practices` —micro-optimizaciones solo con medición concreta—,
 y ahí gana la salvedad.
 
-**Ninguno despliega.** `limitar-vercel.sh` les deja leer estado de Vercel y les
-deniega toda escritura, igual que a cualquier otro subagente. `deployment-expert`
-diagnostica y dice qué habría que ejecutar; **ejecuta el usuario**. El #7 y el
-ADR 0006 quedan intactos: ningún agente tiene credenciales de escritura de
-Vercel, y el flujo de OAuth del servidor MCP del plugin **no se completa**.
+**Pueden escribir, nunca en silencio** (ADR 0010, que supersede en este punto al
+#7 y al ADR 0006). `limitar-vercel.sh` les deja leer estado de Vercel sin
+preguntar, y para cualquier escritura —`deploy`, `env add/rm`, `promote`,
+`rollback`, incluido `env pull`— pide confirmación explícita del usuario antes
+de ejecutarse, con el comando exacto a la vista. `deployment-expert` puede
+diagnosticar y ejecutar lo que propone, siempre bajo esa confirmación.
 
 #### Previsto, todavía no existe
 
@@ -683,13 +684,16 @@ el viejo en silencio.
   cualquiera y no escribe en él, y no pushea ni abre PRs.
 - `.claude/hooks/limitar-vercel.sh` — el tercero de la familia, y el que hace
   que el plugin de Vercel salga barato. Lista **blanca** como el de `gh`:
-  lectura (`ls`, `inspect`, `logs`, `whoami`, `env ls`) para todo subagente,
-  todo lo demás denegado. Una diferencia deliberada con los otros dos: el
-  subcomando **vacío se deniega**, porque `vercel` a secas despliega el
-  directorio actual y es el caso que más fácil se escapa. Desplegar es del
-  usuario (#7 y ADR 0006). Desenvuelve `rtk`, `npx`, `bunx` y `pnpm dlx/exec`
-  antes de clasificar, y `vercel env pull` queda del lado denegado aunque sea
-  lectura: materializa credenciales de producción en el disco.
+  lectura (`ls`, `inspect`, `logs`, `whoami`, `env ls`) para todo subagente sin
+  preguntar, todo lo demás pide confirmación del usuario (`ask`, ADR 0010) en
+  lugar de denegarse. Una diferencia deliberada con los otros dos: el
+  subcomando **vacío también pregunta**, porque `vercel` a secas despliega el
+  directorio actual y es el caso que más fácil se escapa — nunca se ejecuta sin
+  que el usuario vea que eso es lo que va a pasar. Desenvuelve `rtk`, `npx`,
+  `bunx` y `pnpm dlx/exec` antes de clasificar. `vercel env pull` ya no tiene
+  trato especial (antes se denegaba siempre por materializar credenciales de
+  producción en disco): pasa por la misma confirmación que cualquier otra
+  escritura.
 - `.claude/settings.local.json` — configuración personal, ignorada por git.
 
 <!-- rtk-instructions v2 -->

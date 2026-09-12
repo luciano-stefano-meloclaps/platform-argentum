@@ -3,42 +3,50 @@
 #
 # Tercer hook de la misma familia. bloquear-git-push.sh impide publicar
 # código; limitar-gh.sh impide publicar contra el repositorio remoto; este
-# impide publicar contra la infraestructura. El criterio es el del ADR 0006 y
-# el del ticket #7: desplegar no es una acción de agente, y ningún agente
-# tiene credenciales de Vercel de escritura.
+# media lo que se publica contra la infraestructura. El criterio es el del
+# ADR 0010, que supersede en este punto al ADR 0006 y al ticket #7: un agente
+# **puede** escribir contra Vercel, pero nunca en silencio — cada escritura
+# pasa por una confirmación explícita del usuario antes de ejecutarse.
 #
 # Existe porque el plugin `vercel@claude-plugins-official` es todo-o-nada: no
 # hay forma documentada de habilitar sus agentes (`deployment-expert`,
 # `performance-optimizer`, `ai-architect`) sin habilitar también `/deploy`,
 # `/bootstrap` y `/env`. Este hook es lo que hace que esa decisión sea barata:
-# los agentes asesoran, el usuario ejecuta.
+# los agentes proponen y ejecutan, pero el usuario ve el comando exacto y lo
+# aprueba o lo rechaza en el momento.
 #
 # La lista es BLANCA por comando, como en limitar-gh.sh: lo que no está
-# explícitamente permitido se deniega, así que un subcomando nuevo de `vercel`
-# nace denegado.
+# explícitamente permitido como lectura pasa a preguntar, así que un
+# subcomando nuevo de `vercel` nace preguntando, nunca ejecutando directo.
 #
 #   - lectura (ls, inspect, logs, whoami, y los `ls` de cada recurso):
-#     permitida para todo subagente;
-#   - todo lo demás: denegado.
+#     permitida para todo subagente, sin preguntar;
+#   - todo lo demás (incluida `env pull`, ADR 0010): pide confirmación al
+#     usuario antes de ejecutarse.
 #
 # Dos diferencias deliberadas con limitar-gh.sh:
 #
-#   1. El subcomando VACÍO se deniega. `vercel` a secas no es ayuda: despliega
-#      el directorio actual. Es exactamente lo que este hook existe para
-#      impedir, y es el caso que más fácil se escapa.
+#   1. El subcomando VACÍO pide confirmación. `vercel` a secas no es ayuda:
+#      despliega el directorio actual. Es exactamente el caso que más fácil se
+#      escapa, así que nunca se ejecuta sin que el usuario vea que eso es lo
+#      que va a pasar.
 #   2. El super-architect NO está exento. En limitar-gh.sh lo está porque
-#      coordina el repositorio; acá no hay nada que coordinar, porque el
-#      despliegue es del usuario. Solo pasa la sesión principal, que es donde
-#      está el usuario.
+#      coordina el repositorio; acá no hay nada que coordinar, porque
+#      desplegar sigue siendo una decisión del usuario, solo que ahora puede
+#      delegar la ejecución con su aprobación explícita. Solo pasa la sesión
+#      principal, que es donde está el usuario y donde no hace falta
+#      preguntarle a través de un hook.
 #
-# `vercel env pull` queda del lado denegado aunque sea "lectura": materializa
-# credenciales de producción en un archivo del disco. Leer qué variables
-# existen (`env ls`) no necesita bajar sus valores.
+# `vercel env pull` ya no tiene un trato especial (ADR 0010, alternativa D):
+# antes se denegaba siempre porque materializa credenciales de producción en
+# disco; ahora pasa por la misma confirmación que cualquier otra escritura, sin
+# la excepción que hubiera exigido recordarla aparte.
 #
 # Se desenvuelven los prefijos que no cambian el comando: `rtk` (filtro de
 # salida) y los lanzadores `npx`, `bunx`, `pnpm dlx`, `pnpm exec`. Sin eso el
 # fragmento no arrancaría con `vercel` y caería en la rama de "envuelto en
-# otro comando", que deniega incluso una lectura permitida.
+# otro comando", que también pide confirmación aunque fuera una lectura
+# permitida.
 
 ENTRADA=$(cat)
 
@@ -48,12 +56,12 @@ COMANDO=$(printf '%s' "$ENTRADA" | jq -r '.tool_input.command // empty')
 # Solo la sesión principal, donde está el usuario.
 [ -z "$AGENTE" ] && exit 0
 
-denegar() {
+preguntar() {
   jq -n --arg a "$AGENTE" --arg c "$1" '{
     hookSpecificOutput: {
       hookEventName: "PreToolUse",
-      permissionDecision: "deny",
-      permissionDecisionReason: ("El agente \($a) no puede correr `\($c)`: escribe en la infraestructura real. Desplegar, promover, revertir y tocar variables de entorno lo hace el usuario (ticket #7 y ADR 0006). Terminá tu turno indicando qué habría que ejecutar y por qué.")
+      permissionDecision: "ask",
+      permissionDecisionReason: ("El agente \($a) quiere correr `\($c)`: escribe en la infraestructura real (deploy, variables de entorno, promoción, rollback). Por ADR 0010, esto requiere tu confirmación explícita antes de ejecutarse.")
     }
   }'
   exit 0
@@ -73,7 +81,7 @@ while IFS= read -r FRAG; do
       # `git commit -m 'apaga el plugin de vercel'` se denegaría. Mismo criterio
       # y mismo patrón que limitar-gh.sh.
       if printf '%s' "$FRAG" | grep -Eq '(\$\(|`|[[:space:]]-c[[:space:]]+.?|xargs[[:space:]]+|eval[[:space:]]+|env[[:space:]]+)[[:space:]"'"'"']*vercel([[:space:]]|$)'; then
-        denegar "vercel envuelto en otro comando"
+        preguntar "vercel envuelto en otro comando"
       fi
       continue
       ;;
@@ -115,9 +123,9 @@ while IFS= read -r FRAG; do
   esac
 
   # `vercel` a secas despliega. No es ayuda.
-  [ -z "$SUB" ] && denegar "vercel (despliega el directorio actual)"
+  [ -z "$SUB" ] && preguntar "vercel (despliega el directorio actual)"
 
-  denegar "vercel $SUB $VERBO"
+  preguntar "vercel $SUB $VERBO"
 done <<EOF
 $FRAGMENTOS
 EOF
