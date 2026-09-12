@@ -338,6 +338,51 @@
   --spacing-2xl: 32px;
 
   /*
+   * --- Corrección de colisión con la escala de contenedor (ticket #73) ---
+   * Tailwind v4 resuelve `max-w-<clave>` probando, en este orden exacto,
+   * `--max-width-<clave>` → `--spacing-<clave>` → `--container-<clave>`
+   * (tabla de prioridades verificada en
+   * `node_modules/tailwindcss/dist/lib.mjs`, build 4.3.3: la entrada
+   * `["max-w", ["--max-width", "--spacing", "--container"], "max-width"]`).
+   * Se queda con la primera que exista y no sigue buscando. Como arriba
+   * definimos `--spacing-xs/sm/md/lg/xl/2xl` para `px-*`/`py-*`/`gap-*`
+   * —y tienen que seguir existiendo, esos tokens son de la marca (§5)—,
+   * `max-w-xs`, `max-w-sm`, `max-w-md`, `max-w-lg`, `max-w-xl` y `max-w-2xl`
+   * quedaban atrapados en el segundo escalón, resolviendo contra el
+   * espaciado (ej. `max-w-2xl` → 32px) en vez de contra el ancho de
+   * contenedor que evidentemente se pretende (42rem). Efecto real: texto
+   * partido palabra por palabra en `src/app/hero.tsx`,
+   * `src/app/catalogo/page.tsx` y `src/app/catalogo/[slug]/not-found.tsx`.
+   *
+   * La corrección: declarar `--max-width-*` explícito para cada clave que
+   * colisiona, apuntando con `var()` al `--container-*` que Tailwind ya
+   * trae por defecto (no hace falta declararlo: lo aporta
+   * `@import "tailwindcss"` de la línea 7). Esto intercepta la resolución
+   * en el primer escalón de la tabla, antes de que llegue a `--spacing`, sin
+   * tocar ni un valor ni una clase de espaciado existente. El CSS
+   * compilado queda `.max-w-2xl { max-width: var(--max-width-2xl) }`, y esa
+   * variable vale a su vez `var(--container-2xl)`: es la única forma
+   * estructural de que `max-w-2xl` "salte" `--spacing` sin renombrar la
+   * escala de espaciado (que sigue rigiendo para `px-lg`, `py-2xl`,
+   * `gap-md`, etc., sin cambios). El resultado visual y funcional es
+   * idéntico a usar `--container-2xl` directo: solo cambia el nombre de la
+   * variable intermedia.
+   *
+   * No cubre `w-*`/`min-w-*` (misma tabla de prioridades, pero sin ningún
+   * `w-lg`/`min-w-lg` hoy en el código que la necesite) ni las utilidades
+   * lógicas `inline-*`/`max-inline-*`/`min-inline-*` (misma ambigüedad
+   * --spacing/--container, pero sin un namespace propio como --max-width
+   * que permita interceptarlas del mismo modo, y sin uso hoy en el
+   * código). Quedan documentados como riesgo residual, no como bug abierto.
+   */
+  --max-width-xs:  var(--container-xs);
+  --max-width-sm:  var(--container-sm);
+  --max-width-md:  var(--container-md);
+  --max-width-lg:  var(--container-lg);
+  --max-width-xl:  var(--container-xl);
+  --max-width-2xl: var(--container-2xl);
+
+  /*
    * ==========================================================================
    * Radios (§5)
    * ==========================================================================
@@ -354,7 +399,7 @@
    */
   --radius-sm:   8px;  /* chips, badges, botones chicos */
   --radius-md:   12px; /* tarjetas de categoría */
-  --radius-lg:   14px; /* tarjetas de estadística */
+  --radius-lg:   14px; /* bloques de estadística */
   --radius-xl:   16px; /* tarjeta principal de contenido */
   --radius-full: 9999px; /* pills y avatares — ver nota arriba */
 
