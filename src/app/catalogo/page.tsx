@@ -25,7 +25,7 @@ export default async function PaginaCatalogo() {
   const proceres = await listarPorTipo("procer");
 
   return (
-    <main className="mx-auto max-w-5xl px-lg py-2xl">
+    <main id="contenido" className="mx-auto max-w-5xl px-lg py-2xl">
       <h1 className="font-titulo text-h1 text-texto-titulo">Próceres</h1>
       <p className="mt-sm max-w-2xl font-cuerpo text-body-lg text-texto-secundario">
         Las fichas de próceres cargadas en el catálogo, una por una.

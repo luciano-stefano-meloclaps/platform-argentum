@@ -53,7 +53,11 @@ export default async function PaginaFicha({ params }: PageProps<"/catalogo/[slug
 
   if (entidad === undefined) notFound();
 
-  return <main className="mx-auto max-w-3xl px-lg py-2xl">{renderizarFicha(entidad)}</main>;
+  return (
+    <main id="contenido" className="mx-auto max-w-3xl px-lg py-2xl">
+      {renderizarFicha(entidad)}
+    </main>
+  );
 }
 
 /**

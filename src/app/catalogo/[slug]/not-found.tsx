@@ -22,7 +22,10 @@ export const metadata: Metadata = {
 
 export default function NoEncontrado() {
   return (
-    <main className="mx-auto flex min-h-[60vh] max-w-3xl flex-col items-center justify-center px-lg py-2xl text-center">
+    <main
+      id="contenido"
+      className="mx-auto flex min-h-[60vh] max-w-3xl flex-col items-center justify-center px-lg py-2xl text-center"
+    >
       <h1 className="text-balance font-titulo text-h1 text-texto-titulo">Esta ficha no existe</h1>
       <p className="mt-sm max-w-md font-cuerpo text-body-lg text-texto-secundario">
         Puede que el nombre esté mal escrito, o que la ficha todavía no esté cargada en el catálogo.
