@@ -99,16 +99,29 @@ refleja —"se estableció", "se agregó", "se corrigió", "quedó resuelto"—,
 el commit documenta el estado del árbol, no la autoría de una sesión.
 
 **Referencia al ticket:** si el commit corresponde a un ticket, cerrá el
-mensaje con una última línea que lo referencie.
+mensaje con una última línea que lo referencie, usando la palabra clave de
+cierre de GitHub que corresponda al tipo del commit —`Closes #12` en general,
+`Fixes #12` cuando el tipo es `fix`—.
 
 ```
-Ticket: #12
+Closes #12
 ```
 
-Es una **referencia, no un cierre**. No uses `Closes #12` ni `Fixes #12`: esas
-palabras hacen que GitHub cierre el issue solo al publicar, y en este proyecto
-el cierre es explícito y tiene una condición —el commit tiene que estar en el
-remoto—.
+```
+Fixes #31
+```
+
+Estas palabras clave **no cierran el issue al publicar**: GitHub solo las
+ejecuta cuando el commit llega a la rama **default** del repositorio, que
+sigue siendo `main`, y este proyecto empuja a `development`. El cierre real
+sigue siendo un paso explícito del `delivery-specialist`, con `gh issue
+close`, después de verificar el ticket contra el árbol de trabajo —esta línea
+es la referencia que documenta cuál ticket cierra ese commit, y de paso deja
+lista la palabra clave para cuando `development` se mergee a `main`.
+
+Si el commit **no** cierra el ticket todavía —porque la rebanada sigue en otro
+commit pendiente—, usá `Ticket: #12` en su lugar: es la misma referencia sin
+la palabra clave de cierre.
 
 ## Ejemplo
 
@@ -129,5 +142,5 @@ Razones:
 - Validar en la importación evita que entre contenido que no cumple el
   esquema del tipo.
 
-Ticket: #12
+Closes #12
 ```
