@@ -4,21 +4,36 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 /**
- * Los ítems del nav plano del header. Solo rutas reales: hoy la aplicación
- * tiene "/" (la home) y "/catalogo" (ticket #33) — nada de Tarjetas, Quiz ni
- * Progreso, que todavía no existen como pantalla. Cuando aparezcan, se
- * agregan acá; no se inventan links a rutas que hoy dan 404.
+ * Los 12 ítems de la Nav/TabsBar de tipografía pura (ticket #82), en el
+ * orden exacto que pide el ticket. Hoy solo hay pantalla real para
+ * "Explorar" (`/`, `src/app/page.tsx`) e "Índice" (`/catalogo`,
+ * `src/app/catalogo/page.tsx`) — el resto ("Ficha", "Tarjetas", "Quiz", "Mi
+ * progreso", "Propuestas", "Proponer", "Resultado", "Perfil", "Usuarios",
+ * "Ingresar") no tiene ruta ni pantalla todavía: sin `href`, se renderizan
+ * como `<button type="button">` inertes, nunca como `<a>`/`<Link>` que
+ * resolvería en 404 — mismo criterio que ya documentaba el `NavPrincipal`
+ * viejo.
  */
 const ITEMS = [
-  { href: "/", etiqueta: "Inicio" },
-  { href: "/catalogo", etiqueta: "Catálogo" },
+  { etiqueta: "Explorar", href: "/" },
+  { etiqueta: "Ficha" },
+  { etiqueta: "Tarjetas" },
+  { etiqueta: "Quiz" },
+  { etiqueta: "Mi progreso" },
+  { etiqueta: "Propuestas" },
+  { etiqueta: "Índice", href: "/catalogo" },
+  { etiqueta: "Proponer" },
+  { etiqueta: "Resultado" },
+  { etiqueta: "Perfil" },
+  { etiqueta: "Usuarios" },
+  { etiqueta: "Ingresar" },
 ] as const;
 
 /**
  * Devuelve si `href` es la sección activa para `pathname`. "/" solo se
  * considera activo con match exacto (si no, marcaría cualquier ruta como
- * "Inicio" activo); el resto, exacto o como prefijo de una ruta hija —
- * `/catalogo/manuel-belgrano` también marca "Catálogo" como activo.
+ * "Explorar" activo); el resto, exacto o como prefijo de una ruta hija —
+ * `/catalogo/manuel-belgrano` también marca "Índice" como activo.
  */
 function esActivo(pathname: string, href: string): boolean {
   if (href === "/") return pathname === "/";
@@ -26,31 +41,63 @@ function esActivo(pathname: string, href: string): boolean {
 }
 
 /**
- * Nav plano del header (expansión de alcance pedida por el usuario, sin
- * ticket todavía — ver `header.tsx`). Único fragmento de cliente de todo el
- * bloque superior: `usePathname` no existe en un Server Component, y es lo
- * único que necesita para resaltar el ítem activo con `aria-current`.
+ * Clases compartidas por todo ítem, sea link real o botón inerte —
+ * tipografía pura del ticket #82, sin pill ni fondo detrás del activo, sin
+ * ícono, sin badge, sin sombra. `font-cuerpo` es Lora (`--font-body` del
+ * ticket): el nav es UI, nunca `font-titulo` (Cormorant Garamond, reservada
+ * a titulación). `text-[10px]` y `tracking-[0.14em]` no tienen token en la
+ * escala existente — mismo criterio documentado en `header.tsx` para los
+ * `text-[56px]`/`tracking-[0.34em]` del logotipo: valor puntual de este
+ * componente, no una escala nueva.
  *
- * Objetivo táctil: `text-chip` es 11px con `line-height:1`, así que hace
- * falta más que `py-xs` para llegar al piso de 24×24px CSS (WCAG 2.2 SC
- * 2.5.8) — con `py-sm` (8px arriba y abajo) la caja del link da ~27px de
- * alto. `px-sm` (8px) de cada lado, y `gap-lg` entre ítems — ningún par de
- * links queda pegado el uno al otro para un dedo chico. Foco visible con el
- * mismo patrón de
- * outline celeste que ya usan los demás links de la aplicación
- * (`salas-del-catalogo.tsx`, `catalogo/page.tsx`).
+ * `border-b border-b-transparent`: el preflight de Tailwind ya deja
+ * `border-width: 0` en los cuatro lados, así que alcanza con fijar el ancho
+ * del lado inferior a 1px transparente — reserva el espacio de la línea
+ * activa para que no salte el layout al cambiar de ítem, sin pisar ningún
+ * otro lado.
  *
- * Separación respecto del separador ornamental que lo precede: `mt-xl`
- * (22px), un escalón más que el `mt-lg` (16px) anterior — mismo pedido de
- * "más aire" que documenta `header.tsx` para los tres tramos verticales del
- * bloque del logotipo.
+ * `transition-[color]` (no `transition-colors`, que además anima
+ * `border-color`, `background-color`, etc.): el ticket pide una única
+ * transición, `color 120ms ease`.
+ */
+const clasesBase =
+  "cursor-pointer border-b border-b-transparent bg-transparent px-md py-sm font-cuerpo text-[10px] uppercase leading-none tracking-[0.14em] whitespace-nowrap text-texto-cuerpo transition-[color] duration-[120ms] ease-[ease] hover:text-celeste-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-celeste-text";
+
+/**
+ * Vía `aria-current="page"` únicamente — nunca una clase `.active`
+ * desconectada del estado semántico. El espacio entre texto y línea lo da
+ * el `py-sm` (8px) de `clasesBase`; acá no se agrega margin extra. El
+ * `font-weight` no cambia: la diferencia activo/inactivo es solo color +
+ * línea.
+ */
+const clasesActivo = "border-b-celeste-text text-celeste-text";
+
+/**
+ * Nav/TabsBar de tipografía pura (ticket #82), reemplazo del `NavPrincipal`
+ * con subrayado grueso y fondo `rounded-sm`. Nav simple, no widget ARIA
+ * tabs: `aria-current="page"`, nunca `aria-selected` ni `role="tablist"`.
+ * Único fragmento de cliente del bloque superior del header: `usePathname`
+ * no existe en un Server Component, y es lo único que este componente
+ * necesita para resaltar el ítem activo.
+ *
+ * Contenedor: ancho completo del header (sin `max-width` propio, se centra
+ * por `justify-content`), `flex-wrap` deja 2-3 líneas en mobile —nunca
+ * hamburguesa ni scroll horizontal— cada una centrada.
  */
 export function NavPrincipal() {
   const pathname = usePathname();
 
   return (
-    <nav aria-label="Principal" className="mt-xl flex flex-wrap items-center justify-center gap-x-lg gap-y-xs">
+    <nav aria-label="Principal" className="flex flex-wrap items-center justify-center gap-x-xs gap-y-0 pt-[6px]">
       {ITEMS.map((item) => {
+        if (!("href" in item)) {
+          return (
+            <button key={item.etiqueta} type="button" className={clasesBase}>
+              {item.etiqueta}
+            </button>
+          );
+        }
+
         const activo = esActivo(pathname, item.href);
 
         return (
@@ -58,11 +105,7 @@ export function NavPrincipal() {
             key={item.href}
             href={item.href}
             aria-current={activo ? "page" : undefined}
-            className={`rounded-sm px-sm py-sm font-cuerpo text-chip uppercase focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-celeste-700 ${
-              activo
-                ? "text-celeste-text underline decoration-celeste-400 decoration-2 underline-offset-4"
-                : "text-texto-secundario hover:text-celeste-text"
-            }`}
+            className={activo ? `${clasesBase} ${clasesActivo}` : clasesBase}
           >
             {item.etiqueta}
           </Link>
