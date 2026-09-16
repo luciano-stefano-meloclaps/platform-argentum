@@ -106,7 +106,116 @@ Cada gesto, cada discurso, cada marcha forzada estaba al servicio de una ambici�
 singular: alcanzar la primacía absoluta y grabar su nombre en la eternidad.
 [2, 3, 4]
 
-### Qué se copia de estas dos muestras
+### Muestra 3 — José de San Martín (Cruce de los Andes)
+
+Solo **contexto**; el usuario no entregó semblanza para esta muestra.
+
+**Contexto Político-Social-Cultural:**
+
+A principios del siglo XIX, la monarquía española, decapitada por la invasión
+napoleónica, sufría una hemorragia de autoridad en sus dominios ultramarinos
+[6]. Las ideas de la Ilustración y el ejemplo de las revoluciones atlánticas
+habían germinado en América, despertando una conciencia criolla que anhelaba la
+emancipación. En el sur, las Provincias Unidas del Río de la Plata habían
+encendido la llama en 1810, pero su revolución estaba aislada, amenazada por la
+contraofensiva que partía desde el Virreinato del Perú, el bastión inexpugnable
+del poder realista [2]. Desde Lima, como un corazón de hierro, se bombeaban
+ejércitos que ahogaban los levantamientos en el Alto Perú y habían reconquistado
+Chile. Las campañas por la ruta altoperuana se habían demostrado un fracaso
+estratégico, un desgaste estéril de hombres y recursos. La lógica militar
+convencional estaba agotada. La libertad del continente dependía de una nueva
+visión, de una maniobra que violentara la geografía y desafiara los límites de
+la voluntad humana. Mientras el caos político devoraba a Buenos Aires, en la
+lejana provincia de Cuyo, un silencio metódico y paciente acumulaba la fuerza de
+un alud, y el destino de un continente aguardaba la orden de romper sus
+cadenas…
+
+### Muestra 4 — Balduino IV de Jerusalén
+
+**Contexto Político-Social-Cultural:**
+
+En el crepúsculo del siglo XII, el Reino Latino de Jerusalén, una frágil y
+anómala flor del feudalismo occidental trasplantada a las arenas de Oriente, se
+debatía en una encrucijada existencial. Sus fronteras, como cicatrices mal
+cerradas sobre el mapa levantino, eran permeables a la incesante presión de las
+potencias musulmanas que, como mareas crecientes, amenazaban con engullirlo. La
+unificación de Siria y Egipto bajo la férula de Saladino, un genio militar cuya
+visión estratégica era la de un halcón sobrevolando la región, había
+transformado la fragmentada resistencia islámica en un solo y formidable puño.
+Las rivalidades internas entre los barones cruzados, la escasez de recursos
+humanos y la lejanía de las fuentes de apoyo europeas lo convertían en un
+relicario de tensiones. En este tablero de ajedrez geopolítico, donde la cruz y
+la media luna se enfrentaban en un duelo a muerte, y la supervivencia pendía de
+un hilo, la aparición de un joven rey marcado por el sino de una enfermedad
+devastadora, cual reloj de arena implacable, estaba destinada a desafiar los
+pronósticos y a grabar su nombre con letras de sangre y sacrificio en la
+efímera historia de los Estados Cruzados…
+
+**Semblanza:**
+
+Balduino IV, un monarca cuyo temple de acero se forjó en el crisol de la
+adversidad, ascendió al trono bajo la sombra ineludible de la lepra, una
+enfermedad que, cual gusano roedor, amenazaba con devorar su cuerpo, mas nunca
+su espíritu. Su formación, aunque marcada por las limitaciones físicas, fue
+excepcionalmente sólida en el ámbito intelectual y estratégico, instruido por
+el ilustre Guillermo de Tiro [1], [2]. Poseía una inteligencia penetrante, capaz
+de discernir las complejas intrigas políticas y militares del Levante, y una
+voluntad férrea, un pilar inquebrantable en un reino plagado de facciones. Su
+carácter era una singular amalgama de piedad profunda y astucia militar, dotado
+de una tenacidad que compensaba su debilidad física [3]. Este "fuego
+estratégico interior" lo impulsó a desafiar las expectativas, a no ser una
+figura decorativa sino un comandante audaz, cuya visión táctica y coraje
+personal brillaron como una estrella fugaz en el oscuro firmamento de su reino.
+Supo inspirar lealtad en sus tropas y respeto, incluso temor, en sus enemigos,
+transformando su propia fragilidad en una inesperada fortaleza moral.
+
+### Muestra 5 — Alejandro Magno
+
+Solo **semblanza**; el usuario no entregó un contexto propio y diferenciado para
+esta muestra.
+
+**Semblanza:**
+
+Alejandro III de Macedonia, conocido universalmente como Alejandro Magno, nació
+en el 356 a.C. en Pella. Desde muy joven fue formado en la tradición guerrera de
+Filipo II y en las humanidades con Aristóteles, lo que le otorgó una visión
+estratégica y culta sin parangón. Su carisma y determinación lo llevaron a
+asumir el trono a los 20 años tras el asesinato de su padre, impulsándolo a
+emprender una serie de conquistas que transformarían el mapa del mundo antiguo.
+Con un aura que bordeaba lo divino, los relatos antiguos relatan que en lugares
+como el oasis de Siwa se proclamó "hijo de Zeus-Amón", consolidando la creencia
+de que su destino estaba entrelazado con lo celestial. Esta percepción de
+deificación, sumada a su habilidad para inspirar a sus tropas, le brindó un
+poder simbólico que trascendió lo puramente militar y le marcó como un líder
+legendario cuyo ejemplo ha perdurado a lo largo de los siglos.
+
+Su capacidad para transformar el ejército macedonio, fusionar culturas tan
+disímiles como la griega y la egipcia y resolver desafíos aparentemente
+insolubles –como el enigmático nudo gordiano– convirtió sus campañas en una
+epopeya legendaria. Desde la fidelidad casi mítica de Bucéfalo hasta la
+percepción de su figura como casi divina, cada episodio de su vida resuena en la
+historia como muestra de un liderazgo implacable, visionario y adaptable que
+cambió el curso del mundo antiguo para siempre.
+[1][4]
+
+**Nota sobre esta muestra:** es la más floja de las cinco para este registro —
+abre por nacimiento y avanza en orden más cercano a la cronología que al
+retrato («nació en el 356 a.C. en Pella. Desde muy joven fue formado…»), y no
+tiene la prueba-por-hecho-concreto que sí tienen César (los piratas del Egeo) o
+Brown. Se conserva como parte del corpus de destino porque el usuario la
+entregó como tal, pero al usarla como referencia conviene pesarla menos que a
+César, Brown o Balduino IV.
+
+**Contexto para estas tres muestras:** llegaron después de que el usuario
+rechazara la segunda versión del `contexto` de la ficha de Belgrano (ticket
+#51), como respuesta a "analizá mis textos y encontrá los patrones o síntomas
+de mi escritura". Se transcriben acá con el mismo criterio que Brown y César:
+tal cual, sin corregir, marcas de cita y de formato original incluidas.
+
+### Qué se copia de las muestras 1 y 2 (Brown y César)
+
+El análisis que sigue es el original, escrito antes de que llegaran las
+muestras 3 a 5: describe específicamente Brown y César, no el corpus entero.
 
 **El escenario abre y no nombra al protagonista.** Los dos contextos describen un
 mundo en pugna y recién al final insinúan a alguien: «un patricio con un linaje
@@ -170,10 +279,12 @@ en vez de aplastar. **Es una elección, y se puede revisar.**
 
 ## Parte 2 — El contraejemplo
 
-Está publicado en `contenido/procer/manuel-belgrano.ts` y es la primera prosa del
-catálogo. Se escribió cuando el producto era para chicos, y **está bien escrita
-para lo que se pedía entonces**. Con el ADR 0012 dejó de ser el destino y pasó a
-ser lo que hay que reconocer para no caer ahí.
+**Este es el texto viejo, ya no el publicado.** Fue la primera prosa del
+catálogo, en `contenido/procer/manuel-belgrano.ts`, hasta que el ticket #51
+reescribió `contexto` y `semblanza` en el registro de esta skill. Se conserva
+acá porque es material calibrado: se escribió cuando el producto era para
+chicos, y **está bien escrita para lo que se pedía entonces**. Con el ADR 0012
+dejó de ser el destino y pasó a ser lo que hay que reconocer para no caer ahí.
 
 > Manuel Belgrano nació en Buenos Aires en 1770, en una familia de comerciantes.
 > Lo mandaron a estudiar leyes a España y volvió con una idea que en el Río de la
