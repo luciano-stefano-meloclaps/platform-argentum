@@ -5,18 +5,19 @@ import { usePathname } from "next/navigation";
 
 /**
  * Los 12 ítems de la Nav/TabsBar de tipografía pura (ticket #82), en el
- * orden exacto que pide el ticket. Hoy solo hay pantalla real para
- * "Explorar" (`/`, `src/app/page.tsx`) e "Índice" (`/catalogo`,
- * `src/app/catalogo/page.tsx`) — el resto ("Ficha", "Tarjetas", "Quiz", "Mi
- * progreso", "Propuestas", "Proponer", "Resultado", "Perfil", "Usuarios",
- * "Ingresar") no tiene ruta ni pantalla todavía: sin `href`, se renderizan
+ * orden exacto que pide el ticket. Hoy hay pantalla real para "Explorar"
+ * (`/`, `src/app/page.tsx`), "Ficha" (`/ficha`, `src/app/ficha/page.tsx`) e
+ * "Índice" (`/catalogo`, `src/app/catalogo/page.tsx`) — el resto
+ * ("Tarjetas", "Quiz", "Mi progreso", "Propuestas", "Proponer", "Resultado",
+ * "Perfil", "Usuarios", "Ingresar") no tiene ruta ni pantalla todavía: sin
+ * `href`, se renderizan
  * como `<button type="button">` inertes, nunca como `<a>`/`<Link>` que
  * resolvería en 404 — mismo criterio que ya documentaba el `NavPrincipal`
  * viejo.
  */
 const ITEMS = [
   { etiqueta: "Explorar", href: "/" },
-  { etiqueta: "Ficha" },
+  { etiqueta: "Ficha", href: "/ficha" },
   { etiqueta: "Tarjetas" },
   { etiqueta: "Quiz" },
   { etiqueta: "Mi progreso" },
