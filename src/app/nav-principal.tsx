@@ -8,17 +8,18 @@ import { usePathname } from "next/navigation";
  * orden exacto que pide el ticket. Hoy hay pantalla real para "Explorar"
  * (`/`, `src/app/page.tsx`), "Ficha" (`/ficha`, `src/app/ficha/page.tsx`) e
  * "Índice" (`/catalogo`, `src/app/catalogo/page.tsx`) — el resto
- * ("Tarjetas", "Quiz", "Mi progreso", "Propuestas", "Proponer", "Resultado",
- * "Perfil", "Usuarios", "Ingresar") no tiene ruta ni pantalla todavía: sin
- * `href`, se renderizan
- * como `<button type="button">` inertes, nunca como `<a>`/`<Link>` que
- * resolvería en 404 — mismo criterio que ya documentaba el `NavPrincipal`
- * viejo.
+ * ("Quiz", "Mi progreso", "Propuestas", "Proponer", "Resultado", "Perfil",
+ * "Usuarios", "Ingresar") no tiene ruta ni pantalla todavía: sin `href`, se
+ * renderizan como `<button type="button">` inertes, nunca como `<a>`/`<Link>`
+ * que resolvería en 404 — mismo criterio que ya documentaba el
+ * `NavPrincipal` viejo. "Tarjetas" pasó a tener ruta real en el ticket #91
+ * (`/tarjetas`, `src/app/tarjetas/page.tsx`) y se renderiza como link, igual
+ * que "Explorar", "Ficha" e "Índice".
  */
 const ITEMS = [
   { etiqueta: "Explorar", href: "/" },
   { etiqueta: "Ficha", href: "/ficha" },
-  { etiqueta: "Tarjetas" },
+  { etiqueta: "Tarjetas", href: "/tarjetas" },
   { etiqueta: "Quiz" },
   { etiqueta: "Mi progreso" },
   { etiqueta: "Propuestas" },

@@ -372,6 +372,27 @@ comparten también.
 | Animales | `#EFEAFB` | `#DDD2F4` | `#5A45A0` |
 | Naturaleza | `#E4F4EF` | `#C2E2D6` | `#1F7A5C` |
 
+### Acento morado de repaso (ticket #91, formalizado por el `brand-specialist`)
+
+**No es una categoría de contenido.** Es un acento puntual para "dominio/
+temática de la tarjeta" en la pantalla de repaso (tag del frente, badge
+"Respuesta revelada" del dorso) — el ticket #91 pedía explícitamente no usar
+dorado ni celeste ahí, porque esos dos ya tienen significado propio.
+
+| Token | Valor | Fuente |
+| --- | --- | --- |
+| `--color-acento-repaso-100` | `#EDE4F5` | Ticket #91, formalizado en `globals.css` |
+| `--color-acento-repaso-700` | `#6B3FA0` | Ticket #91, formalizado en `globals.css` |
+
+**⚠️ Riesgo documentado, no bloqueante:** el matiz queda muy cerca del de la
+categoría "Animales" (`#5A45A0`/`#EFEAFB`, tabla de arriba) — no es el mismo
+token, pero en una tarjeta de "Próceres" o "Comidas" puede leerse de reojo
+como si fuera el color de "Animales". No se resolvió corriendo el matiz por
+iniciativa propia (un octavo tono no es claramente mejor que la colisión que
+evita); queda para que `frontend-specialist` evalúe si conviene, a futuro,
+repasar con el color real de la categoría (`--color-cat-*`) en vez de un
+acento fijo único.
+
 ### Ligas (4, v1 — vigentes sin cambios)
 
 Nombres fijados por el ADR 0008 §6 y el vocabulario de `CONTEXT.md`. **No se
@@ -630,6 +651,10 @@ familia de marca completa.
 | --- | ---: | --- |
 | `--celeste-text` `#0A5FA8` / `--celeste-50` `#EAF4FE` | 5.87:1 | ADR 0015 |
 | `--celeste-text` `#0A5FA8` / `--crema` `#FBF7F0` | 6.12:1 | `brand-specialist`, ticket header (#0A5FA8 sitewide en header/nav) |
+| `--color-acento-repaso-700` `#6B3FA0` / `--color-acento-repaso-100` `#EDE4F5` | 5.98:1 | `brand-specialist`, ticket #91 (pill de dominio, frente y dorso) |
+| `--color-acento-repaso-700` `#6B3FA0` / `--color-blanco` `#FFFFFF` | 7.38:1 | `brand-specialist`, ticket #91 (stat "Dominio de esta ficha") |
+| Blanco / `--color-error` `#C23A3A` (botón "Falso", texto 14px) | 5.30:1 | `brand-specialist`, ticket #91 |
+| Blanco / `--color-ok` `#2E7C5A` (botón "Verdadero", texto 14px) | 5.07:1 | `brand-specialist`, ticket #91 |
 | `--texto-titulo` `#1F3B4D` / `--celeste-50` `#EAF4FE` | 10.54:1 | `brand-specialist`, ticket #65 |
 | `--texto-secundario` `#6B5D4A` / `--celeste-50` `#EAF4FE` | 5.74:1 | `brand-specialist`, ticket #65 |
 | Blanco / `--celeste-700` `#0978D0` | 4.56:1 | ADR 0008 |

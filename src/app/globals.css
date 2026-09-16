@@ -200,6 +200,40 @@
   --color-cat-naturaleza-borde: #C2E2D6;
   --color-cat-naturaleza-text:  #1F7A5C;
 
+  /*
+   * --- Acento morado de repaso (ticket #91, formalizado por el
+   * `brand-specialist`) ---
+   * Nace como hex suelto en `tarjetas-repaso.tsx` para el tag de
+   * "dominio/temática de la tarjeta" y el badge "Respuesta revelada" del
+   * dorso — el ticket #91 pedía explícitamente NO usar dorado ni celeste
+   * ahí (esos dos ya tienen significado propio: logros/marca y estructura
+   * de interfaz). Se formaliza como token porque se usa en dos lugares de
+   * la misma pantalla con un rol semántico estable ("acento de repaso"),
+   * no como decoración puntual.
+   *
+   * Contraste medido (fórmula WCAG, luminancia relativa):
+   *   texto / fondo propio (el pill):      #6B3FA0 / #EDE4F5 → 5.98:1
+   *   texto / --color-blanco (stat "Dominio de esta ficha"): → 7.38:1
+   * Los dos pasan AA con margen.
+   *
+   * ⚠️ Riesgo señalado, no bloqueante: este morado queda MUY cerca del de
+   * la categoría "Animales" (--color-cat-animales-text #5A45A0 /
+   * --color-cat-animales-bg #EFEAFB, ver más abajo) — mismo matiz,
+   * diferencia perceptible pero chica. No es el mismo token, así que no
+   * repite exactamente el error que este mismo componente dice evitar en
+   * su comentario ("que dos conceptos usen exactamente el mismo color"),
+   * pero sí se le acerca: en una tarjeta de categoría "Próceres" o
+   * "Comidas" este acento puede leerse, de reojo, como si fuera el color
+   * de la categoría "Animales". No lo resuelvo acá cambiando el matiz por
+   * mi cuenta —correr la paleta a un octavo tono no está claramente mejor
+   * que la colisión que evita—: lo dejo documentado para que
+   * `frontend-specialist` decida si repasar categoría real
+   * (`--color-cat-*`) en vez de un acento fijo es preferible a largo
+   * plazo. Ver el informe del `brand-specialist` de esta tarea.
+   */
+  --color-acento-repaso-100: #EDE4F5;
+  --color-acento-repaso-700: #6B3FA0;
+
   /* --- Neutrales cálidos (§3) — la clave anti-gubernamental --- */
   --color-crema:             #FBF7F0; /* fondo de página principal — nunca blanco puro */
   --color-blanco:            #FFFFFF; /* tarjetas y superficies elevadas */
