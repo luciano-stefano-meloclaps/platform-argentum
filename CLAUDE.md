@@ -67,6 +67,18 @@ lleguen las cuentas: el MVP no tiene cuentas.
 - **Regla de límite:** la capa web no consulta la base de datos; le pide al
   módulo. La autorización se verifica dentro del módulo, nunca solo en la
   interfaz.
+- **La capa web es hexagonal (puertos y adaptadores) y se organiza con MVVM**
+  (ADR 0016, recuperado y renumerado — no confundir con el ADR 0015, que es la
+  identidad visual v2). La vista-modelo es una **función pura del servidor**,
+  nunca una clase con estado ni un hook; `src/catalogo/index.ts` es la única
+  superficie de importación del módulo, con **tres** funciones
+  (`listarPorTipo`, `obtenerPorSlug`, `listarSlugs`); no hay `/api` interno
+  hasta que exista un segundo consumidor real; y la ficha se prerenderiza
+  (`dynamicParams = false`), sin `cacheComponents`. El **puerto de salida**
+  —que `catalogo` declare una interfaz de persistencia intercambiable en vez
+  de usar Drizzle directo— queda **explícitamente fuera de este ADR**: lo
+  decide el arquitecto con `backend-specialist` y `database-specialist`,
+  ticket #60, todavía sin resolver.
 - Catálogo: una sola tabla `entidad` con discriminador `tipo` y columna `datos`
   JSONB; los campos de cada tipo viven en descriptores en código (ADR 0001).
 - **Una entidad es una fila con un solo slug** (ADR 0013). El **registro de
