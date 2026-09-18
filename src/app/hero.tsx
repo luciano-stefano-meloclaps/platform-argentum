@@ -103,14 +103,21 @@ export function Hero() {
 
           {/*
            * Divisor decorativo: patrón "Rombo separador" de
-           * `identidad-argentum` (v2/ADR 0015) — línea con `--color-accent`,
-           * rombo 5px rotado 45° con **fondo** `--color-celeste-400` (no
-           * borde), línea con `--color-accent`.
+           * `identidad-argentum` (v2/ADR 0015, ticket #69) — dos líneas
+           * hairline con el filete dorado (clase `.filete-dorado`,
+           * `globals.css`, que arma `--gradiente-filete` más la banda de
+           * brillo animada) y, entre ellas, un rombo de 5px rotado 45° con
+           * **fondo** `--color-celeste-400` (no borde). Es el mismo patrón
+           * que ya usa el filete de 3px del header (`header.tsx`), aplicado
+           * acá a una línea de 1px: la clase no fija alto ni ancho, así que
+           * hereda el tamaño de las utilidades de Tailwind del `<span>`.
+           * Antes estas líneas usaban `bg-accent`, un dorado sólido sin el
+           * gradiente ni el brillo — ya no aplica ese parche.
            */}
           <div aria-hidden="true" className="my-xl flex items-center justify-center gap-md">
-            <span className="h-px w-[70px] bg-accent" />
+            <span className="h-px w-[70px] filete-dorado" />
             <span className="h-[5px] w-[5px] rotate-45 bg-celeste-400" />
-            <span className="h-px w-[70px] bg-accent" />
+            <span className="h-px w-[70px] filete-dorado" />
           </div>
 
           <p className="font-cuerpo text-[15px] leading-[1.8] text-texto-secundario">
