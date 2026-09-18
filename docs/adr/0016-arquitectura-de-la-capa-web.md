@@ -1,6 +1,10 @@
 # 0016 — Arquitectura de la capa web
 
-- **Estado:** Aceptado
+- **Estado:** Aceptado — parcialmente superseded por
+  [0017](0017-nombre-del-punto-de-entrada-de-un-modulo.md), **solo** en el nombre del archivo del puerto de entrada: donde este documento dice
+  `src/catalogo/index.ts`, léase `src/catalogo/catalogo.ts`. El resto —las
+  once reglas y todo lo demás— sigue vigente sin cambios, y el texto de abajo
+  no se edita.
 - **Fecha de la decisión:** 2026-09-09
 - **Fecha de este documento:** 2026-09-16 (recuperado y renumerado; ver nota)
 - **Decide:** el usuario (el patrón); **redacta:** el `super-architect`

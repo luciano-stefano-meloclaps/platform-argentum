@@ -354,8 +354,9 @@ hay que publicar, terminá el turno diciendo **qué** y **quién** debería hace
 - **`improve-codebase-architecture`** — revisión arquitectónica del código
   existente: busca módulos superficiales y propone oportunidades de
   profundización, con un informe visual. **Es tuya**: sos el único agente que la
-  usa. Necesita historial de commits y código real, así que todavía no sirve:
-  hay cimientos hechos, pero ninguna rebanada de producto terminada.
+  usa. Necesita historial de commits y código real, y ya los hay: el módulo
+  `catalogo` y la rebanada de `/catalogo` y `/catalogo/[slug]` están
+  entregadas, así que ya se puede usar.
 
 Precedencia, siempre: los ADR de `docs/adr/` y `CONTEXT.md` **ganan** sobre
 cualquier skill externa.

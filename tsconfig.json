@@ -11,7 +11,8 @@
     "erasableSyntaxOnly": true,
     // ADR 0007: obliga a "import type" explícito, para que un import de valor que cruza la costura servidor/cliente se vea en el diff.
     "verbatimModuleSyntax": true,
-    // ADR 0007: un switch sobre "tipo" que no cubre un caso deja de compilar, en vez de devolver undefined en runtime.
+    // ADR 0007: una función con una rama que no devuelve nada deja de compilar, en vez de devolver undefined en runtime.
+    // No da exhaustividad de switch: eso lo da @typescript-eslint/switch-exhaustiveness-check (eslint.config.mjs) más el never.
     "noImplicitReturns": true,
     // ADR 0007: la más floja de las cinco, entra porque el switch sobre "tipo" es central y el seguro cuesta cero.
     "noFallthroughCasesInSwitch": true,

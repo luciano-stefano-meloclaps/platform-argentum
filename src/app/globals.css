@@ -268,7 +268,7 @@
   --color-alerta-bg: #FBF0DA;
 
   /*
-   * --- Foco visible (ticket #58) ---
+   * --- Foco visible (ticket #96) ---
    * Ninguno de los dos documentos de marca declaraba un anillo de foco de
    * sistema. El ADR 0015 §8 lo dejaba como deuda explícita ("cada
    * componente nuevo necesita su propio tratamiento hasta que exista una
@@ -462,7 +462,7 @@
   --spacing-2xl: 32px;
 
   /*
-   * --spacing-objetivo-tactil (ticket #58): mínimo de alto y ancho de
+   * --spacing-objetivo-tactil (ticket #96): mínimo de alto y ancho de
    * cualquier elemento interactivo tocable — botón, link independiente,
    * ítem de nav, chip clickeable. No es un peldaño más de la progresión
    * xs…2xl de arriba (esa es para padding/gap/márgenes): es una constante
