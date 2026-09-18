@@ -367,6 +367,40 @@
   --text-meta--font-weight: 500;
 
   /*
+   * --text-kicker: extensión propia, no del documento de marca original.
+   * Ticket #88 ("grilla tabular de las salas del catálogo") necesitaba
+   * `text-[15px] font-semibold tracking-[0.2em] uppercase` para el kicker de
+   * sección — y al revisar el árbol, ese mismo bloque exacto de clases (salvo
+   * `uppercase`, que sigue siendo una utilidad aparte, igual que en
+   * --text-chip) ya vivía, byte a byte, en `src/app/laminas-destacadas.tsx`.
+   * Dos ocurrencias idénticas de un valor sin token es la señal de erosión
+   * que este archivo existe para cortar, así que se formaliza acá en vez de
+   * sumar una tercera copia suelta en `salas-del-catalogo.tsx`. No cubre
+   * `text-transform`: `uppercase` sigue aplicándose en el componente.
+   */
+  --text-kicker: 15px;
+  --text-kicker--line-height: 1;
+  --text-kicker--font-weight: 600;
+  --text-kicker--letter-spacing: 0.2em;
+
+  /*
+   * --text-tile-title: extensión propia, mismo criterio que --text-kicker de
+   * arriba y mismo ticket (#88). `text-[26px] leading-[1.15] font-normal`
+   * (font-titulo) ya vivía idéntico en `src/app/grilla-laminas.tsx` antes de
+   * esta tarea; `grilla-salas.tsx` lo necesita para el nombre de cada sala.
+   * Peso 400 porque Cormorant Garamond lo tiene nativo y es el peso vigente
+   * para títulos desde el ADR 0015 — no confundir con --text-h2, que sigue
+   * declarando 700 en este archivo (deuda separada, sin tocar en este
+   * ticket: ver el informe del `brand-specialist` para el ticket #88).
+   * No cubre el caso de `tarjetas-repaso.tsx`, que usa el mismo tamaño con
+   * `leading-none` para cifras de stat, no para un título de tarjeta — es un
+   * rol distinto y no se pliega acá sin que se pida.
+   */
+  --text-tile-title: 26px;
+  --text-tile-title--line-height: 1.15;
+  --text-tile-title--font-weight: 400;
+
+  /*
    * ==========================================================================
    * Espaciado (§5)
    * ==========================================================================
