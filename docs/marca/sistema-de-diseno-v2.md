@@ -399,6 +399,64 @@ inventar imágenes reales.
   índice — refuerzo del tono museístico, siempre acompañados del nombre en
   texto, nunca como único identificador.
 
+### Foco visible y objetivo táctil (sistema)
+
+🔶 **Extensión — ticket #58, no estaba en ninguno de los dos documentos
+originales.** Ninguno declaraba un anillo de foco de sistema ni un mínimo de
+objetivo táctil. El ADR 0008 §8 ya exigía que el objetivo táctil tuviera "un
+mínimo definido en la escala de espaciado, no a criterio de cada pantalla", y
+el ADR 0015 §8 dejaba el foco como deuda explícita ("cada componente nuevo
+necesita su propio tratamiento... hasta que exista una regla de sistema"),
+con el disparador "se define un sistema de foco consistente". Esta sección
+resuelve los dos, sin tocar ningún valor ya fijado.
+
+**Anillo de foco.** Todo elemento interactivo —botón, link, campo, chip
+clickeable, tab, ítem de nav— muestra un foco visible al navegar con teclado.
+Nunca se elimina el `outline` nativo del navegador sin reemplazarlo por este.
+
+```css
+outline: 2px solid var(--color-foco);
+outline-offset: 2px;
+```
+
+- `--color-foco` (`#94691A`, alias de `--color-accent-700`) es el anillo por
+  defecto, sobre `--color-crema`/`--color-bg` o `--color-blanco`. Es el mismo
+  valor que ya usaba `.btn-primary:focus-visible` de arriba — se generaliza
+  en vez de dejarlo exclusivo de ese componente. Contraste (WCAG 1.4.11, piso
+  3:1 para indicadores no-textuales): **4.58:1** sobre `--color-bg`, **4.89:1**
+  sobre `--color-blanco`.
+- Dentro de un **panel invertido** (fondo `--celeste-900`), `--color-foco` cae
+  a **2.29:1** y no pasa el piso de 3:1. Ahí se usa
+  `--color-foco-invertido` (`#FFFFFF`, alias de `--color-blanco`), que da
+  **11.21:1** — mismo patrón que `--error-invertido`: una variante acotada a
+  una superficie, nunca la variante por defecto.
+- Grosor y separación (2px / 2px) se aplican con las utilidades estáticas de
+  Tailwind `outline-2 outline-offset-2` — mismo criterio que ya resuelve
+  `--borde-default` con la utilidad `border`: el token resuelve el color, la
+  utilidad estática resuelve ancho y estilo, y ninguna pantalla escribe
+  ninguno de los dos a mano. Uso: `outline-2 outline-offset-2 outline-foco`
+  (o `outline-foco-invertido` dentro de un panel invertido).
+
+**Objetivo táctil mínimo.** `--spacing-objetivo-tactil` (44px, namespace
+`--spacing-*` — ADR 0008 §8 ya pedía que viviera en la escala de espaciado)
+es el mínimo de alto y ancho de cualquier elemento interactivo tocable:
+botón, link independiente, ítem de nav, chip clickeable. Se aplica con
+`min-w-objetivo-tactil min-h-objetivo-tactil`. No es un peldaño más de la
+progresión xs…2xl (esa es para padding/gap/márgenes): es una constante de
+accesibilidad, tan independiente de esa escala como un color de feedback.
+
+- Valor: 44×44px CSS, el piso AAA de WCAG 2.5.5 — no el mínimo AA de 24px de
+  WCAG 2.5.8, que trae excepciones que este sistema prefiere no administrar
+  pantalla por pantalla. El motivo original de este piso (ADR 0008 §8: "lo
+  usan chicos de ocho años en pantallas malas") envejeció con el ADR 0012,
+  pero el requisito no: dedos imprecisos y pantallas baratas no dependen de
+  la edad del lector (CLAUDE.md, sección "Audiencia y voz").
+- Separación mínima entre dos objetivos táctiles adyacentes que ya cumplen
+  el mínimo: `--spacing-xs` (4px) de espacio libre entre sus bordes. No hace
+  falta más — a 44px ya se supera con margen el radio de 24px de la
+  excepción de espaciado de WCAG 2.5.8, que solo se activa para objetivos
+  más chicos que el mínimo, algo que este sistema no contempla.
+
 ---
 
 ## 7. Voz y contenido — fuera de alcance
@@ -419,11 +477,16 @@ iconografía decorativa" — **ya regía desde v1** y no cambia.
 
 - **`--ok-invertido`** — no derivado (ver §3). Disparador: primera pantalla
   con panel invertido y feedback de acierto.
-- **Sistema de foco (`:focus-visible`) no especificado por el documento
-  nuevo**, para ningún componente salvo el botón primario (agregado por el
+- **(Resuelto, ticket #58 — ver §6, "Foco visible y objetivo táctil".)**
+  ~~Sistema de foco (`:focus-visible`) no especificado por el documento
+  nuevo, para ningún componente salvo el botón primario (agregado por el
   `brand-specialist`, ver §6). Hasta que se defina un tratamiento de sistema,
   cada componente nuevo necesita su propio indicador de foco visible, nunca
-  su eliminación.
+  su eliminación.~~ `--color-foco`/`--color-foco-invertido` son el
+  tratamiento de sistema. `.btn-primary` puede migrar a consumirlos en vez
+  de repetir `var(--color-accent-700)` a mano, cuando se vuelva a tocar ese
+  componente — no se lo edita en este ticket, que es solo `@theme` +
+  documentación.
 - **Imágenes reales, textura de baldosa calcárea e isotipo "Ag"** — sin
   cambios respecto a v1 (`sistema-de-diseno.md` §7 / ADR 0008 §8): siguen sin
   producirse.

@@ -455,6 +455,14 @@ suben ni se bajan**: son una función pura del total de puntos.
 | `--alerta` | `#9F5F00` | v1, corregido ADR 0008 | — |
 | `--alerta-bg` | `#FBF0DA` | v1 | — |
 
+### Foco y objetivo táctil (ticket #58)
+
+| Token | Valor | Fuente | Nota |
+| --- | --- | --- | --- |
+| `--color-foco` | `#94691A` (alias de `--color-accent-700`) | `brand-specialist`, ticket #58 | Anillo de foco por defecto — 4.58:1 sobre `--color-bg`, 4.89:1 sobre `--color-blanco`. **Falla 2.29:1 contra panel invertido** — no usar ahí |
+| `--color-foco-invertido` | `#FFFFFF` (alias de `--color-blanco`) | `brand-specialist`, ticket #58 | **Exclusivo** de paneles invertidos (11.21:1 sobre `--celeste-900`) — mismo patrón que `--error-invertido` |
+| `--spacing-objetivo-tactil` | `44px` | `brand-specialist`, ticket #58 | Mínimo de alto/ancho de cualquier elemento tocable. Namespace `--spacing-*` (ADR 0008 §8 lo pedía ahí, no en un namespace propio) — no es parte de la progresión `xs…2xl` |
+
 ### Tipografía
 
 | Rol | Familia | Nota |
@@ -629,6 +637,24 @@ familia de marca completa.
     de los probados hasta ahora con esta paleta de extremos
     (`#75500F`/`#D99A26`, antes `#8A5E12`/`#E0AC4C`).
 
+17. Todo elemento interactivo muestra un foco visible al navegar con
+    teclado — nunca se elimina el `outline` nativo sin reemplazarlo. El
+    anillo por defecto es `--color-foco` (alias de `--color-accent-700`,
+    reutiliza el mismo valor que ya usaba `.btn-primary:focus-visible`).
+    Dentro de un panel invertido (fondo `--celeste-900`) se usa
+    `--color-foco-invertido` en su lugar — `--color-foco` ahí cae a 2.29:1
+    y no pasa el piso de 3:1 de WCAG 1.4.11. Grosor/offset (2px/2px) van
+    con las utilidades estáticas de Tailwind `outline-2 outline-offset-2`,
+    mismo criterio que `--borde-default` con `border`. Ver el detalle
+    completo en `sistema-de-diseno-v2.md` §6, "Foco visible y objetivo
+    táctil" (ticket #58).
+18. Todo elemento interactivo tocable —botón, link independiente, ítem de
+    nav, chip clickeable— mide al menos `--spacing-objetivo-tactil` (44px)
+    de alto y ancho, y dos objetivos adyacentes que ya cumplen ese mínimo
+    guardan al menos `--spacing-xs` (4px) de separación entre sus bordes.
+    No es parte de la progresión `xs…2xl` de espaciado: es una constante de
+    accesibilidad. Ver `sistema-de-diseno-v2.md` §6 (ticket #58).
+
     **Actualización (punto 7 de la sección 1):** el usuario pidió después
     oscurecer *solo* el extremo (`#75500F` → `#6A480E`), dejando el centro
     intacto. Como esta regla mide el par centro-contra-fondo, **los dos
@@ -715,6 +741,9 @@ familia de marca completa.
 | Filete dorado del header (vigente): centro `#FFD250` (`--dorado-brillante-stops`) / `--celeste-900` `#0A3D66` | **7.79:1 — pasa AA con margen amplio**, baja respecto al 8.76:1 anterior (el centro se oscureció), misma salvedad que la fila de arriba: es una medición de referencia sobre un fondo que el filete no usa hoy, no una aprobación de uso real | `brand-specialist`, medido para esta tarea |
 | Pico de la banda de brillo (blanco 0.75 opacidad, overlay sobre el centro de la base) ≈ `rgb(226,180,60)` (medido contra la base de 7 stops del ADR 0015, centro `#8B6722`) / hueso | **1.81:1 — falla** (desactualizado desde entonces; tampoco remedido contra el centro `#FFD250` vigente de esta tarea). Hasta el paso 9 era una medición exclusiva de `.shiny`; desde la unificación de la animación (sección 1, paso 9 de `.au`), el mismo pico —sin remedir— corre también sobre `.au` (logotipo real del header) y sobre `.filete-dorado` (sin texto encima, no aplica par de contraste) | `brand-specialist`, pedido de más brillo, ver regla de uso 15 |
 | `--color-accent-700` `#94691A` / hueso `#FBF7F0` | 4.58:1 | ADR 0015 |
+| `--color-foco` `#94691A` (= `--color-accent-700`) / `--color-blanco` `#FFFFFF` | 4.89:1 | `brand-specialist`, ticket #58 |
+| `--color-foco` `#94691A` / `--color-celeste-900` `#0A3D66` | **2.29:1 — falla el piso no-texto de 3:1 (WCAG 1.4.11), no usar en panel invertido** | `brand-specialist`, ticket #58 |
+| `--color-foco-invertido` `#FFFFFF` (= `--color-blanco`) / `--color-celeste-900` `#0A3D66` | 11.21:1 | `brand-specialist`, ticket #58 (mismo par que "Blanco / `--celeste-900`" de la fila de abajo, medido de nuevo para este uso) |
 | `--color-accent-800` `#604411` / hueso `#FBF7F0` | 8.43:1 | ADR 0015 |
 | `--color-accent-800` `#604411` / `--color-accent-300` `#F7DE9B` (hover) | 6.81:1 | ADR 0015 |
 | `.au-dark` extremo `#E8BE63` / `--celeste-900` `#0A3D66` | 6.40:1 | ADR 0015 |

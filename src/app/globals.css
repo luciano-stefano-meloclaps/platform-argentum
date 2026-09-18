@@ -267,6 +267,51 @@
   --color-alerta:    #9F5F00;
   --color-alerta-bg: #FBF0DA;
 
+  /*
+   * --- Foco visible (ticket #58) ---
+   * Ninguno de los dos documentos de marca declaraba un anillo de foco de
+   * sistema. El ADR 0015 §8 lo dejaba como deuda explícita ("cada
+   * componente nuevo necesita su propio tratamiento hasta que exista una
+   * regla de sistema", con el disparador "se define un sistema de foco
+   * consistente") y el único precedente era el outline puntual de
+   * `.btn-primary:focus-visible` (sistema-de-diseno-v2.md §6):
+   * `outline: 2px solid var(--color-accent-700)`. Este token generaliza ese
+   * mismo valor en vez de dejarlo exclusivo de un componente — no se inventa
+   * un color nuevo.
+   *
+   * --color-foco es un alias de --color-accent-700. Contraste (fórmula WCAG,
+   * luminancia relativa, piso no-texto 3:1 de WCAG 1.4.11 — un anillo de
+   * foco no es texto):
+   *   sobre --color-crema/--color-bg (#FBF7F0): 4.58:1 (ya medido, ADR 0015)
+   *   sobre --color-blanco (#FFFFFF):           4.89:1 (medido en este ticket)
+   *   sobre --color-celeste-900 (panel invertido): 2.29:1 — FALLA el piso de
+   *     3:1. No usar --color-foco dentro de un panel invertido: ahí va
+   *     --color-foco-invertido.
+   */
+  --color-foco: var(--color-accent-700);
+
+  /*
+   * --color-foco-invertido, exclusivo de paneles invertidos (fondo
+   * --color-celeste-900) — mismo patrón que --error-invertido (ADR 0015):
+   * una variante acotada a una superficie, nunca la variante por defecto.
+   * Alias de --color-blanco: sobre --color-celeste-900 da 11.21:1 (medido en
+   * este ticket; coincide con el "Blanco / --celeste-900" ya registrado en
+   * la skill `identidad-argentum`).
+   */
+  --color-foco-invertido: var(--color-blanco);
+
+  /*
+   * Grosor y separación del anillo (2px / 2px) se aplican con las
+   * utilidades estáticas de Tailwind `outline-2 outline-offset-2` — mismo
+   * criterio que ya resuelve --borde-default con la utilidad `border` más
+   * abajo: el token resuelve el color, la utilidad estática resuelve ancho
+   * y estilo, y ninguna pantalla escribe ninguno de los dos a mano. Uso:
+   * `outline-2 outline-offset-2 outline-foco` (o `outline-foco-invertido`
+   * dentro de un panel invertido). Documentado con su regla de aplicación
+   * completa en sistema-de-diseno-v2.md §6, "Foco visible y objetivo
+   * táctil".
+   */
+
   /* --- Sistema de ligas — metales argentinos (§3; nombres fijados por ADR 0008 punto 6, CONTEXT.md) --- */
   --color-liga-cobre-bg: #FBEDE4; --color-liga-cobre-text: #8A4E1F; /* 0–500 pts */
   --color-liga-plata-bg: #F1F3F5; --color-liga-plata-text: #5B666F; /* 501–1500 pts */
@@ -415,6 +460,37 @@
   --spacing-lg:  16px;
   --spacing-xl:  22px;
   --spacing-2xl: 32px;
+
+  /*
+   * --spacing-objetivo-tactil (ticket #58): mínimo de alto y ancho de
+   * cualquier elemento interactivo tocable — botón, link independiente,
+   * ítem de nav, chip clickeable. No es un peldaño más de la progresión
+   * xs…2xl de arriba (esa es para padding/gap/márgenes): es una constante
+   * de accesibilidad, tan independiente de esa escala como lo es un color
+   * de feedback. Vive en el namespace --spacing-* (no uno propio) porque
+   * ADR 0008 §8 ya lo pedía así explícitamente: "los objetivos táctiles
+   * tienen un mínimo definido en la escala de espaciado, no a criterio de
+   * cada pantalla". Genera min-w-objetivo-tactil/min-h-objetivo-tactil
+   * (entre otras) — uso recomendado:
+   * `min-w-objetivo-tactil min-h-objetivo-tactil`.
+   *
+   * Valor: 44px, el piso AAA de WCAG 2.5.5 (Target Size Enhanced) — no el
+   * mínimo AA de 24px de WCAG 2.5.8, que además trae excepciones (espaciado
+   * equivalente, objetivo en línea de texto, etc.) que este sistema prefiere
+   * no administrar pantalla por pantalla. El motivo original de este piso
+   * (ADR 0008 §8: "lo usan chicos de ocho años en pantallas malas") envejeció
+   * con el ADR 0012, pero el requisito no: dedos imprecisos y pantallas
+   * baratas no dependen de la edad del lector (CLAUDE.md, sección
+   * "Audiencia y voz").
+   *
+   * Separación mínima entre dos objetivos táctiles adyacentes que ya
+   * cumplen este mínimo: --spacing-xs (4px) de espacio libre entre sus
+   * bordes. No hace falta más: a 44px ya se supera con margen el radio de
+   * 24px de la excepción de espaciado de WCAG 2.5.8, que solo se activa
+   * para objetivos más chicos que el mínimo — algo que este sistema no
+   * contempla.
+   */
+  --spacing-objetivo-tactil: 44px;
 
   /*
    * --- Corrección de colisión con la escala de contenedor (ticket #73) ---
