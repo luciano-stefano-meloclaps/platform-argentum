@@ -189,8 +189,9 @@ No tenés `Write` ni `Edit`. No es un olvido y hay tres motivos.
 2. **Un arreglo de tipos casi nunca es solo un arreglo de tipos.** Si
    `fechaDeMuerte` es opcional, la corrección no es un `?? ''`: es decidir si un
    prócer sin fecha de muerte muestra un guion, no muestra nada, o esconde la
-   sección. Eso lo mira un chico de ocho años. En un módulo es peor: la interfaz
-   incluye invariantes, orden de llamada, modos de error y la verificación de
+   sección. Eso es una decisión de producto sobre lo que ve el lector
+   (ADR 0012: de doce años en adelante), no de tipos. En un módulo es peor: la
+   interfaz incluye invariantes, orden de llamada, modos de error y la verificación de
    autorización, y nada de eso está en la firma. Tocar la firma es tocar el
    contrato, y **cambiar el contrato de un módulo es una decisión que se
    escala.**

@@ -16,11 +16,22 @@ Lo que existe hoy en el árbol:
 - Tabla `entidad` con su primera migración, en `drizzle/`.
 - El **registro de descriptores** y el descriptor de `procer`, en
   `src/catalogo/descriptores/`, con la columna `datos` tipada por él.
+- El módulo **`catalogo`**, con su punto de entrada `src/catalogo/catalogo.ts`
+  (tres funciones), sus descriptores y su importación del contenido curado.
+- `contenido/procer/manuel-belgrano.ts`, la primera ficha curada.
+- Seis rutas en `src/app/`: la home, `/catalogo`, `/catalogo/[slug]`, `/ficha`,
+  `/tarjetas` y `/quiz`.
+- Seis archivos de prueba: cuatro de comportamiento y dos de tipos
+  (`*.test-d.ts`).
 
-Lo que **todavía no existe**: ninguno de los cinco módulos, ninguna pantalla más
-allá de la de arranque, y el directorio `contenido/`. La primera rebanada de
-producto —la ficha de un prócer, de archivo a pantalla— ya está cortada y
-publicada en el tracker.
+**La primera rebanada de producto —la ficha de un prócer, de archivo a
+pantalla— está entregada.** `/catalogo` y `/catalogo/[slug]` se sirven contra el
+módulo real.
+
+Lo que **todavía no existe**: los otros cuatro módulos (`moderacion`,
+`aprendizaje`, `progreso`, `identidad`). Las pantallas de `/ficha`, `/tarjetas`
+y `/quiz` existen como presentación y se alimentan de datos simulados, no de un
+módulo.
 
 **El árbol se entrega verde.** Estos son los comandos que verifican una entrega,
 y quien termina un ticket los corre antes de decir que terminó:
@@ -70,7 +81,7 @@ lleguen las cuentas: el MVP no tiene cuentas.
 - **La capa web es hexagonal (puertos y adaptadores) y se organiza con MVVM**
   (ADR 0016, recuperado y renumerado — no confundir con el ADR 0015, que es la
   identidad visual v2). La vista-modelo es una **función pura del servidor**,
-  nunca una clase con estado ni un hook; `src/catalogo/index.ts` es la única
+  nunca una clase con estado ni un hook; `src/catalogo/catalogo.ts` es la única
   superficie de importación del módulo, con **tres** funciones
   (`listarPorTipo`, `obtenerPorSlug`, `listarSlugs`); no hay `/api` interno
   hasta que exista un segundo consumidor real; y la ficha se prerenderiza
@@ -79,6 +90,17 @@ lleguen las cuentas: el MVP no tiene cuentas.
   de usar Drizzle directo— queda **explícitamente fuera de este ADR**: lo
   decide el arquitecto con `backend-specialist` y `database-specialist`,
   ticket #60, todavía sin resolver.
+- **Los datos de una pantalla viven en un `*.datos.ts` al lado de su ruta**, y
+  cada uno declara en su encabezado **si es simulado o real** y a qué módulo
+  futuro correspondería su firma. Hoy hay seis en `src/app/**`. No es una capa
+  nueva: es el único lugar donde una pantalla nombra de dónde saca lo que
+  muestra, así que reemplazar un mock por el módulo real es un cambio de import
+  y no toca ningún componente. **`salas-del-catalogo.datos.ts` no es un mock**:
+  consume `listarPorTipo` del módulo `catalogo` real, y
+  `estadisticas-catalogo.datos.ts` se apoya en él. Los otros cuatro
+  —`laminas-destacadas`, `ficha-entidad`, `tarjetas-repaso`,
+  `quiz-pregunta`— sí lo son, y el encabezado lo dice. La firma que anticipan
+  **no es un contrato**: ver `docs/decisiones-pendientes.md` §4.
 - Catálogo: una sola tabla `entidad` con discriminador `tipo` y columna `datos`
   JSONB; los campos de cada tipo viven en descriptores en código (ADR 0001).
 - **Una entidad es una fila con un solo slug** (ADR 0013). El **registro de
@@ -91,7 +113,9 @@ lleguen las cuentas: el MVP no tiene cuentas.
   `contenido/<tipo>/<slug>.ts` y tipado por el descriptor de su tipo (ADR 0009).
 - **Severidad del compilador cerrada** (ADR 0007): `strict` más
   `noUncheckedIndexedAccess`, `erasableSyntaxOnly`, `verbatimModuleSyntax`,
-  `noImplicitReturns` y `noFallthroughCasesInSwitch`. Están en `tsconfig.json`
+  `noImplicitReturns` y `noFallthroughCasesInSwitch`, más
+  `allowImportingTsExtensions` (ADR 0011, que no afloja ninguna de las cinco:
+  `tsc` acá solo verifica, no emite). Están en `tsconfig.json`
   con un comentario cada una: **no se aflojan para que compile algo**, se
   resuelve el código. Lo mismo vale para el linter: **todo import de valor
   lleva su extensión** —`./boton.tsx`, `@/catalogo/descriptores/registro.ts`—
@@ -321,11 +345,12 @@ destino**: se escribe como ellas, no parecido a ellas. Un solo registro para tod
 la ficha —el único campo que baja es el `resumen`, que es una etiqueta de listado
 y no narración—.
 
-Dos consecuencias que arrastra y conviene tener presentes: **la semblanza
-publicada de `contenido/procer/manuel-belgrano.ts` está en el registro viejo y
-hay que reescribirla**, y **el criterio de aceptación del ticket #30 —«redactado
-para chicos»— quedó falso** y lo corrige el `delivery-specialist` cuando el
-usuario se lo lleve.
+Una consecuencia que arrastra y conviene tener presente: **el criterio de
+aceptación del ticket #30 —«redactado para chicos»— quedó falso** y lo corrige
+el `delivery-specialist` cuando el usuario se lo lleve. La otra ya está
+saldada: la semblanza de `contenido/procer/manuel-belgrano.ts` estaba en el
+registro llano y **se reescribió en registro épico** (commit `4d39813`, ticket
+#86).
 
 **`historiador-specialist` (ADR 0014).** Igual que el narrador, **no es par**
 de los tres especialistas: trabaja dentro del área del `backend-specialist`, y
@@ -495,7 +520,8 @@ agente, así que nada de lo que se decidió ahora hay que rehacerlo cuando exist
 Queda **una decisión pendiente** para ese momento: hoy cada especialista escribe
 las pruebas de lo suyo. Si aparece un dueño de las pruebas hay que decidir si las
 escribe él o si las sigue escribiendo cada uno y él las revisa. **No se decide
-ahora**: todavía no hay una sola prueba.
+ahora**: las seis pruebas que existen las escribió el dueño de su área, y con
+ese volumen todavía no hay evidencia de cuál de las dos formas conviene.
 
 ## Principio de arquitectura
 
@@ -574,8 +600,9 @@ el viejo en silencio.
   trae una `react-best-practices`—, gana esta, que está versionada en
   `.agents/skills/` y fijada en `skills-lock.json` y no cambia sola.
 - `improve-codebase-architecture` — **es del arquitecto**, ningún otro agente la
-  usa. Necesita historial de commits y código real, así que no sirve hasta que
-  haya varias rebanadas hechas. Está **modificada localmente** para que se pueda
+  usa. Necesita historial de commits y código real, y ya los hay: el módulo
+  `catalogo` y la rebanada de `/catalogo` y `/catalogo/[slug]` están entregados,
+  así que **ya se puede usar**. Está **modificada localmente** para que se pueda
   auto-invocar: al actualizarla desde el origen hay que volver a quitarle
   `disable-model-invocation`.
 - `to-tickets` — es del `delivery-specialist`. Está **modificada localmente**
