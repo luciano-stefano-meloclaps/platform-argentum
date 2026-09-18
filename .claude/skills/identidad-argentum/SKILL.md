@@ -29,7 +29,7 @@ ganan ellos.
 
 | Token | Valor | Fuente | Nota |
 | --- | --- | --- | --- |
-| `--celeste-50` | `#EAF4FE` | v1 | Fondo de bandas/notas |
+| `--celeste-50` | `#EAF4FE` | v1 | Fondo de bandas/notas. También hover de celda tabular (grilla de salas, ticket #88) |
 | `--celeste-150` | `#BFE0FC` | v1 | Borde sobre fondo celeste |
 | `--celeste-400` | `#5DADE2` | v1 | **Superficie, nunca fondo de texto** |
 | `--celeste-600` | `#1E96F5` | v1 | Superficie/borde sin texto — no botón |
@@ -37,6 +37,25 @@ ganan ellos.
 | `--celeste-text` | `#0A5FA8` | v1 | Kicker, etiquetas, links |
 | `--celeste-900` | `#0A3D66` | v1 | También es el fondo de panel invertido (v2) |
 | `--celeste-cinta` | `#4FA8DE` | v2 | Exclusivo de la cinta bandera del header, decorativo |
+
+**Token descartado: `--celeste-25` (`#F5FAFF`).** Se había derivado para el
+ticket #88 como fondo de reposo de la celda tabular de la grilla de salas, un
+escalón más pálido que `--celeste-50` (L≈98% contra L≈95.7%). El
+`brand-specialist` lo revisó al auditar el criterio de aceptación del mismo
+ticket (que exigía que todo token nuevo constara en el documento fuente
+correspondiente) y decidió **no** llevarlo a `docs/marca/sistema-de-diseno.md`
+ni sostenerlo como extensión formal de la rampa: la diferencia con
+`--celeste-50` es demasiado sutil para justificar un escalón nuevo — no se
+había probado antes que los tokens existentes no alcanzaran, como pide la
+sección 3 de las instrucciones del `brand-specialist`. `--blanco` (reposo) +
+`--celeste-50` (hover, ya en uso) resuelven la misma necesidad de dos estados
+distinguibles sin derivar nada: `--blanco` es además el fondo estándar de
+tarjeta en v1 ("Tarjeta de contenido", §7), así que la celda de la grilla
+queda consistente con ese patrón en vez de inaugurar uno propio. Reemplazo
+pendiente de aplicar en `src/app/globals.css` (borrar la declaración de
+`--color-celeste-25`) y `src/app/grilla-salas.tsx` (`bg-celeste-25` →
+`bg-white`, o el token de utilidad que Tailwind genere para `--blanco`) —
+ninguno de los dos es del `brand-specialist`.
 
 ### Dorado — v1 (logros, ligas)
 
@@ -677,6 +696,10 @@ familia de marca completa.
 | --- | ---: | --- |
 | `--celeste-text` `#0A5FA8` / `--celeste-50` `#EAF4FE` | 5.87:1 | ADR 0015 |
 | `--celeste-text` `#0A5FA8` / `--crema` `#FBF7F0` | 6.12:1 | `brand-specialist`, ticket header (#0A5FA8 sitewide en header/nav) |
+| `--texto-titulo` `#1F3B4D` / `--blanco` `#FFFFFF` (reposo de celda) | 11.72:1 | `brand-specialist`, ticket #88 — reemplaza la medición contra `--celeste-25` (descartado) |
+| `--texto-secundario` `#6B5D4A` / `--blanco` `#FFFFFF` (reposo de celda) | 6.38:1 | `brand-specialist`, ticket #88 — reemplaza la medición contra `--celeste-25` (descartado) |
+| `--texto-terciario` `#7E705D` / `--celeste-50` `#EAF4FE` (hover de celda) | **4.33:1 — falla AA**, texto de 10px | `brand-specialist`, ticket #88. No usar `--texto-terciario` sobre `--celeste-50`; usar `--texto-secundario` (5.73:1 sobre `--celeste-50`, 6.38:1 sobre `--blanco`), que pasa en los dos estados. El componente real (`grilla-salas.tsx`) ya usa `--texto-secundario` en el caption, no `--texto-terciario` — este hallazgo es preventivo, no un bug encontrado en código |
+| `--celeste-700` `#0978D0` (foco) / `--blanco` `#FFFFFF` (reposo de celda) | 4.56:1 (no-texto, piso 3:1) | `brand-specialist`, ticket #88 — reemplaza la medición contra `--celeste-25` (descartado). Contra `--celeste-50` (hover) sigue siendo 4.34:1, sin cambios |
 | `--color-acento-repaso-700` `#6B3FA0` / `--color-acento-repaso-100` `#EDE4F5` | 5.98:1 | `brand-specialist`, ticket #91 (pill de dominio, frente y dorso) |
 | `--color-acento-repaso-700` `#6B3FA0` / `--color-blanco` `#FFFFFF` | 7.38:1 | `brand-specialist`, ticket #91 (stat "Dominio de esta ficha") |
 | Blanco / `--color-error` `#C23A3A` (botón "Falso", texto 14px) | 5.30:1 | `brand-specialist`, ticket #91 |
