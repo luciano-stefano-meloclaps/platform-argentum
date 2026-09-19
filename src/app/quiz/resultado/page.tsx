@@ -12,10 +12,11 @@ import { ResultadoQuiz } from "./resultado-quiz.tsx";
  *
  * Vive en `/quiz/resultado`, dentro del árbol de `/quiz`, y no como una
  * ruta hermana de primer nivel: es el final de la misma partida, no otra
- * sección de la plataforma. El encadenamiento real desde la última pregunta
- * hacia acá está **fuera del alcance** del ticket, así que la ruta se
- * alcanza por URL y no hay todavía ningún `<Link>` que lleve a ella desde
- * `/quiz`.
+ * sección de la plataforma. El ticket #107 le dio sus dos entradas de
+ * navegación —el cierre de `quiz-pregunta.tsx` y el ítem "Resultado" del
+ * navbar—, así que ya no se alcanza solo por URL; lo que sigue fuera de
+ * alcance es el encadenamiento **real** desde la última pregunta, que
+ * depende del módulo `aprendizaje`.
  *
  * Server Component, y toda la pantalla también: el resultado es estático —
  * no hay inputs, no hay estado que cambie acá—, así que no hay ninguna isla

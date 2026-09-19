@@ -254,6 +254,38 @@ export function QuizPregunta({ pregunta, progreso, aciertos, errores }: Props) {
           ))}
         </ol>
       </section>
+
+      {/*
+       * ── Cierre: salida hacia la pantalla de resultado (ticket #107) ──
+       * Hasta acá `/quiz/resultado` era una ruta huérfana: existía y se
+       * prerenderizaba, pero no había forma de llegar sin escribir la URL.
+       * Este es el único camino desde la partida hacia el cierre.
+       *
+       * `<Link>`, no `<button>`: lleva a otra pantalla, así que el elemento
+       * correcto es un enlace — mismo criterio que las dos salidas del pie
+       * de `resultado-quiz.tsx`.
+       *
+       * El texto dice **lo que de verdad hace**: "Ver la pantalla de
+       * resultado", no "Terminar el quiz" ni "Ver mi resultado". El módulo
+       * `aprendizaje` (ADR 0002) no existe, así que esta pantalla no lleva
+       * la cuenta de nada y no hay partida que termine: el resultado del
+       * otro lado es el mismo mock siempre, y prometer un estado de partida
+       * terminada sería mentirle al visitante. No se agrega avance entre
+       * preguntas ni registro de respuestas: eso es del módulo.
+       *
+       * Tokens ya vigentes, ninguno nuevo: borde `--arena-borde`, texto
+       * `--texto-titulo`, anillo de foco por defecto de la marca
+       * (`--color-foco`, regla de uso 17) y alto mínimo de objetivo táctil
+       * (regla de uso 18).
+       */}
+      <nav aria-label="Salida del quiz" className="mt-2xl flex">
+        <Link
+          href="/quiz/resultado"
+          className="flex min-h-objetivo-tactil flex-1 items-center justify-center rounded-sm border border-arena-borde px-lg py-[15px] text-center font-cuerpo text-[14px] font-semibold text-texto-titulo motion-safe:transition-colors motion-safe:duration-150 hover:border-borde-strong hover:bg-blanco focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foco"
+        >
+          Ver la pantalla de resultado
+        </Link>
+      </nav>
     </main>
   );
 }
