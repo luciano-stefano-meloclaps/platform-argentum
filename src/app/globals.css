@@ -942,3 +942,55 @@
     background-position: 0 0, 100% 0;
   }
 }
+
+/*
+ * `.au-dark` — gradiente metálico de texto **para panel invertido** (fondo
+ * `--color-celeste-900`). Primera implementación: la clase estaba
+ * especificada en `sistema-de-diseno-v2.md` §143-155 y adoptada por el
+ * ADR 0015, pero nunca había bajado a esta hoja de estilos porque ninguna
+ * pantalla la consumía. Su primer consumidor real es la cifra de 96px de
+ * la pantalla de resultado del quiz (ticket #106).
+ *
+ * Los stops son **los originales de v2, sin recalcular**, y eso es
+ * deliberado: a diferencia de `.au`/`.shiny` —cuya base pasó por doce
+ * iteraciones a pedido explícito del usuario, todas sobre fondo claro—,
+ * este gradiente vive sobre `--color-celeste-900` y ahí el problema de
+ * contraste se invierte: el dorado claro es el que pasa. El extremo
+ * `#E8BE63` da **6.40:1** contra `#0A3D66` (ADR 0015), así que todo el
+ * rango de stops —que solo se aclara desde ahí hacia el centro `#FFF3D0`—
+ * pasa AA con margen. No se toca ninguno de los siete valores.
+ *
+ * **Sin banda de brillo ni animación**, a diferencia de las tres clases de
+ * arriba. v2 la describe como un gradiente estático, y la regla de uso 8
+ * de `identidad-argentum` prohíbe extender el efecto ornamental de v2 a un
+ * componente que v2 no cubre explícitamente. No consume `--brillo-banda`,
+ * no entra al selector de `@keyframes shinySweep` y no necesita bloque de
+ * `prefers-reduced-motion`: no se mueve.
+ *
+ * El fallback sólido **no puede ser `--color-accent-700`**, que es el que
+ * usan `.au`/`.shiny`: sobre `--color-celeste-900` da 2.29:1 y no llega ni
+ * al piso no-texto de 3:1. Va `--color-accent-300` (`#F7DE9B`), **8.48:1
+ * sobre `#0A3D66`** (medido por el `brand-specialist` para el ticket #106,
+ * es el mismo token del badge de liga de esa pantalla): un navegador sin
+ * `background-clip: text` ve un dorado claro sólido que pasa AA, y queda
+ * consistente con el resto del panel invertido. El
+ * `-webkit-text-fill-color: transparent` cumple acá la misma función de
+ * mecánica CSS que en `.au` — sin él el color sólido pintaría por encima
+ * del recorte y el gradiente nunca se vería.
+ */
+.au-dark {
+  background-image: linear-gradient(
+    100deg,
+    #e8be63 0%,
+    #f2d488 18%,
+    #f7de9b 36%,
+    #fff3d0 50%,
+    #f7de9b 64%,
+    #f2d488 82%,
+    #e8be63 100%
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: var(--color-accent-300); /* fallback sólido, 8.48:1 sobre --color-celeste-900 */
+  -webkit-text-fill-color: transparent;
+}
