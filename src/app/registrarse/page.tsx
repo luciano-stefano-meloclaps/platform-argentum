@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 
 import { registrarseConFormulario } from "./acciones.ts";
 import { FormularioDeRegistro } from "./formulario-de-registro.tsx";
+import { BotonContinuarConGoogle } from "../boton-continuar-con-google.tsx";
 
 /**
  * La pantalla "Registrarse" (ticket #113, ADR 0019): alta de cuenta con
@@ -17,8 +18,10 @@ import { FormularioDeRegistro } from "./formulario-de-registro.tsx";
  * `next-best-practices`: una función `"use server"` es serializable de
  * servidor a cliente aunque las funciones comunes no lo sean).
  *
- * Fuera de alcance de este ticket: el botón "Continuar con Google" (#115,
- * bloqueada por esta) y el login con contraseña ya existente (#114).
+ * **"Continuar con Google" (ticket #115, ADR 0019 Regla 4):** debajo del
+ * formulario, separado por un divisor de texto ("o"). Es el único punto de
+ * la interfaz que no pasa por `identidad.ts` — ver
+ * `../boton-continuar-con-google.tsx` para el porqué.
  */
 export const metadata: Metadata = {
   title: "Creá tu cuenta | Argentum",
@@ -33,6 +36,10 @@ export default function PaginaDeRegistro() {
       </p>
 
       <FormularioDeRegistro accion={registrarseConFormulario} />
+
+      <p className="mt-lg text-center font-cuerpo text-caption text-texto-terciario">o</p>
+
+      <BotonContinuarConGoogle />
     </main>
   );
 }

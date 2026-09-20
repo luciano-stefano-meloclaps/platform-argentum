@@ -3,6 +3,7 @@ import Link from "next/link";
 
 import { iniciarSesionConFormulario } from "./acciones.ts";
 import { FormularioDeIngreso } from "./formulario-de-ingreso.tsx";
+import { BotonContinuarConGoogle } from "../boton-continuar-con-google.tsx";
 
 /**
  * La pantalla "Ingresar" (ticket #114, ADR 0019): inicio de sesión con email
@@ -11,8 +12,9 @@ import { FormularioDeIngreso } from "./formulario-de-ingreso.tsx";
  * `FormularioDeIngreso` (Client Component), que recibe la Server Action como
  * prop.
  *
- * Fuera de alcance de este ticket: el botón "Continuar con Google" (#115,
- * bloqueada por esta y por #113).
+ * **"Continuar con Google" (ticket #115, ADR 0019 Regla 4):** debajo del
+ * formulario, separado por un divisor de texto ("o"). Mismo componente que
+ * `registrarse/page.tsx`, ver `../boton-continuar-con-google.tsx`.
  */
 export const metadata: Metadata = {
   title: "Ingresá | Argentum",
@@ -27,6 +29,10 @@ export default function PaginaDeIngreso() {
       </p>
 
       <FormularioDeIngreso accion={iniciarSesionConFormulario} />
+
+      <p className="mt-lg text-center font-cuerpo text-caption text-texto-terciario">o</p>
+
+      <BotonContinuarConGoogle />
 
       <p className="mt-lg font-cuerpo text-body text-texto-secundario">
         ¿Todavía no tenés cuenta?{" "}
