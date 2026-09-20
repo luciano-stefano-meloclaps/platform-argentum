@@ -1,3 +1,5 @@
+import { obtenerSesion } from "../identidad/identidad.ts";
+import { cerrarSesionDesdeNav } from "./header.acciones.ts";
 import { NavPrincipal } from "./nav-principal.tsx";
 
 /**
@@ -85,10 +87,20 @@ import { NavPrincipal } from "./nav-principal.tsx";
  *   ("include skip link for main content"). Cada página expone `id="contenido"`
  *   en su `<main>` para que el ancla tenga destino.
  *
- * Server Component: todo lo de acá es marcado estático: ni estado, ni
- * efectos, ni una sola API del navegador.
+ * Server Component, ahora `async` (ticket #114, ADR 0019): el resto del
+ * marcado sigue siendo estático, pero necesita `obtenerSesion()` — async y
+ * server-only (`src/identidad/identidad.ts`) — para saber si hay una sesión
+ * activa y decidir qué muestra `NavPrincipal` en el ítem que hoy es
+ * "Ingresar"/"Salir". Es la señal visible de estado que pide el ticket: no
+ * se rediseña la navegación, se le pasa el dato que le faltaba al único
+ * ítem que ya distinguía ese caso (antes un botón inerte sin ruta).
+ * `cerrarSesionDesdeNav` (`./header.acciones.ts`) viaja como prop, mismo
+ * patrón que la Server Action de un formulario: es serializable de servidor
+ * a cliente aunque `NavPrincipal` sea un Client Component.
  */
-export function Header() {
+export async function Header() {
+  const sesion = await obtenerSesion();
+
   return (
     <header className="border-b border-arena-borde-suave bg-crema">
       {/*
@@ -133,7 +145,7 @@ export function Header() {
           <span className="h-px flex-1 bg-accent" />
         </div>
 
-        <NavPrincipal />
+        <NavPrincipal sesionActiva={sesion !== undefined} cerrarSesion={cerrarSesionDesdeNav} />
       </div>
     </header>
   );

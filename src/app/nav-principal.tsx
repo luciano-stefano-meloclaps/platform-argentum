@@ -17,6 +17,12 @@ import { usePathname } from "next/navigation";
  * (`/quiz`, `src/app/quiz/page.tsx`) y "Resultado" en el #107
  * (`/quiz/resultado`, creada por el #106); las tres se renderizan como link,
  * igual que "Explorar", "Ficha" e "Índice".
+ *
+ * "Ingresar" salió de esta lista estática en el ticket #114: ya no es un
+ * botón inerte, es el ítem dinámico que se arma más abajo a partir de
+ * `sesionActiva` — "Ingresar" (link a `/ingresar`) o "Salir" (Server Action
+ * que cierra la sesión), la señal visible de en cuál de los dos estados está
+ * el visitante. Se renderiza en la misma posición, al final.
  */
 const ITEMS = [
   { etiqueta: "Explorar", href: "/" },
@@ -30,7 +36,6 @@ const ITEMS = [
   { etiqueta: "Resultado", href: "/quiz/resultado" },
   { etiqueta: "Perfil" },
   { etiqueta: "Usuarios" },
-  { etiqueta: "Ingresar" },
 ] as const;
 
 /**
@@ -76,6 +81,13 @@ const clasesBase =
  */
 const clasesActivo = "border-b-celeste-text text-celeste-text";
 
+type Props = {
+  /** Si hay una sesión activa (`obtenerSesion() !== undefined`, resuelto por `Header`, el Server Component padre). */
+  sesionActiva: boolean;
+  /** Server Action que cierra la sesión (`./header.acciones.ts`), pasada como prop por el mismo motivo que cualquier Server Action se pasa de un Server Component a un Client Component. `<form action={...}>` la invoca con un `FormData` que la función no necesita declarar. */
+  cerrarSesion: () => Promise<void>;
+};
+
 /**
  * Nav/TabsBar de tipografía pura (ticket #82), reemplazo del `NavPrincipal`
  * con subrayado grueso y fondo `rounded-sm`. Nav simple, no widget ARIA
@@ -87,8 +99,16 @@ const clasesActivo = "border-b-celeste-text text-celeste-text";
  * Contenedor: ancho completo del header (sin `max-width` propio, se centra
  * por `justify-content`), `flex-wrap` deja 2-3 líneas en mobile —nunca
  * hamburguesa ni scroll horizontal— cada una centrada.
+ *
+ * El último ítem (ticket #114) ya no es estático: sin sesión es un `<Link>`
+ * a `/ingresar`, igual que cualquier otro ítem con ruta; con sesión activa
+ * es un `<form>` de un solo botón que dispara `cerrarSesion` — la Server
+ * Action no necesita ningún campo, así que el `<form>` no tiene ningún
+ * `<input>`, solo el botón. Las clases son las mismas (`clasesBase`) en los
+ * dos casos, así que "Ingresar"/"Salir" se ve igual que el resto del nav, no
+ * como un botón aparte.
  */
-export function NavPrincipal() {
+export function NavPrincipal({ sesionActiva, cerrarSesion }: Props) {
   const pathname = usePathname();
 
   return (
@@ -115,6 +135,22 @@ export function NavPrincipal() {
           </Link>
         );
       })}
+
+      {sesionActiva ? (
+        <form action={cerrarSesion}>
+          <button type="submit" className={clasesBase}>
+            Salir
+          </button>
+        </form>
+      ) : (
+        <Link
+          href="/ingresar"
+          aria-current={esActivo(pathname, "/ingresar") ? "page" : undefined}
+          className={esActivo(pathname, "/ingresar") ? `${clasesBase} ${clasesActivo}` : clasesBase}
+        >
+          Ingresar
+        </Link>
+      )}
     </nav>
   );
 }
