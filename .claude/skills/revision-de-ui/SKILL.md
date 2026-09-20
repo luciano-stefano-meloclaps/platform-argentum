@@ -21,8 +21,14 @@ nada de internet.
 
 ## Prioridad para este proyecto
 
-La aplicación la usan **chicos**. Cuando haya que ordenar los hallazgos, estas
-categorías van primero:
+La audiencia del catálogo son **chicos grandes y adultos, de doce años en
+adelante** (ADR 0012), con una prosa épica de registro alto. La versión para
+chicos más chicos está **pospuesta, no cancelada** — ver
+`docs/decisiones-pendientes.md`. Eso no afloja ningún piso de accesibilidad:
+este producto se usa en pantallas baratas, de brillo bajo y a veces al sol
+(ADR 0008), y una prosa épica —más larga y más densa que una llana— se
+sostiene mejor con ese piso, no peor. Cuando haya que ordenar los hallazgos,
+estas categorías van primero:
 
 1. **Accesibilidad** — etiquetas, roles, navegación por teclado, textos
    alternativos.

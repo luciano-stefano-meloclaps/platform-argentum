@@ -194,7 +194,7 @@ necesario, diseñado para poder crecer.
 **Las fuentes se cargan con `next/font/google`** —Cormorant Garamond y
 Montserrat—, no con el `@import` que aparece en el documento de marca. Lo dice el
 ADR 0008: auto-hospedadas, sin salto de layout y sin una petición a un tercero
-desde el navegador del chico.
+desde el navegador de quien lee.
 
 ---
 
@@ -261,12 +261,20 @@ usuario, documentada en `sistema-de-diseno-v2.md` §8—. **900 sigue prohibido
 siempre**: Cormorant Garamond no lo tiene, y pedirlo produce negrita
 sintética.
 
-### No infantil y legible a la vez
+### Voz épica y legible a la vez
 
-La marca declara un territorio **transversal, no infantil**, y tiene razón: esto
-no es una app de jardín de infantes. Pero *no infantil* es una decisión de
-**estilo**; la legibilidad es un requisito de **producto**, porque lo usan chicos
-de ocho años que leen más lento y con menos precisión.
+La audiencia del catálogo son **chicos grandes y adultos, de doce años en
+adelante** (ADR 0012), con una prosa épica de registro alto: escenario
+dramático, léxico rico, metáfora sostenida. La versión para chicos más chicos
+está **pospuesta, no cancelada** — ver `docs/decisiones-pendientes.md`. La
+marca declara además un territorio **transversal, no infantil**, y tiene
+razón: esto no es una app de jardín de infantes. Ese registro alto es una
+decisión de **estilo y de voz**; la legibilidad sigue siendo un requisito de
+**producto**, con el mismo argumento de siempre — este producto se usa en
+pantallas baratas, de brillo bajo y a veces al sol (ADR 0008) — reforzado
+ahora por la propia prosa: un texto épico es más largo y más denso que uno
+llano, así que el piso de legibilidad se sostiene mejor con estos números, no
+peor.
 
 Los dos conviven usando los propios tokens de la marca:
 
@@ -278,8 +286,8 @@ Los dos conviven usando los propios tokens de la marca:
 - **Objetivos táctiles grandes y separados.** El mínimo se define en la escala de
   espaciado, para que no quede a criterio de cada pantalla.
 - **El color nunca es el único portador de significado.** Si algo está bien o mal
-  respondido, tiene que notarse además por forma, ícono o texto. Hay chicos que
-  no distinguen rojo de verde y no lo saben todavía.
+  respondido, tiene que notarse además por forma, ícono o texto. Hay personas
+  que no distinguen rojo de verde y no siempre lo saben.
 - **El movimiento es un premio, no un peaje.** Todo lo que se mueva respeta
   `prefers-reduced-motion`, y nada bloquea la lectura mientras se mueve.
 - **Nada castiga.** Equivocarse en el quiz enseña. El lenguaje visual del error
