@@ -1,25 +1,32 @@
 # platform-argentum
 
-Aplicación web para que los chicos aprendan sobre Argentina.
+Catálogo web sobre Argentina, con prosa épica de registro alto.
 
-> **Estado: el arranque está hecho.** La aplicación compila, corre contra
-> PostgreSQL y está desplegada. Existen la tabla `entidad` con su migración y el
-> registro de descriptores; **todavía no existen los módulos, las pantallas de
-> producto ni el contenido**. La arquitectura y el stack están decididos y
-> documentados en [`docs/adr/`](docs/adr/).
->
-> Los pasos de [Puesta en marcha](#puesta-en-marcha) marcados como *previsto* son
-> los que todavía no tienen su comando.
+> **Estado: la primera rebanada de producto está entregada.** La aplicación
+> compila, corre contra PostgreSQL y está desplegada. Existen la tabla
+> `entidad` con su migración, el registro de descriptores, el módulo
+> `catalogo`, seis rutas en `src/app/` y la primera ficha de contenido curado
+> (`contenido/procer/manuel-belgrano.ts`). `/catalogo` y `/catalogo/[slug]` se
+> sirven contra el módulo real. **Todavía no existen** los otros cuatro
+> módulos (`moderacion`, `aprendizaje`, `progreso`, `identidad`); las pantallas
+> de `/ficha`, `/tarjetas` y `/quiz` existen como presentación, con datos
+> simulados. La arquitectura y el stack están decididos y documentados en
+> [`docs/adr/`](docs/adr/).
 
 ## Qué es
 
 Un catálogo de contenido sobre Argentina —próceres, monumentos, animales,
-comida, fechas patrias, eventos históricos— pensado para que un chico lo lea, lo
-entienda y lo repase jugando.
+comida, fechas patrias, eventos históricos— pensado para un lector de doce
+años en adelante, que lo lea, lo entienda y lo repase jugando. La audiencia y
+el registro épico de la prosa están decididos en
+[ADR 0012](docs/adr/0012-audiencia-adulta-y-registro-epico.md); una versión
+para chicos más chicos, en otra lengua y quizás otro diseño, está **pospuesta,
+no cancelada** (ver
+[`docs/decisiones-pendientes.md`](docs/decisiones-pendientes.md)).
 
 La idea no es un enciclopedismo: es que el contenido se pueda **ver a simple
-vista**, con una interfaz pensada para chicos, y que arriba de ese catálogo haya
-tarjetas de repaso y un juego de preguntas que refuercen lo leído.
+vista**, con una interfaz clara y sin fricción, y que arriba de ese catálogo
+haya tarjetas de repaso y un juego de preguntas que refuercen lo leído.
 
 El conjunto de tipos de contenido **no está cerrado a propósito**. Hoy son los
 que están arriba; mañana pueden ser otros. Toda la arquitectura está diseñada
@@ -41,15 +48,18 @@ alrededor de ese hecho: agregar un tipo nuevo tiene que ser barato (ver
   se compite con nadie.** Es un incentivo, no un ranking.
 
 No hay cuentas todavía. **Dónde se guarda el progreso de alguien sin cuenta es
-una decisión abierta a propósito**, y el producto es para chicos, así que
-persistir un identificador por navegador no es un detalle de implementación: está
-registrada, con su disparador y su regla interina, en
-[`docs/decisiones-pendientes.md`](docs/decisiones-pendientes.md).
+una decisión abierta a propósito**: la audiencia arranca a los doce años
+(ADR 0012) y a esa edad se sigue siendo menor, así que persistir un
+identificador por navegador sigue siendo una decisión sobre datos de menores,
+no un detalle de implementación —la dimensión se aflojó con la nueva audiencia,
+pero no desapareció—. Está registrada, con su disparador y su regla interina,
+en [`docs/decisiones-pendientes.md`](docs/decisiones-pendientes.md).
 
 ### Después del MVP
 
-- **Cuentas de usuario.** Solo correo electrónico, sin contraseña. Al haber
-  chicos involucrados, se piden los datos mínimos indispensables y nada más.
+- **Cuentas de usuario.** Solo correo electrónico, sin contraseña. La audiencia
+  incluye menores de edad (doce años en adelante, ADR 0012), así que se piden
+  los datos mínimos indispensables y nada más.
 - **Propuestas de la comunidad.** Los usuarios proponen altas, modificaciones y
   bajas de contenido; **nada se publica sin que un administrador lo apruebe.**
 - **Roles.** `usuario`, `admin` y `superadmin`. Un visitante sin sesión no es un
@@ -133,11 +143,9 @@ Los valores de la base local salen de `docker-compose.yml`. El archivo es `.env`
 | `pnpm db:ping` | Verifica que la base responda |
 | `pnpm db:generate` | Genera migraciones a partir del esquema |
 | `pnpm db:migrate` | Aplica las migraciones pendientes |
+| `pnpm contenido:importar` | Importa `contenido/` a la base, validando cada ficha contra el descriptor de su tipo ([ADR 0004](docs/adr/0004-contenido-en-archivos-versionados.md)) |
 
 Antes de dar por terminado un cambio: `pnpm typecheck && pnpm lint && pnpm test`.
-
-*Previsto, todavía sin comando:* la **importación** que carga `contenido/` en la
-base ([ADR 0004](docs/adr/0004-contenido-en-archivos-versionados.md)).
 
 ## Cómo agregar contenido
 
@@ -188,7 +196,16 @@ backend" y después "todo el frontend".
 Cada rebanada se corta en **tickets**, que son issues de este repositorio, y
 **nada entra al historial sin un ticket que lo explique**. El trabajo lo hacen
 agentes de Claude Code con roles y límites definidos en
-[`CLAUDE.md`](CLAUDE.md); el push y el despliegue los hace una persona.
+[`CLAUDE.md`](CLAUDE.md).
+
+El trabajo con ticket llega a la rama **`development`**: el
+`delivery-specialist` pushea la rama de la rebanada y abre el *pull request*
+contra `development` —nunca contra `main`—, y lo mergea. Cada uno de esos dos
+pasos, push y merge, requiere la verificación explícita del usuario antes de
+ejecutarse.
+
+Mergear `development` a `main` y desplegar sigue siendo **enteramente del
+usuario**, en su propio tiempo.
 
 ## Documentación
 
@@ -197,9 +214,11 @@ agentes de Claude Code con roles y límites definidos en
 | [`CONTEXT.md`](CONTEXT.md) | Glosario del dominio: el vocabulario del proyecto |
 | [`docs/adr/`](docs/adr/) | Decisiones arquitectónicas, con su contexto y sus alternativas |
 | [`docs/decisiones-pendientes.md`](docs/decisiones-pendientes.md) | Lo que **todavía no** se decidió, con su disparador y su regla interina |
-| [`docs/marca/sistema-de-diseno.md`](docs/marca/sistema-de-diseno.md) | La identidad **Argentum**: paleta, tipografía y reglas de aplicación |
+| [`docs/marca/sistema-de-diseno.md`](docs/marca/sistema-de-diseno.md) | La identidad **Argentum** v1.0: paleta, tipografía y reglas de aplicación |
+| [`docs/marca/sistema-de-diseno-v2.md`](docs/marca/sistema-de-diseno-v2.md) | El giro museístico de Argentum ([ADR 0015](docs/adr/0015-identidad-visual-argentum-v2.md)): logotipo, concepto y tipografía nuevos |
 | [`docs/tickets-del-arranque.md`](docs/tickets-del-arranque.md) | El corte del arranque en diez cimientos, y su razonamiento |
-| [`.claude/skills/`](.claude/skills/) | Skills del proyecto: convenciones de Git y revisión de interfaz |
+| [`docs/agents/`](docs/agents/) | Configuración de las skills de ingeniería: tracker de issues y documentación de dominio |
+| [`.claude/skills/`](.claude/skills/) | Skills del proyecto: `convenciones-git`, `revision-de-ui`, `voz-narrativa`, `investigacion-historica` e `identidad-argentum` |
 | [`CLAUDE.md`](CLAUDE.md) | Contexto del proyecto para Claude Code, y el equipo de agentes |
 
 **Antes de proponer un cambio que contradiga una decisión registrada, leé el ADR
