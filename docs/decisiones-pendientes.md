@@ -198,3 +198,41 @@ la firma que sale es distinta, la que se cambia es la de las pantallas. Mientras
 tanto, ningún archivo nuevo puede citar a `obtenerMazoDeRepaso` ni a
 `obtenerQuizMock` como si fueran la interfaz del módulo, y un `*.datos.ts` nuevo
 que anticipe una firma tiene que decir en su encabezado que es simulada.
+
+---
+
+## 5. El puerto de salida del módulo `catalogo`
+
+**Qué está pendiente.** ¿Debería `catalogo` declarar una interfaz de
+persistencia que Drizzle implemente por detrás —el puerto de salida que el ADR
+0016 dejó explícitamente afuera de su alcance—, o seguir importando `db`
+directo como hace hoy?
+
+**Por qué no se decide hoy.** El ADR 0018 resolvió esta pregunta por ahora:
+**se pospone**. Hoy hay una sola tabla (`entidad`), un solo motor
+(PostgreSQL/Drizzle) y ningún segundo adaptador de persistencia a la vista. Una
+interfaz con una sola implementación real es la capa vacía que el propio
+ADR 0016 advirtió que hay que evitar, y el beneficio concreto que se nombra a
+favor —probar el módulo sin Postgres levantado— no está doliendo: las pruebas
+de `catalogo.test.ts` corren rápido contra Docker, que ya es un prerrequisito
+del flujo de desarrollo, y no existe todavía un pipeline de CI que se
+beneficie de evitarlo.
+
+**Disparador.** El primero de estos hechos que ocurra:
+
+1. **Aparece un segundo adaptador de persistencia real** para algún módulo del
+   catálogo —otro motor, una réplica, un caché delante de Postgres— y no uno
+   hipotético.
+2. **Aparece un pipeline de CI** y levantar Postgres ahí resulta costoso o
+   inestable de forma medida, no supuesta.
+3. **El tiempo de las pruebas del módulo se vuelve doloroso de forma medible**
+   a medida que `catalogo` (u otro módulo) crece en funciones y pruebas.
+
+En cualquiera de los tres casos, el ADR que reabra la pregunta se escribe
+**antes** de introducir el puerto, no durante, y puede resolver que la interfaz
+se agregue solo al módulo afectado, no a los cinco por igual.
+
+**Regla interina.** `catalogo.ts` sigue con Drizzle directo (ver ADR 0018). Un
+módulo nuevo (`moderacion`, `aprendizaje`, `progreso`, `identidad`) que se
+diseñe mientras esta entrada siga abierta hace lo mismo: importa `db` directo,
+sin anticipar una interfaz de persistencia por si acaso.
