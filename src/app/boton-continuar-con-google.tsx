@@ -1,21 +1,6 @@
 "use client";
 
-import { createAuthClient } from "better-auth/react";
-
-/**
- * Cliente de Better Auth para el navegador (ADR 0019, Regla 4: la única
- * excepción nombrada a "la capa web le pide al módulo", ADR 0002). Vive acá,
- * junto al botón que lo usa, y no en `src/identidad/`, a propósito: el lint
- * que restringe `src/app` a importar solo `identidad/identidad.ts` (ADR 0019,
- * `eslint.config.mjs`) no distingue entre el módulo de dominio y esta
- * excepción del navegador — meter este cliente adentro de `src/identidad/`
- * forzaría una excepción nueva a esa regla, y esa regla no es de este ticket.
- *
- * `createAuthClient()` sin `baseURL`: el cliente corre en el mismo origen que
- * `/api/auth/[...all]` (ticket #112), así que Better Auth la resuelve sola
- * (documentación oficial, verificada vía Context7).
- */
-const authClient = createAuthClient();
+import { authClient } from "./auth-cliente.ts";
 
 async function continuarConGoogle() {
   // `callbackURL` no se fija: el valor por omisión de Better Auth ya es "/"
