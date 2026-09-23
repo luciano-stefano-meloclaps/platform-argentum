@@ -1,6 +1,6 @@
 # 0020 — La sesión de la barra de navegación se lee desde el cliente, para no volver dinámico el catálogo
 
-- **Estado:** Propuesto (supersede parcialmente al 0019, solo su Regla 4)
+- **Estado:** Aceptado (supersede parcialmente al 0019, solo su Regla 4)
 - **Fecha:** 2026-09-23
 - **Decide:** el usuario; **redacta:** el `super-architect`
 
