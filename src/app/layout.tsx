@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Cormorant_Garamond, Lora } from "next/font/google";
 
 import "./globals.css";
+import { Header } from "./header.tsx";
 
 /*
  * Las dos familias de la identidad Argentum, auto-hospedadas con
@@ -11,10 +12,16 @@ import "./globals.css";
  *
  * Cada una expone su variable CSS, que el bloque `@theme` de `globals.css`
  * referencia como `--font-titulo` y `--font-cuerpo`. Los pesos pedidos son
- * los que la escala tipográfica realmente usa: 600 y 700 para Cormorant
- * Garamond (h3 y display/h1/h2, este último ya corregido a 700 por el ADR
- * 0008), 400/500/600 para Lora (cuerpo, label, botón, meta). No se pide la
- * itálica: la escala tipográfica no la usa en ningún componente.
+ * los que la escala tipográfica realmente usa: 400, 600 y 700 para
+ * Cormorant Garamond (400 para logotipo/H1–H3 grandes/cifras destacadas
+ * por el ADR 0015 — `.au`, `.shiny` y el `<h1>` del hero en `font-normal`
+ * no llevan ninguna otra clase de peso, así que dependen de que el 400 esté
+ * realmente cargado como variante propia; sin él, el navegador sustituía
+ * por el 600 más cercano o generaba negrita sintética, que es el bug que
+ * corrige este cambio—, 600 para h3, 700 para display/h1/h2, este último ya
+ * corregido a 700 por el ADR 0008), 400/500/600 para Lora (cuerpo, label,
+ * botón, meta). No se pide la itálica: la escala tipográfica no la usa en
+ * ningún componente.
  *
  * Lora reemplaza a Montserrat en toda la interfaz (ADR 0015, giro
  * museístico v2 — sistema-de-diseno-v2.md §4): no solo el cuerpo de
@@ -29,7 +36,7 @@ import "./globals.css";
  */
 const cormorantGaramond = Cormorant_Garamond({
   subsets: ["latin"],
-  weight: ["600", "700"],
+  weight: ["400", "600", "700"],
   display: "swap",
   variable: "--font-cormorant-garamond",
 });
@@ -56,7 +63,30 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
        * marca dejen de ser solo declaración y pasen a estar en uso; no
        * agrega ninguna pantalla ni componente.
        */}
-      <body className="bg-crema font-cuerpo text-texto-cuerpo">{children}</body>
+      <body className="flex min-h-dvh flex-col bg-crema font-cuerpo text-texto-cuerpo">
+        {/*
+         * Header sitewide (expansión de alcance de esta conversación, ver
+         * `header.tsx`): aparece en toda pantalla, no solo en la home, por
+         * eso vive acá y no en `page.tsx`.
+         *
+         * `min-h-dvh flex flex-col` acá, en el `<body>`, y no en el `<Hero>`:
+         * el conjunto Header + Hero tiene que ocupar exactamente el
+         * viewport completo, con el Header en su alto natural arriba y la
+         * caja celeste del Hero (ver `hero.tsx`) rellenando el resto hasta
+         * el borde inferior. Ponerle `min-h-dvh` al Hero por separado (como
+         * se hizo antes) suma su propio 100dvh al alto del Header y el
+         * conjunto termina pasándose de la ventana. El Header no lleva
+         * `flex-1` ni `min-h`: se queda en su alto natural, y es el Hero
+         * (que sí tiene `flex-1`) el que absorbe el espacio sobrante. Si
+         * `page.tsx` agrega más secciones después del Hero (como
+         * `SalasDelCatalogo`), quedan fuera de este cálculo: el `flex-1`
+         * vive en el propio `<Hero>`, no en `<main>` ni en `{children}`,
+         * así que esas secciones siguen apareciendo debajo con scroll
+         * normal, sin que este layout les robe espacio.
+         */}
+        <Header />
+        {children}
+      </body>
     </html>
   );
 }

@@ -11,8 +11,11 @@ repositorio antes de explorar el código.
 - [`CONTEXT.md`](../../CONTEXT.md) en la raíz — el glosario del dominio.
 - [`docs/adr/`](../adr/) — las decisiones que tocan el área en la que vas a
   trabajar. Empezá por el [índice](../adr/README.md).
-- [`docs/marca/sistema-de-diseno.md`](../marca/sistema-de-diseno.md) — la
-  identidad visual, si vas a tocar algo que se ve. La corrige el ADR 0008.
+- [`docs/marca/sistema-de-diseno.md`](../marca/sistema-de-diseno.md) y
+  [`docs/marca/sistema-de-diseno-v2.md`](../marca/sistema-de-diseno-v2.md) — la
+  identidad visual, si vas a tocar algo que se ve. **Se leen juntos**: v1 la
+  adopta el ADR 0008, y el giro museístico de v2 lo adopta el ADR 0015, que
+  supersede parcialmente al 0008. Donde no coincidan, gana el ADR.
 
 Los dos existen y están escritos. No es un repositorio donde haya que
 "proceder en silencio" ante su ausencia: acá están, y **no leerlos es un error**.
@@ -23,10 +26,10 @@ Los dos existen y están escritos. No es un repositorio donde haya que
 /
 ├── CONTEXT.md          ← glosario del dominio
 ├── docs/
-│   ├── adr/            ← decisiones arquitectónicas (0001…0008)
+│   ├── adr/            ← decisiones arquitectónicas (0001…0017)
 │   ├── marca/          ← la identidad visual Argentum
 │   └── agents/         ← este archivo y el del tracker
-└── src/                ← todavía no existe: el proyecto es greenfield
+└── src/                ← el código: el módulo `catalogo` y la capa web
 ```
 
 ## Usá el vocabulario del glosario

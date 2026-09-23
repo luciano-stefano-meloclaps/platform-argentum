@@ -20,16 +20,22 @@ pregunta por qué las cosas están así.
 | [0007](0007-severidad-del-compilador-de-typescript.md) | Severidad del compilador de TypeScript | Aceptado |
 | [0008](0008-identidad-visual-argentum.md) | Identidad visual Argentum | Aceptado — corregido parcialmente por 0015 |
 | [0009](0009-formato-del-contenido-curado.md) | Formato, ubicación e imágenes del contenido curado | Aceptado |
+| [0010](0010-agentes-pueden-escribir-en-vercel-con-confirmacion.md) | Los agentes pueden escribir en Vercel, con confirmación del usuario | Aceptado |
 | [0011](0011-extension-explicita-en-imports-relativos-de-valor.md) | Extensión explícita en los imports relativos de valor | Aceptado |
 | [0012](0012-audiencia-adulta-y-registro-epico.md) | Audiencia de chicos grandes y adultos, con registro épico | Aceptado |
 | [0013](0013-el-registro-de-lectura-no-es-una-entidad.md) | El registro de lectura no es una entidad: dos prosas, una fila | Aceptado |
 | [0014](0014-historiador-especialista-y-neutralidad-en-disputas-politicas.md) | Historiador especialista y neutralidad en disputas políticas | Aceptado |
 | [0015](0015-identidad-visual-argentum-v2.md) | Identidad visual Argentum v2: giro museístico e institucional | Aceptado |
+| [0016](0016-arquitectura-de-la-capa-web.md) | Arquitectura de la capa web: hexagonal con MVVM | Aceptado — corregido parcialmente por 0017 |
+| [0017](0017-nombre-del-punto-de-entrada-de-un-modulo.md) | El punto de entrada de un módulo se llama como el módulo | Aceptado |
 
-**El 0010 no existe y no se reutiliza.** Hubo un
-`0010-agentes-pueden-escribir-en-vercel-con-confirmacion.md` que se retiró y se
-borró del árbol; sigue en el historial de git. El número queda quemado para que
-una referencia vieja al 0010 no apunte a una decisión distinta.
+**El 0016 recupera un ADR que había perdido su número.** El 2026-09-09 se
+escribió, en una rama que nunca se mergeó completa, un ADR de arquitectura de la
+capa web numerado 0015. Mientras esa rama seguía sin integrarse, otra rama tomó
+el mismo número para la identidad visual v2 y sí llegó a `development` — así que
+el 0015 vigente hoy es ese, y la decisión de arquitectura de la capa web, ya
+implementada en el módulo `catalogo`, no tenía ADR en el árbol. Se recuperó y
+renumeró como 0016; el archivo trae la nota de procedencia completa.
 
 ## Cuándo escribir un ADR
 

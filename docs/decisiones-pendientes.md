@@ -89,9 +89,9 @@ sin saber con qué se va a reconciliar, que es exactamente el tipo de error que
 después cuesta una migración de datos.
 
 Hay además una dimensión que no es técnica y que hay que resolver antes de
-elegir: el producto es **para chicos**, así que persistir un identificador por
-navegador es una decisión sobre datos de menores, no un detalle de
-implementación.
+elegir: la audiencia del producto arranca a los **doce años** (ADR 0012), y a
+los doce se sigue siendo menor, así que persistir un identificador por navegador
+es una decisión sobre datos de menores, no un detalle de implementación.
 
 **Disparador.** El arranque de la **rebanada 5 (progreso)**. Bloquea esa
 rebanada por completo: no se corta en tickets hasta que exista el ADR.
@@ -101,11 +101,11 @@ persiste nada de progreso.** Las **tarjetas** de la rebanada 3 se diseñan sin
 guardar resultados. Si aparece la tentación de guardar "algo mínimo" antes de
 tiempo, es señal de que el disparador ya se cumplió y toca escribir el ADR.
 
-**Nota del ADR 0012.** La dimensión no técnica de arriba —«el producto es para
-chicos, así que persistir un identificador por navegador es una decisión sobre
-datos de menores»— **se aflojó, pero no desapareció**. La audiencia inmediata
-pasó a ser de doce años en adelante, y a los doce se sigue siendo menor. Deja de
-ser el nudo de esta decisión; no deja de ser una consideración.
+**Nota del ADR 0012.** Esta entrada se escribió cuando el producto era para
+chicos de ocho años, y su dimensión no técnica era el nudo del asunto. Con la
+audiencia de doce en adelante **se aflojó, pero no desapareció**: el párrafo de
+arriba ya está redactado con la audiencia vigente. Deja de ser el nudo de esta
+decisión; no deja de ser una consideración.
 
 ---
 
@@ -127,12 +127,16 @@ concreto:
 4. **Si la identidad visual se bifurca** —«quizás otro diseño», dijo el usuario—,
    lo que reabriría la sección 8 del ADR 0008, que hoy quedó sin objeto.
 
-**Por qué no se decide hoy.** Porque decidirla ahora sería diseñar para un
-producto que todavía no existe. **No hay ninguna pantalla de catálogo
-construida** y hay **una sola** ficha escrita, en el registro que se acaba de
-abandonar. Elegir hoy entre «campo paralelo» y «aplicación aparte» significa
-fijar la forma de los **datos** y la de la navegación sin haber visto funcionar
-ninguna de las dos, que es el error caro. El propio motivo del vuelco —«es lo más
+**Por qué no se decide hoy.** Porque todavía falta la información que haría
+elegible una de las formas. Las pantallas del catálogo ya existen —`/catalogo` y
+`/catalogo/[slug]` están entregadas— y la única ficha escrita ya está en
+registro épico, así que las dos premisas originales de este párrafo caducaron.
+Lo que **no** caducó es el disparador: nadie pidió una ficha para chicos y hay
+**una** ficha publicada, no diez. Con una sola no se sabe cuánto cuesta escribir
+la prosa de una, ni si el formato aguanta a escala, que es exactamente lo que
+hay que saber para elegir entre campo paralelo y objeto anidado. Elegir hoy la
+forma de los **datos** y la de la navegación sin haber visto funcionar ninguna
+de las dos es el error caro. El propio motivo del vuelco —«es lo más
 rápido a lo inmediato»— dice que primero hay que llegar rápido a algo, y esta
 decisión no está en ese camino.
 
@@ -160,3 +164,107 @@ prosa:
    ninguna segunda fila ni segundo slug, ningún campo `*Chicos` en el descriptor
    y ningún registro en la ruta. Preparar el terreno para una forma que todavía
    no se eligió es elegirla en silencio.
+
+---
+
+## 4. El contrato del módulo `aprendizaje`
+
+**Qué está pendiente.** ¿Cuál es la interfaz del módulo `aprendizaje` (ADR
+0002): qué funciones expone, con qué firmas, y qué le devuelve a la capa web
+para una **tarjeta** de repaso y para una pregunta de **quiz**?
+
+**Por qué no se decide hoy.** Porque el módulo no existe, y la información que
+haría falta para diseñarlo tampoco: no está decidido cómo se arma un mazo, si el
+quiz se genera desde las entidades o se cura a mano, ni qué se guarda de una
+respuesta —esto último bloqueado por la entrada §2 de este mismo archivo—.
+
+Hay además un motivo específico para escribir esta entrada, y es el que la hace
+necesaria: **dos archivos de la capa web ya declaran anticipar esa firma**.
+`src/app/tarjetas/tarjetas-repaso.datos.ts` y
+`src/app/quiz/quiz-pregunta.datos.ts` dicen en su encabezado que su función
+mock «anticipa la firma de la consulta real que algún día va a vivir en el
+módulo `aprendizaje`». Nadie aprobó esa firma: el módulo no tiene dueño
+asignado todavía y el `backend-specialist` no la revisó. Es exactamente la
+decisión que se toma sola por acumulación —la fija el primero que escribe
+código que la roza— que este archivo existe para evitar.
+
+**Disparador.** El arranque de la rebanada de **aprendizaje**. El contrato se
+diseña ahí, con el `backend-specialist`, y si merece un ADR se escribe **antes**
+de la primera función del módulo, no durante.
+
+**Regla interina.** **Los mocks no son contrato.** Cuando llegue el módulo se
+diseña desde cero, mirando el problema y no los dos archivos de la capa web; si
+la firma que sale es distinta, la que se cambia es la de las pantallas. Mientras
+tanto, ningún archivo nuevo puede citar a `obtenerMazoDeRepaso` ni a
+`obtenerQuizMock` como si fueran la interfaz del módulo, y un `*.datos.ts` nuevo
+que anticipe una firma tiene que decir en su encabezado que es simulada.
+
+---
+
+## 5. El puerto de salida del módulo `catalogo`
+
+**Qué está pendiente.** ¿Debería `catalogo` declarar una interfaz de
+persistencia que Drizzle implemente por detrás —el puerto de salida que el ADR
+0016 dejó explícitamente afuera de su alcance—, o seguir importando `db`
+directo como hace hoy?
+
+**Por qué no se decide hoy.** El ADR 0018 resolvió esta pregunta por ahora:
+**se pospone**. Hoy hay una sola tabla (`entidad`), un solo motor
+(PostgreSQL/Drizzle) y ningún segundo adaptador de persistencia a la vista. Una
+interfaz con una sola implementación real es la capa vacía que el propio
+ADR 0016 advirtió que hay que evitar, y el beneficio concreto que se nombra a
+favor —probar el módulo sin Postgres levantado— no está doliendo: las pruebas
+de `catalogo.test.ts` corren rápido contra Docker, que ya es un prerrequisito
+del flujo de desarrollo, y no existe todavía un pipeline de CI que se
+beneficie de evitarlo.
+
+**Disparador.** El primero de estos hechos que ocurra:
+
+1. **Aparece un segundo adaptador de persistencia real** para algún módulo del
+   catálogo —otro motor, una réplica, un caché delante de Postgres— y no uno
+   hipotético.
+2. **Aparece un pipeline de CI** y levantar Postgres ahí resulta costoso o
+   inestable de forma medida, no supuesta.
+3. **El tiempo de las pruebas del módulo se vuelve doloroso de forma medible**
+   a medida que `catalogo` (u otro módulo) crece en funciones y pruebas.
+
+En cualquiera de los tres casos, el ADR que reabra la pregunta se escribe
+**antes** de introducir el puerto, no durante, y puede resolver que la interfaz
+se agregue solo al módulo afectado, no a los cinco por igual.
+
+**Regla interina.** `catalogo.ts` sigue con Drizzle directo (ver ADR 0018). Un
+módulo nuevo (`moderacion`, `aprendizaje`, `progreso`, `identidad`) que se
+diseñe mientras esta entrada siga abierta hace lo mismo: importa `db` directo,
+sin anticipar una interfaz de persistencia por si acaso.
+
+## 6. Proveedor de envío de correo, para verificar email y recuperar contraseña
+
+**Qué está pendiente.** ¿Con qué proveedor se envía el correo saliente que
+necesitan la verificación de email y la recuperación de contraseña del módulo
+`identidad` (ADR 0019), y con qué configuración?
+
+**Por qué no se decide hoy.** El ADR 0019 dejó las dos funcionalidades
+explícitamente fuera de la primera rebanada de `identidad`: ninguna de las dos
+tiene un caso de uso presente —cero usuarios reales todavía— y las dos
+necesitan una pieza que hoy no existe en el stack en absoluto, un proveedor de
+envío de correo (Resend, Postmark, SES, u otro), con su propia cuenta,
+credenciales y configuración de dominio. Elegir uno ahora, sin un flujo
+concreto que lo use, sería exactamente la infraestructura anticipada que el
+principio de arquitectura del proyecto prohíbe.
+
+**Disparador.** El primero de estos hechos que ocurra:
+
+1. Se pide recuperación de contraseña como funcionalidad (`sendResetPassword`
+   de Better Auth deja de ser un callback sin implementar).
+2. Se pide requerir email verificado antes de dejar entrar a un usuario
+   (`requireEmailVerification` pasa de `false` a `true` en la configuración de
+   `identidad`).
+3. Aparece cualquier otra necesidad de enviarle correo a un usuario —una
+   notificación de moderación, por ejemplo— que independientemente ya
+   obligaría a elegir un proveedor.
+
+**Regla interina.** `emailAndPassword.requireEmailVerification` queda en
+`false` y no se implementa `sendResetPassword`. Un usuario que pierde su
+contraseña no tiene, hoy, forma de recuperarla sin intervención manual del
+usuario del proyecto contra la base. Es la deuda técnica que el ADR 0019 ya
+declaró aceptada.

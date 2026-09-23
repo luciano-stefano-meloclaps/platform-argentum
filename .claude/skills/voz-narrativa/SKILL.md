@@ -175,8 +175,14 @@ grandiosa y no dice nada de nadie.
 - **No nombra al personaje** hasta la última oración, y ahí lo insinúa sin
   nombrarlo: «un patricio con un linaje divino y una deuda colosal se preparó
   para apostarlo todo».
-- **Cierra abriendo, y con puntos suspensivos.** Las dos muestras lo hacen y es
-  la convención del proyecto: el contexto no concluye, entrega.
+- **Cierra abriendo, y con puntos suspensivos — en afirmación suspendida, nunca
+  en pregunta.** Las cinco muestras versionadas (`muestras.md`) lo hacen así,
+  sin excepción: entregan una imagen o un destino que queda en el aire, no una
+  pregunta retórica. Es la misma regla que la sección 6 ya declara ("sin
+  preguntas retóricas"): el cierre del contexto no es un lugar donde esa
+  prohibición se levanta. Precisión añadida durante el ticket #51, después de
+  que una primera vuelta probó el cierre en pregunta por pedido puntual y el
+  propio corpus del usuario mostró que esa no es la convención.
 - Da **fuerzas en pugna**, no lista de acontecimientos. Un contexto que enumera
   hechos en orden es una cronología disfrazada de escenario.
 

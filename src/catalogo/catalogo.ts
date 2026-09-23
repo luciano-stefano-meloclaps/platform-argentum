@@ -13,7 +13,10 @@ import { esTipoConocido, validarDatos, type DatosDe, type Tipo } from "./descrip
  *
  * **Interfaz:**
  *
- * - `listarPorTipo(tipo)` — todas las entidades de un tipo.
+ * - `listarPorTipo(tipo)` — todas las entidades de un tipo. Tiene una segunda
+ *   forma para un `tipo` que el compilador no conoce como perteneciente al
+ *   registro de descriptores (ver su comentario, más abajo) — sigue siendo
+ *   la misma función, no una cuarta.
  * - `obtenerPorSlug(slug)` — una entidad por su slug, sin importar el tipo.
  * - `listarSlugs()` — los slugs de **todas** las entidades, de todos los
  *   tipos. Existe porque la ficha vive en `/catalogo/<slug>` (ticket #32, sin
@@ -101,8 +104,34 @@ function aEntidad<T extends Tipo>(fila: Omit<FilaEntidad, "tipo"> & { tipo: T })
  * Todas las entidades de un `tipo`, ordenadas por `nombre`.
  *
  * Un tipo sin entidades devuelve `[]`, no un error.
+ *
+ * **Dos formas, la misma función** (no una cuarta función del módulo, y no un
+ * cambio de contrato para quien ya la llama con un `tipo` literal conocido):
+ *
+ * - Con un `T extends Tipo` —el caso de siempre, p. ej. `listarPorTipo("procer")`—
+ *   el compilador ya sabe que el tipo tiene descriptor, y esta forma devuelve
+ *   el tipo estrecho `Entidad<T>[]`, exactamente como antes de este overload.
+ * - Con un `tipo: string` cualquiera que el compilador **no** puede probar que
+ *   pertenece al registro —el caso de una pantalla que enumera categorías
+ *   fijas del dominio (el discriminador `tipo` de ADR 0001) antes de que cada
+ *   una tenga su descriptor, como las seis salas de la home, ticket #88—
+ *   devuelve `Entidad[]` sin estrechar.
+ *
+ * Para esa segunda forma, un `tipo` sin descriptor en el registro devuelve
+ * `[]` **sin consultar la base**: el invariante ya documentado arriba —una
+ * fila de un tipo sin descriptor "se trata como si no existiera"— también
+ * vale *antes* de la consulta, no solo después de leerla. Es información
+ * honesta, no un placeholder: ninguna fila pudo haber pasado nunca la
+ * validación de un descriptor que no existe, así que su conteo real es cero.
+ * Evita además una consulta contra un `tipo` que no es un valor de
+ * `entidad.tipo` conocido por el código, y el `.parse()` sobre un descriptor
+ * inexistente que eso dispararía dentro de `aEntidad`.
  */
-export async function listarPorTipo<T extends Tipo>(tipo: T): Promise<Entidad<T>[]> {
+export async function listarPorTipo<T extends Tipo>(tipo: T): Promise<Entidad<T>[]>;
+export async function listarPorTipo(tipo: string): Promise<Entidad[]>;
+export async function listarPorTipo(tipo: string): Promise<Entidad[]> {
+  if (!esTipoConocido(tipo)) return [];
+
   const filas = await db.select().from(entidad).where(eq(entidad.tipo, tipo)).orderBy(asc(entidad.nombre));
 
   return filas.map((fila) => aEntidad({ ...fila, tipo }));

@@ -108,6 +108,17 @@
    */
   --color-celeste-900: #0A3D66;
 
+  /*
+   * --celeste-cinta (v2, sistema-de-diseno-v2.md líneas ~172-330, "Cinta
+   * bandera del header"): token nuevo, EXCLUSIVO de esa cinta tricolor.
+   * No es un peldaño más de la escala --celeste-* de v1 (50/150/400/600/700/
+   * 900): es un color puntual para un componente puntual, así que no se lo
+   * intercala en esa numeración. Decorativo, sin texto encima — el header
+   * lleva el wordmark/nav sobre `--color-crema` o `--color-blanco`, no sobre
+   * la cinta, así que no hace falta medir contraste de texto acá.
+   */
+  --color-celeste-cinta: #4FA8DE;
+
   /* --- Dorado — acento 1: logros y ligas (§3) --- */
   --color-dorado-bg:     #FFF8E8; /* fondo de tarjeta de liga — NUNCA sobre celeste */
   --color-dorado-borde:  #F0DFB8;
@@ -189,6 +200,40 @@
   --color-cat-naturaleza-borde: #C2E2D6;
   --color-cat-naturaleza-text:  #1F7A5C;
 
+  /*
+   * --- Acento morado de repaso (ticket #91, formalizado por el
+   * `brand-specialist`) ---
+   * Nace como hex suelto en `tarjetas-repaso.tsx` para el tag de
+   * "dominio/temática de la tarjeta" y el badge "Respuesta revelada" del
+   * dorso — el ticket #91 pedía explícitamente NO usar dorado ni celeste
+   * ahí (esos dos ya tienen significado propio: logros/marca y estructura
+   * de interfaz). Se formaliza como token porque se usa en dos lugares de
+   * la misma pantalla con un rol semántico estable ("acento de repaso"),
+   * no como decoración puntual.
+   *
+   * Contraste medido (fórmula WCAG, luminancia relativa):
+   *   texto / fondo propio (el pill):      #6B3FA0 / #EDE4F5 → 5.98:1
+   *   texto / --color-blanco (stat "Dominio de esta ficha"): → 7.38:1
+   * Los dos pasan AA con margen.
+   *
+   * ⚠️ Riesgo señalado, no bloqueante: este morado queda MUY cerca del de
+   * la categoría "Animales" (--color-cat-animales-text #5A45A0 /
+   * --color-cat-animales-bg #EFEAFB, ver más abajo) — mismo matiz,
+   * diferencia perceptible pero chica. No es el mismo token, así que no
+   * repite exactamente el error que este mismo componente dice evitar en
+   * su comentario ("que dos conceptos usen exactamente el mismo color"),
+   * pero sí se le acerca: en una tarjeta de categoría "Próceres" o
+   * "Comidas" este acento puede leerse, de reojo, como si fuera el color
+   * de la categoría "Animales". No lo resuelvo acá cambiando el matiz por
+   * mi cuenta —correr la paleta a un octavo tono no está claramente mejor
+   * que la colisión que evita—: lo dejo documentado para que
+   * `frontend-specialist` decida si repasar categoría real
+   * (`--color-cat-*`) en vez de un acento fijo es preferible a largo
+   * plazo. Ver el informe del `brand-specialist` de esta tarea.
+   */
+  --color-acento-repaso-100: #EDE4F5;
+  --color-acento-repaso-700: #6B3FA0;
+
   /* --- Neutrales cálidos (§3) — la clave anti-gubernamental --- */
   --color-crema:             #FBF7F0; /* fondo de página principal — nunca blanco puro */
   --color-blanco:            #FFFFFF; /* tarjetas y superficies elevadas */
@@ -221,6 +266,51 @@
   /* --alerta (ADR 0008): #B26A00 → #9F5F00. Sobre --color-alerta-bg: 4.52:1 (según el ADR; no remedido en este ticket). */
   --color-alerta:    #9F5F00;
   --color-alerta-bg: #FBF0DA;
+
+  /*
+   * --- Foco visible (ticket #96) ---
+   * Ninguno de los dos documentos de marca declaraba un anillo de foco de
+   * sistema. El ADR 0015 §8 lo dejaba como deuda explícita ("cada
+   * componente nuevo necesita su propio tratamiento hasta que exista una
+   * regla de sistema", con el disparador "se define un sistema de foco
+   * consistente") y el único precedente era el outline puntual de
+   * `.btn-primary:focus-visible` (sistema-de-diseno-v2.md §6):
+   * `outline: 2px solid var(--color-accent-700)`. Este token generaliza ese
+   * mismo valor en vez de dejarlo exclusivo de un componente — no se inventa
+   * un color nuevo.
+   *
+   * --color-foco es un alias de --color-accent-700. Contraste (fórmula WCAG,
+   * luminancia relativa, piso no-texto 3:1 de WCAG 1.4.11 — un anillo de
+   * foco no es texto):
+   *   sobre --color-crema/--color-bg (#FBF7F0): 4.58:1 (ya medido, ADR 0015)
+   *   sobre --color-blanco (#FFFFFF):           4.89:1 (medido en este ticket)
+   *   sobre --color-celeste-900 (panel invertido): 2.29:1 — FALLA el piso de
+   *     3:1. No usar --color-foco dentro de un panel invertido: ahí va
+   *     --color-foco-invertido.
+   */
+  --color-foco: var(--color-accent-700);
+
+  /*
+   * --color-foco-invertido, exclusivo de paneles invertidos (fondo
+   * --color-celeste-900) — mismo patrón que --error-invertido (ADR 0015):
+   * una variante acotada a una superficie, nunca la variante por defecto.
+   * Alias de --color-blanco: sobre --color-celeste-900 da 11.21:1 (medido en
+   * este ticket; coincide con el "Blanco / --celeste-900" ya registrado en
+   * la skill `identidad-argentum`).
+   */
+  --color-foco-invertido: var(--color-blanco);
+
+  /*
+   * Grosor y separación del anillo (2px / 2px) se aplican con las
+   * utilidades estáticas de Tailwind `outline-2 outline-offset-2` — mismo
+   * criterio que ya resuelve --borde-default con la utilidad `border` más
+   * abajo: el token resuelve el color, la utilidad estática resuelve ancho
+   * y estilo, y ninguna pantalla escribe ninguno de los dos a mano. Uso:
+   * `outline-2 outline-offset-2 outline-foco` (o `outline-foco-invertido`
+   * dentro de un panel invertido). Documentado con su regla de aplicación
+   * completa en sistema-de-diseno-v2.md §6, "Foco visible y objetivo
+   * táctil".
+   */
 
   /* --- Sistema de ligas — metales argentinos (§3; nombres fijados por ADR 0008 punto 6, CONTEXT.md) --- */
   --color-liga-cobre-bg: #FBEDE4; --color-liga-cobre-text: #8A4E1F; /* 0–500 pts */
@@ -322,6 +412,40 @@
   --text-meta--font-weight: 500;
 
   /*
+   * --text-kicker: extensión propia, no del documento de marca original.
+   * Ticket #88 ("grilla tabular de las salas del catálogo") necesitaba
+   * `text-[15px] font-semibold tracking-[0.2em] uppercase` para el kicker de
+   * sección — y al revisar el árbol, ese mismo bloque exacto de clases (salvo
+   * `uppercase`, que sigue siendo una utilidad aparte, igual que en
+   * --text-chip) ya vivía, byte a byte, en `src/app/laminas-destacadas.tsx`.
+   * Dos ocurrencias idénticas de un valor sin token es la señal de erosión
+   * que este archivo existe para cortar, así que se formaliza acá en vez de
+   * sumar una tercera copia suelta en `salas-del-catalogo.tsx`. No cubre
+   * `text-transform`: `uppercase` sigue aplicándose en el componente.
+   */
+  --text-kicker: 15px;
+  --text-kicker--line-height: 1;
+  --text-kicker--font-weight: 600;
+  --text-kicker--letter-spacing: 0.2em;
+
+  /*
+   * --text-tile-title: extensión propia, mismo criterio que --text-kicker de
+   * arriba y mismo ticket (#88). `text-[26px] leading-[1.15] font-normal`
+   * (font-titulo) ya vivía idéntico en `src/app/grilla-laminas.tsx` antes de
+   * esta tarea; `grilla-salas.tsx` lo necesita para el nombre de cada sala.
+   * Peso 400 porque Cormorant Garamond lo tiene nativo y es el peso vigente
+   * para títulos desde el ADR 0015 — no confundir con --text-h2, que sigue
+   * declarando 700 en este archivo (deuda separada, sin tocar en este
+   * ticket: ver el informe del `brand-specialist` para el ticket #88).
+   * No cubre el caso de `tarjetas-repaso.tsx`, que usa el mismo tamaño con
+   * `leading-none` para cifras de stat, no para un título de tarjeta — es un
+   * rol distinto y no se pliega acá sin que se pida.
+   */
+  --text-tile-title: 26px;
+  --text-tile-title--line-height: 1.15;
+  --text-tile-title--font-weight: 400;
+
+  /*
    * ==========================================================================
    * Espaciado (§5)
    * ==========================================================================
@@ -336,6 +460,37 @@
   --spacing-lg:  16px;
   --spacing-xl:  22px;
   --spacing-2xl: 32px;
+
+  /*
+   * --spacing-objetivo-tactil (ticket #96): mínimo de alto y ancho de
+   * cualquier elemento interactivo tocable — botón, link independiente,
+   * ítem de nav, chip clickeable. No es un peldaño más de la progresión
+   * xs…2xl de arriba (esa es para padding/gap/márgenes): es una constante
+   * de accesibilidad, tan independiente de esa escala como lo es un color
+   * de feedback. Vive en el namespace --spacing-* (no uno propio) porque
+   * ADR 0008 §8 ya lo pedía así explícitamente: "los objetivos táctiles
+   * tienen un mínimo definido en la escala de espaciado, no a criterio de
+   * cada pantalla". Genera min-w-objetivo-tactil/min-h-objetivo-tactil
+   * (entre otras) — uso recomendado:
+   * `min-w-objetivo-tactil min-h-objetivo-tactil`.
+   *
+   * Valor: 44px, el piso AAA de WCAG 2.5.5 (Target Size Enhanced) — no el
+   * mínimo AA de 24px de WCAG 2.5.8, que además trae excepciones (espaciado
+   * equivalente, objetivo en línea de texto, etc.) que este sistema prefiere
+   * no administrar pantalla por pantalla. El motivo original de este piso
+   * (ADR 0008 §8: "lo usan chicos de ocho años en pantallas malas") envejeció
+   * con el ADR 0012, pero el requisito no: dedos imprecisos y pantallas
+   * baratas no dependen de la edad del lector (CLAUDE.md, sección
+   * "Audiencia y voz").
+   *
+   * Separación mínima entre dos objetivos táctiles adyacentes que ya
+   * cumplen este mínimo: --spacing-xs (4px) de espacio libre entre sus
+   * bordes. No hace falta más: a 44px ya se supera con margen el radio de
+   * 24px de la excepción de espaciado de WCAG 2.5.8, que solo se activa
+   * para objetivos más chicos que el mínimo — algo que este sistema no
+   * contempla.
+   */
+  --spacing-objetivo-tactil: 44px;
 
   /*
    * --- Corrección de colisión con la escala de contenedor (ticket #73) ---
@@ -445,23 +600,242 @@
  * Dorado institucional — gradiente y filete (v2, ADR 0015 §3 /
  * sistema-de-diseno-v2.md §3)
  * ==============================================================================
- * `--gradiente-filete` no vive dentro de `@theme`: no es un color sólido de
- * un namespace de Tailwind (--color-*, --font-*, etc.), es un valor de
- * `background` que un componente consume directo con `var(...)` — mismo
- * criterio que ya separa `--borde-default` (shorthand compuesto) de los
- * namespaces de arriba. Queda como variable CSS de :root, fuera del bloque
- * de tokens de Tailwind.
+ * `--gradiente-filete` y `--gradiente-au` no viven dentro de `@theme`: no son
+ * colores sólidos de un namespace de Tailwind (--color-*, --font-*, etc.),
+ * son valores de `background` que un componente consume directo con
+ * `var(...)` — mismo criterio que ya separa `--borde-default` (shorthand
+ * compuesto) de los namespaces de arriba. Quedan como variables CSS de
+ * :root, fuera del bloque de tokens de Tailwind.
+ *
+ * `--dorado-brillante-stops` — **unificación completa**, pedido explícito
+ * del usuario en esta tarea. Hasta acá, `--gradiente-filete` y
+ * `--gradiente-au` tenían cada una su propia paleta de stops (más clara la
+ * del filete, más oscura la de `.au`/`.shiny`, ver el historial completo
+ * más abajo, antes de `.au`) con el argumento de que forzar una sola
+ * variable de color exigiría mover uno de los dos valores. El usuario
+ * confirmó que sí quiere eso: una sola lista de stops de color, sin
+ * `linear-gradient()` ni ángulo, para que cada consumidor arme su propio
+ * `linear-gradient(<su ángulo>, var(--dorado-brillante-stops))`. Los valores
+ * son los vigentes de `--gradiente-au` (los más recientes, ajustados dos
+ * veces a pedido explícito del usuario: escalado proporcional L×0.85 y
+ * después oscurecimiento adicional del extremo a L×0.90 — ver el historial
+ * completo antes de `.au`), no los del filete viejo (`#8A5E12`/`#FFF3D0`),
+ * que quedan descartados. Consecuencia esperada: el filete de 3px del
+ * header se ve un poco más oscuro en los bordes que antes — es justamente
+ * la convergencia hacia el "un poco más oscuro" que en su momento no se le
+ * había aplicado al filete y que ahora sí alcanza por la unificación.
+ *
+ * `--brillo-banda` — **paso 9, unificación de la animación** (no solo el
+ * color base). Hasta acá compartir `--dorado-brillante-stops` igualaba el
+ * *color* del filete, `.au` y `.shiny`, pero solo `.shiny` tenía la segunda
+ * capa de gradiente (la banda blanca semitransparente que se desliza con
+ * `@keyframes shinySweep`) — el filete y `.au` eran gradientes **estáticos**.
+ * Por eso, a pesar de compartir color, se percibían distintos: uno se ve
+ * "vivo" y los otros dos "apagados". El usuario pidió una sola receta de
+ * "efecto shiny" para los tres, animación incluida. Se extrae la banda de
+ * brillo —antes escrita a mano una sola vez dentro de `.shiny`— a esta
+ * variable, para que el filete, `.au` y `.shiny` la compartan igual que ya
+ * comparten `--dorado-brillante-stops`. Mismos stops (`20%/50%/80%`, banda
+ * del 60% de ancho) y misma opacidad de pico (`0.75`) que tenía `.shiny`;
+ * ver el historial completo de esos dos valores más abajo, antes de
+ * `.shiny` — no se recalculan acá, solo se centralizan.
+ *
+ * **Paso 10 — más saturación, no más luminosidad.** Pedido explícito del
+ * usuario: quiere el dorado de base más "fuerte", pero como color (más
+ * saturado), no más claro ni más oscuro — ese eje ya se ajustó en los
+ * pasos 6-7 de abajo (escalado de L). Método: los tres colores distintos
+ * de los stops (extremo, stop 20/80%, centro) se convirtieron a HSL y se
+ * subió la S de cada uno +15 puntos porcentuales absolutos, manteniendo H
+ * y L intactos:
+ *
+ *   #6A480E → H 37.8° S 76.7% L 23.5% → S+15 → S 91.7% → #734A05
+ *   #D99A26 → H 38.9° S 70.2% L 50.0% → S+15 → S 85.2% → #ECA013
+ *   #FFE18B → H 44.5° S 100%  L 77.3% → **ya en el límite del gamut RGB
+ *             para esa L** (el canal rojo ya está en 255) — no hay forma
+ *             de subir más la S sin bajar la L, así que el centro **no
+ *             cambia**. Esto explica por qué el centro se percibe "lavado":
+ *             a esa luminosidad, el dorado más intenso que existe en RGB
+ *             ya es este.
+ *
+ * El matiz (H) no se tocó en ninguno de los tres, así que no hay riesgo de
+ * que el dorado derive hacia un naranja de advertencia — solo gana cuerpo.
+ * Efecto sobre las mediciones: el salto de luminosidad interno
+ * (extremo → centro) **baja** de 6.44:1 a 6.05:1 (la versión más saturada
+ * del extremo resulta, contraintuitivamente, un poco menos oscura en
+ * luminancia relativa WCAG, que no es lineal con la L de HSL). El
+ * contraste del centro contra `--color-bg` (1.20:1) y contra
+ * `--celeste-50` (1.15:1) **no cambia**, porque el centro es el único stop
+ * que no se tocó.
+ *
+ * **Paso 11 — oscurecer el rango completo, esta vez incluido el centro.**
+ * Corrección de rumbo explícita del usuario: el paso 10 fue "más
+ * saturación", no "más oscuro" — y esta vez pidió lo segundo, aplicado a
+ * los **tres** colores distintos (extremo, stop 20/80% y, a diferencia de
+ * los pasos 6-7, también el centro), no solo a los extremos. Método:
+ * los tres colores del paso 10 se convirtieron a HSL y se multiplicó su L
+ * por 0.85 (−15%), manteniendo H y S intactos:
+ *
+ *   #734A05 → H 37.6° S 91.7% L 23.5% → L×0.85 → L 20.0% → #623F04
+ *   #ECA013 → H 39.0° S 85.1% L 50.0% → L×0.85 → L 42.5% → #C98810
+ *   #FFE18B → H 44.5° S 100%  L 77.3% → L×0.85 → L 65.7% → #FFD250
+ *
+ * H y S se preservan (con la variación de redondeo propia de cuantizar a
+ * 8 bits por canal), así que el matiz sigue siendo el mismo dorado, ahora
+ * más oscuro en todo el rango, no solo en los bordes. Medido de nuevo, no
+ * asumido: el salto de luminosidad interno (extremo → centro) **sube** de
+ * 6.05:1 a **6.53:1** — se mantiene estable en el mismo orden, como se
+ * esperaba de escalar los tres stops por el mismo factor. El contraste del
+ * centro (ahora `#FFD250`, antes `#FFE18B`) contra `--color-bg` **mejora**
+ * de 1.20:1 a **1.35:1**, y contra `--celeste-50` mejora de 1.15:1 a
+ * **1.29:1** — sigue sin alcanzar AA-large (3:1), pero se acerca, porque
+ * por primera vez el centro también se oscurece en vez de quedar fijo.
  */
 :root {
-  --gradiente-filete: linear-gradient(90deg, #8A5E12, #E0AC4C 20%, #FFF3D0 50%, #E0AC4C 80%, #8A5E12);
+  --dorado-brillante-stops: #623F04 0%, #C98810 20%, #FFD250 50%, #C98810 80%, #623F04 100%;
+  --brillo-banda: linear-gradient(100deg, transparent 20%, rgba(255, 255, 255, 0.75) 50%, transparent 80%);
+
+  --gradiente-filete: linear-gradient(90deg, var(--dorado-brillante-stops));
+  --gradiente-au: linear-gradient(100deg, var(--dorado-brillante-stops));
 }
 
 /*
- * `.au` — gradiente metálico de texto (dorado institucional). Los 4 stops
- * únicos están recalculados por el ADR 0015 §3 a partir de los originales
- * del documento de marca: el punto crítico del centro pasó de #C79331
- * (2.57:1, no pasa AA) a #8B6722 (4.85:1 sobre `--color-bg`/`--color-crema`).
- * No se recalculan acá: se citan tal cual de `sistema-de-diseno-v2.md` §3.
+ * `.au` — gradiente metálico de texto (dorado institucional). Los stops
+ * de color fueron recalculados **seis** veces (pasos 1 a 6) y la variable
+ * que los expone pasó, después, por **dos** reorganizaciones estructurales
+ * sin cambiar valores (pasos 7 y 8: primero unificar `.au` con `.shiny`,
+ * después unificar las tres — filete incluido — en una sola fuente):
+ *
+ * 1. ADR 0015 §3: el punto crítico del centro del handoff v2 original pasó
+ *    de #C79331 (2.57:1 sobre `--color-bg`, no pasa AA) a #8B6722 (4.85:1),
+ *    con 7 paradas simétricas (0/16/34/50/66/84/100).
+ * 2. Pedido explícito del usuario, con el antecedente del ADR 0015 ya
+ *    conocido y aceptado: reemplazar la base del gradiente por
+ *    **exactamente los mismos 5 stops** del filete dorado de 3px que ya
+ *    existe bajo la cinta tricolor del header (`--gradiente-filete`,
+ *    definido arriba en este mismo archivo), con centro `#FFF3D0` —
+ *    1.04:1 sobre `--color-bg`, muy por debajo incluso de AA-large. El
+ *    usuario reportó que se veía "plano" (poco contraste contra el fondo,
+ *    casi invisible).
+ * 3. Pedido explícito del usuario, "un poco más oscuro" que el paso 2: se
+ *    mantuvo la estructura de 5 paradas (0/20/50/80/100) y el ángulo
+ *    `100deg`, y se subió el centro de `#FFF3D0` a `#D4A94A` — un punto
+ *    intermedio entre ese extremo casi blanco y el `#8B6722` del ADR 0015.
+ *    2.05:1 sobre `--color-bg` (mejora sobre el 1.04:1 del paso 2), pero el
+ *    usuario **volvió a reportar "plano"** — esta vez no por falta de
+ *    contraste contra el fondo, sino por falta de **rango de luminosidad
+ *    interno del propio degradado**: de extremo oscuro (`#8A5E12`) a
+ *    centro, el salto de luminancia relativa bajó de 5.14:1 (paso 2, con
+ *    `#FFF3D0`) a solo 2.59:1 (con `#D4A94A`), y a esa escala de texto un
+ *    salto de brillo tan chico no se percibe como brillo — se percibe
+ *    chato, sin el efecto de "metal iluminado" que sí tiene el filete.
+ * 4. Pedido explícito del usuario en la conversación siguiente: "vistoso y
+ *    brilloso, como la línea dorada debajo de la bandera" — el objetivo
+ *    pasó a ser maximizar el salto de luminosidad interno del degradado
+ *    (de oscuro a casi blanco), no el contraste contra el fondo, que ya
+ *    era deuda aceptada de todos modos. Se repuso el centro `#FFF3D0` del
+ *    paso 2, con la estructura de 5 paradas (0/20/50/80/100) y el ángulo
+ *    `100deg` sin cambios. Salto de luminosidad interno: 5.14:1 (de
+ *    `#8A5E12` a `#FFF3D0`). Contraste contra `--color-bg`: 1.04:1.
+ * 5. **Vigente**, pedido explícito del usuario en esta misma conversación:
+ *    "un poco más oscuro en general", con la instrucción explícita de que
+ *    los 5 stops bajen de luminosidad **de forma proporcional** en vez de
+ *    tocar solo el centro (que fue exactamente el error del paso 3). Método:
+ *    los tres colores distintos del paso 4 (`#8A5E12`, `#E0AC4C`, `#FFF3D0`)
+ *    se convirtieron a HSL, se multiplicó la luminosidad (L) de cada uno por
+ *    **0.85** (−15%) manteniendo matiz (H) y saturación (S) sin cambios, y
+ *    se volvió a convertir a RGB. Resultado:
+ *
+ *      `#8A5E12` (H 38.0° S 76.9% L 30.6%) → L 26.0% → **`#75500F`**
+ *      `#E0AC4C` (H 38.9° S 70.5% L 58.8%) → L 50.0% → **`#D99A26`**
+ *      `#FFF3D0` (H 44.7° S 100%  L 90.8%) → L 77.2% → **`#FFE18B`**
+ *
+ *    (`#D99A26` coincide, sin buscarlo, con el token ya existente
+ *    `--color-accent-600` — es la misma familia de dorado, escalada.)
+ *    Con esto el centro deja de ser casi blanco y pasa a un dorado más
+ *    saturado, lo que sube el contraste contra el fondo (1.20:1, ver abajo)
+ *    **sin** aplanar el salto interno: extremo `#75500F` → centro `#FFE18B`
+ *    da **5.64:1** de salto de luminosidad interno — igual o mejor que el
+ *    5.14:1 del paso 4, porque escalar los tres puntos por el mismo factor
+ *    preserva su proporción relativa. Contraste del centro vigente contra
+ *    `--color-bg`/`--color-crema` (`#FBF7F0`): **1.20:1** — sigue sin pasar
+ *    AA-large (3:1), sigue siendo deuda aceptada (regla 16 de
+ *    `identidad-argentum`), pero mejora sobre el 1.04:1 anterior. Contra
+ *    `--celeste-50` (`#EAF4FE`): **1.15:1**. Los pasos 2 a 4 quedan
+ *    superados — ver la nota completa en `identidad-argentum`, secciones 1,
+ *    2 (regla 16) y 3.
+ *
+ *    En este punto de la historia `--gradiente-filete` todavía no cambiaba:
+ *    seguía con sus stops originales (`#8A5E12`/`#E0AC4C`/`#FFF3D0`), como
+ *    variable separada. Eso se revirtió en el paso 8, más abajo.
+ * 6. **Vigente**, pedido explícito del usuario en esta misma conversación:
+ *    "oscurecer un poco más los dos extremos", con instrucción explícita de
+ *    **no** tocar el centro (`#FFE18B`) ni el stop intermedio (`#D99A26`)
+ *    fijados en el paso 5 — solo los dos extremos (`0%`/`100%`). Método:
+ *    mismo criterio que el paso 5 (escalar L en HSL manteniendo H y S), pero
+ *    aplicado solo al extremo, con un factor más suave: `#75500F`
+ *    (H 38.0° S 76.9% L 26.0%) → **L × 0.90** → L 23.4% → **`#6A480E`**.
+ *
+ *    Como el paso 5 ya había verificado que `#75500F` reproduce exactamente
+ *    esa terna HSL, escalar de nuevo por 0.90 es un segundo paso del mismo
+ *    método, no uno nuevo — el centro y el stop intermedio no se recalculan
+ *    porque no se tocan.
+ *
+ *    Efecto sobre el salto de luminosidad interno (extremo → centro,
+ *    fórmula WCAG de luminancia relativa): **sube** de 5.64:1 (paso 5) a
+ *    **6.44:1** — subir, no bajar, porque oscurecer el extremo sin tocar el
+ *    centro agranda la distancia entre los dos, es la dirección esperada.
+ *    Verificación de que no se cruzó a "casi negro" ni a un matiz marrón: el
+ *    extremo sigue en el mismo H/S que toda la familia (`H 38° S 76.9%`,
+ *    idéntico a `#8A5E12`/`#75500F`), con `L 23.4%` — oscuro, pero muy por
+ *    encima de negro (`L 0%`) y de un marrón sin saturación (que requeriría
+ *    bajar `S`, no solo `L`); a ese nivel de luminosidad y con la saturación
+ *    intacta, `#6A480E` sigue leyéndose como un bronce/dorado oscuro, no
+ *    como negro ni como marrón apagado.
+ *
+ *    Contraste del centro (sin cambios, `#FFE18B`) contra `--color-bg`/
+ *    `--color-crema` (`#FBF7F0`): **1.20:1**, sin cambios respecto al paso
+ *    5 — el extremo no participa de ese par. Contra `--celeste-50`
+ *    (`#EAF4FE`): **1.15:1**, también sin cambios. Ambos siguen siendo la
+ *    misma deuda aceptada de la regla 16 de `identidad-argentum`, no una
+ *    deuda nueva ni distinta.
+ *
+ *    En este punto de la historia `--gradiente-filete` todavía mantenía su
+ *    extremo original `#8A5E12` (más claro que el `#6A480E` fijado acá),
+ *    por instrucción explícita del usuario en esa tarea. Eso también se
+ *    revirtió en el paso 8.
+ *
+ * 7. Unificación de la duplicación real entre `.au` y `.shiny`: las dos
+ *    reglas repetían el mismo `linear-gradient(100deg, ...)` de 5 stops
+ *    escrito a mano, dos veces, palabra por palabra. Se extrajo a
+ *    `--gradiente-au` (definida arriba, junto a `--gradiente-filete`), y las
+ *    dos reglas pasaron a consumirla con `var(...)`. En este paso,
+ *    `--gradiente-filete` **todavía no** compartía stops con `--gradiente-au`
+ *    — tenían ángulo distinto (`90deg` contra `100deg`) y paleta distinta
+ *    (`#8A5E12`/`#E0AC4C`/`#FFF3D0` contra `#6A480E`/`#D99A26`/`#FFE18B`), y
+ *    en ese momento el usuario había pedido explícitamente **no** mover el
+ *    extremo del filete para hacerlas converger. Esa fue una decisión
+ *    correcta para esa tarea, no un principio permanente.
+ *
+ * 8. **Unificación completa**, pedido explícito del usuario en la
+ *    conversación siguiente: las tres cosas —filete, `.au` y `.shiny`—
+ *    pasan a compartir la misma lista de stops de color, expuesta como
+ *    `--dorado-brillante-stops` (una custom property que contiene **solo**
+ *    los stops, sin la palabra `linear-gradient()` ni el ángulo — válida en
+ *    CSS, y es justamente la técnica que el paso 7 había descartado por no
+ *    hacer falta todavía). `--gradiente-filete` arma
+ *    `linear-gradient(90deg, var(--dorado-brillante-stops))` y
+ *    `--gradiente-au` arma `linear-gradient(100deg,
+ *    var(--dorado-brillante-stops))`: mismos colores, cada uno con su
+ *    propio ángulo. Los valores que se conservan son los de `--gradiente-au`
+ *    (los vigentes del paso 6, más oscuros), no los del filete viejo del
+ *    paso 6 hacia atrás — el filete pasa a verse un poco más oscuro en los
+ *    bordes que antes, que es exactamente lo que el usuario pidió y lo que
+ *    en el paso 6 no le había tocado llegar por decisión explícita de esa
+ *    tarea. La nota "por qué no se unifica con el filete" que estuvo acá
+ *    entre el paso 7 y este queda **superada**: ese "no" era válido para esa
+ *    tarea puntual (valores distintos, instrucción explícita de no mover el
+ *    filete), no una prohibición permanente, y el usuario la revirtió al
+ *    pedir la unificación completa.
  *
  * `color` es el fallback sólido para un navegador que no soporte
  * `background-clip: text` (ahí el gradiente ni se recorta ni se aplica, y
@@ -472,18 +846,151 @@
  * encima del recorte y el gradiente nunca se vería. Es un requisito de
  * mecánica CSS, no un valor de marca: no cambia ningún color de los citados
  * arriba.
+ *
+ * **Paso 9 — unificación de la animación, no solo del color.** El usuario
+ * notó que el filete y `.au` no se veían "iguales" a `.shiny` a pesar de
+ * compartir ya `--dorado-brillante-stops`: la razón real era que solo
+ * `.shiny` tenía la segunda capa de gradiente en movimiento
+ * (`@keyframes shinySweep`); el filete y `.au` eran gradientes estáticos.
+ * Ahora `.au` y `.shiny` quedan **exactamente idénticas** — ambas visten
+ * texto, ambas usan la misma base y la misma banda animada — así que en vez
+ * de mantener dos bloques de reglas copiados se las agrupa en un único
+ * selector compuesto. `.filete-dorado` (ver más abajo) es el tercer
+ * consumidor de la misma receta, pero sobre un fondo (`background`, no
+ * `background-clip: text`): el filete de 3px del header es un `<div>`
+ * decorativo, no texto (confirmado contra `header.tsx`), así que no lleva
+ * el recorte a texto ni el color de fallback, que no tienen sentido ahí.
+ * Los tres comparten `@keyframes shinySweep` y el mismo bloque de
+ * `prefers-reduced-motion`, más abajo, así que quedan sincronizados por
+ * construcción — no hay tres copias del keyframe para que se desincronicen.
  */
-.au {
-  background: linear-gradient(100deg,
-    #2A1C06 0%,
-    #473109 16%,
-    #4F3600 34%,
-    #8B6722 50%,
-    #4F3600 66%,
-    #473109 84%,
-    #2A1C06 100%);
+.au,
+.shiny {
+  background-image: var(--gradiente-au), var(--brillo-banda);
+  background-size: 100% 100%, 200% 100%;
+  background-position: 0 0, -100% 0;
+  background-repeat: no-repeat, no-repeat;
+  background-blend-mode: normal, overlay;
   background-clip: text;
   -webkit-background-clip: text;
   color: var(--color-accent-700); /* fallback sólido si background-clip no aplica */
+  -webkit-text-fill-color: transparent;
+  animation: shinySweep 3.4s ease-in-out infinite;
+}
+
+/*
+ * `.filete-dorado` — el filete de 3px bajo la cinta tricolor del header
+ * (`header.tsx`), ahora con la misma receta de brillo animado que `.au` y
+ * `.shiny` en vez de un gradiente estático. Reemplaza el `style={{
+ * background: "var(--gradiente-filete)" }}` que tenía el `<div>` en
+ * `header.tsx` por esta clase: la variable `--gradiente-filete` (base
+ * estática, `90deg`) se conserva sin cambios para quien la necesite sola,
+ * pero el consumo real del header pasa a esta clase, que le suma la banda
+ * de brillo y la animación. Es un fondo, no texto: **sin**
+ * `background-clip: text` ni el color de fallback que sí llevan `.au` y
+ * `.shiny` — esa mecánica es exclusiva de texto recortado.
+ */
+.filete-dorado {
+  background-image: var(--gradiente-filete), var(--brillo-banda);
+  background-size: 100% 100%, 200% 100%;
+  background-position: 0 0, -100% 0;
+  background-repeat: no-repeat, no-repeat;
+  background-blend-mode: normal, overlay;
+  animation: shinySweep 3.4s ease-in-out infinite;
+}
+
+/*
+ * Ancho de la banda (stops de transparencia) y opacidad de pico: valores
+ * heredados sin cambio de `.shiny` antes de esta tarea — ver
+ * `--brillo-banda` en `:root` más arriba para el historial completo (ancho
+ * ensanchado a 20%/50%/80%, opacidad de pico 0.75, remedición de contraste
+ * pendiente contra la base vigente).
+ *
+ * `background-size: 200% 100%` en la capa de la banda (segundo valor de la
+ * propiedad abreviada) le da recorrido: `background-position-x` arranca en
+ * `-100%` (banda fuera del elemento, a la izquierda) y en `100%` cruza del
+ * todo hacia la derecha. `mix-blend-mode: overlay` es lo que hace que la
+ * banda ilumine el dorado en vez de taparlo con blanco liso — sin eso el
+ * sweep se vería como una franja blanca opaca pasando por encima en vez de
+ * un brillo. Esto vale igual para texto (`.au`/`.shiny`) y para fondo
+ * (`.filete-dorado`): la técnica de la banda no depende del recorte a
+ * texto, por eso es la misma receta en los tres.
+ *
+ * Regla 9 de `identidad-argentum` / regla de uso de `revision-de-ui`:
+ * ninguna animación continua sin respetar `prefers-reduced-motion`. Con
+ * `reduce`, la animación se detiene (`animation: none`) y el
+ * `background-position` de la banda queda fijo en el extremo final del
+ * recorrido (100%, banda ya cruzada y fuera de vista a la derecha) en los
+ * **tres** consumidores: así se pierde el movimiento pero no el gradiente
+ * dorado de fondo, que sigue pintando — no se saca la segunda capa, solo se
+ * la inmoviliza fuera de cuadro.
+ */
+@keyframes shinySweep {
+  0% {
+    background-position: 0 0, -100% 0;
+  }
+  100% {
+    background-position: 0 0, 100% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .au,
+  .shiny,
+  .filete-dorado {
+    animation: none;
+    background-position: 0 0, 100% 0;
+  }
+}
+
+/*
+ * `.au-dark` — gradiente metálico de texto **para panel invertido** (fondo
+ * `--color-celeste-900`). Primera implementación: la clase estaba
+ * especificada en `sistema-de-diseno-v2.md` §143-155 y adoptada por el
+ * ADR 0015, pero nunca había bajado a esta hoja de estilos porque ninguna
+ * pantalla la consumía. Su primer consumidor real es la cifra de 96px de
+ * la pantalla de resultado del quiz (ticket #106).
+ *
+ * Los stops son **los originales de v2, sin recalcular**, y eso es
+ * deliberado: a diferencia de `.au`/`.shiny` —cuya base pasó por doce
+ * iteraciones a pedido explícito del usuario, todas sobre fondo claro—,
+ * este gradiente vive sobre `--color-celeste-900` y ahí el problema de
+ * contraste se invierte: el dorado claro es el que pasa. El extremo
+ * `#E8BE63` da **6.40:1** contra `#0A3D66` (ADR 0015), así que todo el
+ * rango de stops —que solo se aclara desde ahí hacia el centro `#FFF3D0`—
+ * pasa AA con margen. No se toca ninguno de los siete valores.
+ *
+ * **Sin banda de brillo ni animación**, a diferencia de las tres clases de
+ * arriba. v2 la describe como un gradiente estático, y la regla de uso 8
+ * de `identidad-argentum` prohíbe extender el efecto ornamental de v2 a un
+ * componente que v2 no cubre explícitamente. No consume `--brillo-banda`,
+ * no entra al selector de `@keyframes shinySweep` y no necesita bloque de
+ * `prefers-reduced-motion`: no se mueve.
+ *
+ * El fallback sólido **no puede ser `--color-accent-700`**, que es el que
+ * usan `.au`/`.shiny`: sobre `--color-celeste-900` da 2.29:1 y no llega ni
+ * al piso no-texto de 3:1. Va `--color-accent-300` (`#F7DE9B`), **8.48:1
+ * sobre `#0A3D66`** (medido por el `brand-specialist` para el ticket #106,
+ * es el mismo token del badge de liga de esa pantalla): un navegador sin
+ * `background-clip: text` ve un dorado claro sólido que pasa AA, y queda
+ * consistente con el resto del panel invertido. El
+ * `-webkit-text-fill-color: transparent` cumple acá la misma función de
+ * mecánica CSS que en `.au` — sin él el color sólido pintaría por encima
+ * del recorte y el gradiente nunca se vería.
+ */
+.au-dark {
+  background-image: linear-gradient(
+    100deg,
+    #e8be63 0%,
+    #f2d488 18%,
+    #f7de9b 36%,
+    #fff3d0 50%,
+    #f7de9b 64%,
+    #f2d488 82%,
+    #e8be63 100%
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: var(--color-accent-300); /* fallback sólido, 8.48:1 sobre --color-celeste-900 */
   -webkit-text-fill-color: transparent;
 }
