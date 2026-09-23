@@ -6,6 +6,7 @@ import { useEffect, useRef } from "react";
 import { useFormStatus } from "react-dom";
 
 import { authClient } from "./auth-cliente.ts";
+import { debeRefrescarSesion } from "./nav-refresco.ts";
 
 /**
  * Los ítems estáticos de la Nav/TabsBar (más el dinámico Ingresar/Salir) de tipografía pura (ticket #82), en el
@@ -132,9 +133,12 @@ type Props = {
  * (documentación de Better Auth, "Manually refetch session"):
  * - tras el logout, dentro de la propia acción del formulario, antes de
  *   navegar a la home;
- * - tras el login, cuando cambia `pathname` (la acción redirige a `/` desde
- *   `/ingresar` o `/registrarse`); la primera vez se omite, porque
- *   `useSession()` ya pide la sesión al montar.
+ * - tras el login por email o el registro, solo cuando la ruta anterior era
+ *   una de `RUTAS_DE_ENTRADA` (`/ingresar`, `/registrarse`; la acción redirige
+ *   a `/`). Navegar entre otras rutas no pide nada: la sesión se lee una vez
+ *   por carga, más el refresco por foco de ventana que Better Auth trae por
+ *   defecto. Google no necesita nada (redirección completa, recarga la
+ *   página). La decisión vive en `nav-refresco.ts`.
  *
  * Solo es una señal de interfaz: autorizar sigue siendo del módulo, con
  * `obtenerSesion()` (ADR 0020, Regla 4).
@@ -147,9 +151,10 @@ export function NavPrincipal({ cerrarSesion }: Props) {
 
   const pathnameAnterior = useRef(pathname);
   useEffect(() => {
-    if (pathnameAnterior.current === pathname) return;
+    const anterior = pathnameAnterior.current;
+    if (anterior === pathname) return;
     pathnameAnterior.current = pathname;
-    void refetch();
+    if (debeRefrescarSesion(anterior, pathname)) void refetch();
   }, [pathname, refetch]);
 
   async function salir() {
