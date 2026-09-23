@@ -4,7 +4,7 @@ import { isAPIError } from "better-auth/api";
 import { headers } from "next/headers";
 import { z } from "zod";
 
-import { auth } from "./auth.ts";
+import { obtenerAuth } from "./auth.ts";
 import { traducirError, type InfoError } from "./mensajes-de-error.ts";
 
 /**
@@ -74,7 +74,7 @@ export type Credenciales = z.infer<typeof esquemaCredenciales>;
 export type Resultado = { ok: true } | ({ ok: false } & InfoError);
 
 /** La sesión activa, con la forma que ya infiere Better Auth de su propia configuración. */
-export type Sesion = NonNullable<Awaited<ReturnType<typeof auth.api.getSession>>>;
+export type Sesion = NonNullable<Awaited<ReturnType<ReturnType<typeof obtenerAuth>["api"]["getSession"]>>>;
 
 function errorDeValidacion(error: z.ZodError): { ok: false } & InfoError {
   const primerProblema = error.issues[0];
@@ -106,7 +106,7 @@ export async function registrarse(datos: DatosDeRegistro): Promise<Resultado> {
   if (!validacion.success) return errorDeValidacion(validacion.error);
 
   try {
-    await auth.api.signUpEmail({
+    await obtenerAuth().api.signUpEmail({
       body: {
         name: validacion.data.nombre,
         email: validacion.data.email,
@@ -125,7 +125,7 @@ export async function iniciarSesion(credenciales: Credenciales): Promise<Resulta
   if (!validacion.success) return errorDeValidacion(validacion.error);
 
   try {
-    await auth.api.signInEmail({
+    await obtenerAuth().api.signInEmail({
       body: {
         email: validacion.data.email,
         password: validacion.data.contrasena,
@@ -140,7 +140,8 @@ export async function iniciarSesion(credenciales: Credenciales): Promise<Resulta
 /** Cierra la sesión actual. No falla por "no había sesión": es un no-op válido. */
 export async function cerrarSesion(): Promise<Resultado> {
   try {
-    await auth.api.signOut({ headers: await headers() });
+    const cabeceras = await headers();
+    await obtenerAuth().api.signOut({ headers: cabeceras });
     return { ok: true };
   } catch (error) {
     return errorDeBetterAuth(error);
@@ -149,6 +150,10 @@ export async function cerrarSesion(): Promise<Resultado> {
 
 /** La sesión actual, o `undefined` si el visitante no tiene una. */
 export async function obtenerSesion(): Promise<Sesion | undefined> {
-  const sesion = await auth.api.getSession({ headers: await headers() });
+  // `headers()` primero y a propósito: durante el prerenderizado marca la ruta
+  // como dinámica antes de construir Better Auth, así `next build` no exige
+  // sus variables. Con el orden inverso la construcción corría en el build.
+  const cabeceras = await headers();
+  const sesion = await obtenerAuth().api.getSession({ headers: cabeceras });
   return sesion ?? undefined;
 }

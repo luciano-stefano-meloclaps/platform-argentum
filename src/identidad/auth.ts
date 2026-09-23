@@ -91,5 +91,15 @@ const alcanceGlobal = globalThis as typeof globalThis & {
   authArgentum?: ReturnType<typeof construirAuth>;
 };
 
-export const auth: ReturnType<typeof construirAuth> =
-  alcanceGlobal.authArgentum ?? (alcanceGlobal.authArgentum = construirAuth());
+/**
+ * La instancia de Better Auth, construida **en el primer uso** y no al importar
+ * este archivo. `next build` evalúa los módulos de las rutas al recolectar
+ * datos de página, y en ese momento las variables de identidad pueden no estar
+ * cargadas (en Vercel, según el entorno): un `throw` al importar rompería el
+ * build entero. Acá el error de una variable faltante aparece recién en la
+ * petición que de verdad necesita a Better Auth, con el mensaje que nombra la
+ * variable.
+ */
+export function obtenerAuth(): ReturnType<typeof construirAuth> {
+  return alcanceGlobal.authArgentum ?? (alcanceGlobal.authArgentum = construirAuth());
+}

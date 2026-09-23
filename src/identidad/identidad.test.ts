@@ -12,8 +12,8 @@ import { describe, expect, it, vi } from "vitest";
  *
  * `server-only` mockeado y `.env` cargado a mano, mismo mecanismo que
  * `catalogo.test.ts` (ver su comentario): `identidad.ts` importa `auth.ts`,
- * que necesita `DATABASE_URL` (para `../db/cliente.ts`) y las variables de
- * Better Auth, y ninguna de las dos llega sola bajo `vitest run`.
+ * que necesita `DATABASE_URL` (para `../db/cliente.ts`); las variables de
+ * Better Auth ya no hacen falta al importar (se leen en el primer uso).
  */
 vi.mock("server-only", () => ({}));
 
@@ -22,6 +22,10 @@ try {
 } catch {
   // Sin `.env`: las variables tienen que venir ya seteadas (CI).
 }
+
+// Estas pruebas no consultan la base: `db/cliente.ts` solo exige que la cadena
+// exista al importarse, y `pg` no conecta hasta la primera consulta.
+process.env.DATABASE_URL ??= "postgresql://u:p@localhost:5432/inerte";
 
 const { iniciarSesion, registrarse } = await import("./identidad.ts");
 

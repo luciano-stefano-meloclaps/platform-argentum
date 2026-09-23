@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { auth } from "./auth.ts";
+import type { obtenerAuth } from "./auth.ts";
 
 /**
  * Diccionario propio que traduce los `$ERROR_CODES` de Better Auth —en
@@ -15,7 +15,7 @@ import type { auth } from "./auth.ts";
  * un caso nuevo es agregar una línea acá, nunca una rama nueva en
  * `identidad.ts`.
  */
-type CodigoDeError = keyof typeof auth.$ERROR_CODES;
+type CodigoDeError = keyof ReturnType<typeof obtenerAuth>["$ERROR_CODES"];
 type Campo = "nombre" | "email" | "contrasena";
 
 export interface InfoError {

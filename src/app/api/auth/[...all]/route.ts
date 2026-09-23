@@ -1,6 +1,6 @@
 import { toNextJsHandler } from "better-auth/next-js";
 
-import { auth } from "../../../../identidad/auth.ts";
+import { obtenerAuth } from "../../../../identidad/auth.ts";
 
 /**
  * Ruta de protocolo de Better Auth (ADR 0019, Regla 3): intercambio de
@@ -16,4 +16,14 @@ import { auth } from "../../../../identidad/auth.ts";
  * excepción nombrada a "desde `src/app` solo se importa la interfaz pública
  * de un módulo".
  */
-export const { GET, POST } = toNextJsHandler(auth);
+
+// El handler se arma en cada petición y no al importar la ruta: así `next build`
+// no construye Better Auth (ni exige sus variables) al recolectar datos de
+// página. La instancia es un singleton, así que el costo es solo el envoltorio.
+export function GET(request: Request) {
+  return toNextJsHandler(obtenerAuth()).GET(request);
+}
+
+export function POST(request: Request) {
+  return toNextJsHandler(obtenerAuth()).POST(request);
+}
