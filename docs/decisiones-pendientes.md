@@ -236,3 +236,35 @@ se agregue solo al módulo afectado, no a los cinco por igual.
 módulo nuevo (`moderacion`, `aprendizaje`, `progreso`, `identidad`) que se
 diseñe mientras esta entrada siga abierta hace lo mismo: importa `db` directo,
 sin anticipar una interfaz de persistencia por si acaso.
+
+## 6. Proveedor de envío de correo, para verificar email y recuperar contraseña
+
+**Qué está pendiente.** ¿Con qué proveedor se envía el correo saliente que
+necesitan la verificación de email y la recuperación de contraseña del módulo
+`identidad` (ADR 0019), y con qué configuración?
+
+**Por qué no se decide hoy.** El ADR 0019 dejó las dos funcionalidades
+explícitamente fuera de la primera rebanada de `identidad`: ninguna de las dos
+tiene un caso de uso presente —cero usuarios reales todavía— y las dos
+necesitan una pieza que hoy no existe en el stack en absoluto, un proveedor de
+envío de correo (Resend, Postmark, SES, u otro), con su propia cuenta,
+credenciales y configuración de dominio. Elegir uno ahora, sin un flujo
+concreto que lo use, sería exactamente la infraestructura anticipada que el
+principio de arquitectura del proyecto prohíbe.
+
+**Disparador.** El primero de estos hechos que ocurra:
+
+1. Se pide recuperación de contraseña como funcionalidad (`sendResetPassword`
+   de Better Auth deja de ser un callback sin implementar).
+2. Se pide requerir email verificado antes de dejar entrar a un usuario
+   (`requireEmailVerification` pasa de `false` a `true` en la configuración de
+   `identidad`).
+3. Aparece cualquier otra necesidad de enviarle correo a un usuario —una
+   notificación de moderación, por ejemplo— que independientemente ya
+   obligaría a elegir un proveedor.
+
+**Regla interina.** `emailAndPassword.requireEmailVerification` queda en
+`false` y no se implementa `sendResetPassword`. Un usuario que pierde su
+contraseña no tiene, hoy, forma de recuperarla sin intervención manual del
+usuario del proyecto contra la base. Es la deuda técnica que el ADR 0019 ya
+declaró aceptada.
