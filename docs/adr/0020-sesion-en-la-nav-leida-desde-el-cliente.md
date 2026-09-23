@@ -114,7 +114,11 @@ enlace); el costo de las otras es estructural y persistente.
 - El catálogo y la ficha vuelven a prerenderizarse, sin llamada a la base en
   runtime.
 - El endpoint `/api/auth/[...all]` recibe una lectura por carga de página de
-  cada visitante (sin cookie, responde sin tocar la base). No es el `/api`
+  cada visitante (sin cookie, responde sin tocar la base). A esa lectura se
+  suman una tras el login o el registro y una tras el logout (las Server
+  Actions no disparan las señales del cliente de Better Auth, así que la nav
+  refresca a mano, ticket #120) y las del `refetchOnWindowFocus` que Better
+  Auth trae por defecto. No es el `/api`
   interno que prohíbe el 0016: es infraestructura del protocolo (0019, Regla
   3).
 - La señal de sesión ya no está en el HTML inicial: no sirve para SEO ni sin
