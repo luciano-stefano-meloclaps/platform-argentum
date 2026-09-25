@@ -10,6 +10,10 @@
  * `obtenerMazoDeRepaso` deben citarse como la interfaz de ese módulo. La
  * forma de la carta ya cambió una vez en este mock (#132: `esVerdadero`
  * separado del texto) sin ningún ADR, justamente porque no es contrato.
+ *
+ * HOY NO SE MUESTRA `respuesta`: el dorso muestra solo «Verdadero» o «Falso»
+ * (según `esVerdadero`). La explicación queda en los datos para cuando haya
+ * lógica que la use.
  */
 
 /** Una tarjeta del mazo: pregunta de un lado, respuesta del otro (CONTEXT.md). */
@@ -18,12 +22,12 @@ export type TarjetaDeRepaso = {
   id: string;
   /** Numeral romano decorativo de la esquina de la carta (aria-hidden). */
   numeral: string;
-  /** La sala/temática de la tarjeta ("Próceres") — el tag morado del frente. */
+  /** La sala/temática de la tarjeta ("Próceres") — la etiqueta del frente. */
   categoria: string;
   pregunta: string;
   /** Si la afirmación de la pregunta es verdadera. Separado del texto a propósito. */
   esVerdadero: boolean;
-  /** La explicación, sin el «Sí:»/«No:» adelante: la vista lo antepone según `esVerdadero`. */
+  /** La explicación de la respuesta. Hoy la vista no la muestra (ver el encabezado). */
   respuesta: string;
   /** La entidad del catálogo que sustenta esta tarjeta. */
   entidadId: string;

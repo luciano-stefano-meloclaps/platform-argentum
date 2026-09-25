@@ -245,8 +245,9 @@
    *   #A785D6 / --color-celeste-900 (#0A3D66): 3.72:1 — pasa el piso
    *     no-texto de 3:1 (WCAG 1.4.11). Como texto NO se usa: no llega a AA
    *     (4.5:1) y no es su rol.
-   *   texto del badge que enmarca, --color-acento-repaso-100 (#EDE4F5) /
-   *     --color-celeste-900: 9.09:1 — pasa AA con margen.
+   *   La etiqueta ahora lleva fondo propio --color-acento-repaso-700
+   *     (#6B3FA0) y texto --color-acento-repaso-100 (#EDE4F5): 5.98:1, pasa
+   *     AA. El borde va por fuera de ese relleno, contra la cara.
    * Decisión del usuario: seguir el umbral de 3:1 también para este borde.
    * El valor original de la especificación de /tarjetas (ticket #91) era
    * #8B5FC9, que daba 2.45:1 y solo se aceptaba por rol decorativo; se

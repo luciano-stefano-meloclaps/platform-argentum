@@ -403,9 +403,24 @@ comparten también.
 ### Acento morado de repaso (ticket #91, formalizado por el `brand-specialist`)
 
 **No es una categoría de contenido.** Es un acento puntual para "dominio/
-temática de la tarjeta" en la pantalla de repaso (tag del frente, badge
-"Respuesta revelada" del dorso) — el ticket #91 pedía explícitamente no usar
-dorado ni celeste ahí, porque esos dos ya tienen significado propio.
+temática de la tarjeta" en la pantalla de repaso (etiqueta del frente,
+etiqueta "Respuesta revelada" del dorso) — el ticket #91 pedía explícitamente
+no usar dorado ni celeste ahí, porque esos dos ya tienen significado propio.
+
+**Etiqueta de las dos caras (rebanada `feat/tarjetas-rediseno`, pedido del
+usuario).** Las dos caras usan **la misma etiqueta cuadrada con fondo**
+(`inline-block border px-[10px] py-xs font-cuerpo text-[9px]
+tracking-[0.14em] uppercase`, sin `rounded`), solo con los colores
+espejados. **Reemplaza a la píldora morada redondeada del frente (#91)**, que
+queda superada. Sin token nuevo: los tres pares salen de
+`acento-repaso-100/700/invertido`. El color no implica acierto ni error.
+
+| Cara | Fondo | Borde | Texto |
+| --- | --- | --- | --- |
+| Frente (`#F5FAFF`) | `bg-acento-repaso-100` | `border-acento-repaso-700` | `text-acento-repaso-700` |
+| Dorso (`--celeste-900`) | `bg-acento-repaso-700` | `border-acento-repaso-invertido` | `text-acento-repaso-100` |
+
+Contrastes medidos en la sección 3.
 
 | Token | Valor | Fuente |
 | --- | --- | --- |
@@ -832,7 +847,12 @@ familia de marca completa.
 | `--texto-secundario` `#6B5D4A` / `--blanco` `#FFFFFF` (reposo de celda) | 6.38:1 | `brand-specialist`, ticket #88 — reemplaza la medición contra `--celeste-25` (descartado) |
 | `--texto-terciario` `#7E705D` / `--celeste-50` `#EAF4FE` (hover de celda) | **4.33:1 — falla AA**, texto de 10px | `brand-specialist`, ticket #88. No usar `--texto-terciario` sobre `--celeste-50`; usar `--texto-secundario` (5.73:1 sobre `--celeste-50`, 6.38:1 sobre `--blanco`), que pasa en los dos estados. El componente real (`grilla-salas.tsx`) ya usa `--texto-secundario` en el caption, no `--texto-terciario` — este hallazgo es preventivo, no un bug encontrado en código |
 | `--celeste-700` `#0978D0` (foco) / `--blanco` `#FFFFFF` (reposo de celda) | 4.56:1 (no-texto, piso 3:1) | `brand-specialist`, ticket #88 — reemplaza la medición contra `--celeste-25` (descartado). Contra `--celeste-50` (hover) sigue siendo 4.34:1, sin cambios |
-| `--color-acento-repaso-700` `#6B3FA0` / `--color-acento-repaso-100` `#EDE4F5` | 5.98:1 | `brand-specialist`, ticket #91 (pill de dominio, frente y dorso) |
+| `--color-acento-repaso-700` `#6B3FA0` / `--color-acento-repaso-100` `#EDE4F5` | 5.98:1 | `brand-specialist`, ticket #91. **Vigente en las dos caras, en espejo**: frente = texto 700 sobre fondo 100; dorso = texto 100 sobre fondo 700 (etiqueta cuadrada, texto de 9px, pasa AA). La "píldora" redondeada del frente queda **superada** |
+| Borde `--color-acento-repaso-700` `#6B3FA0` / carta `#F5FAFF` (etiqueta del frente) | **7.03:1** — pasa 3:1 no-texto (L 0.0922 contra 0.9500) | `brand-specialist`, etiqueta unificada de `/tarjetas` |
+| Fondo `--color-acento-repaso-100` `#EDE4F5` / carta `#F5FAFF` (etiqueta del frente) | 1.18:1 — decorativo, el borde y el texto delimitan y portan | Ídem |
+| Fondo `--color-acento-repaso-700` `#6B3FA0` / `--celeste-900` `#0A3D66` (etiqueta del dorso) | 1.52:1 — decorativo, el borde delimita | Ídem |
+| Borde `--color-acento-repaso-invertido` `#A785D6` / `--celeste-900` (etiqueta del dorso) | 3.72:1 — pasa 3:1 no-texto (ya medido arriba; es el límite contra la cara) | Ídem |
+| Texto `--color-acento-repaso-100` `#EDE4F5` / fondo `--color-acento-repaso-700` (dorso) | 5.98:1 — pasa AA. Reemplaza al 9.09:1 sobre `--celeste-900` de la etiqueta sin fondo (**superado**) | Ídem |
 | `--color-acento-repaso-700` `#6B3FA0` / `--color-blanco` `#FFFFFF` | 7.38:1 | `brand-specialist`, ticket #91 (stat "Dominio de esta ficha") |
 | `--color-acento-repaso-invertido` `#A785D6` (**vigente**) / `--celeste-900` `#0A3D66` (borde del badge "Respuesta revelada") | **3.72:1 — pasa el piso no-texto de 3:1** (WCAG 1.4.11). Decisión del usuario de seguir el umbral de 3:1 (regla 19) | `brand-specialist`, rebanada `feat/tarjetas-rediseno`, medido (fórmula WCAG): L relativa 0.2985 contra 0.0436 |
 | `--color-acento-repaso-100` `#EDE4F5` (texto del badge) / `--celeste-900` `#0A3D66` | 9.09:1 | Ídem — el texto del badge se lee por sí mismo, sin depender del borde |
@@ -844,7 +864,7 @@ familia de marca completa.
 | `--color-tarjetas-carta-provisorio` `#F5FAFF` / `--color-bg` `#FBF7F0` (relleno de la carta contra la página) | 1.02:1 — no es texto; el relleno casi se funde con la página y la carta la delimitan el marco y las capas del mazo (con `--celeste-50` era 1.04:1) | Ídem — nota de vecindad, sin regresión relevante |
 | `--texto-titulo` `#1F3B4D` / `--color-tarjetas-carta-provisorio` `#F5FAFF` (pregunta, `<h2>` 30–40px) | **11.17:1** | Ídem — el fondo real de la carta desde la decisión del usuario (con `--celeste-50` había sido 10.54:1) |
 | `--texto-secundario` `#6B5D4A` / `#F5FAFF` (pista "tocá la lámina…", 14px cursiva) | **6.08:1** | Ídem (con `--celeste-50` había sido 5.74:1) |
-| `--color-acento-repaso-700` `#6B3FA0` / `--color-acento-repaso-100` `#EDE4F5` (pill de categoría sobre la carta) | 5.98:1 (ya medido arriba). El pill lleva su propio fondo, así que el texto no depende de `#F5FAFF`. El pill contra la carta: 1.18:1, decorativo (el texto del pill es el portador) | Ídem |
+| **(superado, píldora redondeada retirada)** `--color-acento-repaso-700` `#6B3FA0` / `--color-acento-repaso-100` `#EDE4F5` (pill de categoría sobre la carta) | 5.98:1 (ya medido arriba). El pill lleva su propio fondo, así que el texto no depende de `#F5FAFF`. El pill contra la carta: 1.18:1, decorativo (el texto del pill es el portador) | Ídem |
 | `--color-celeste-150` `#BFE0FC` (marco, outline "passe-partout" y filetes) / `#F5FAFF` | 1.31:1 — decorativo, sin información única. Contra `--color-bg` el marco da 1.29:1, ya presente antes del cambio de fondo | Ídem |
 | Blanco / `--color-error` `#C23A3A` (botón "Falso", texto 14px) | 5.30:1 | `brand-specialist`, ticket #91 |
 | Blanco / `--color-ok` `#2E7C5A` (botón "Verdadero", texto 14px) | 5.07:1 | `brand-specialist`, ticket #91 |

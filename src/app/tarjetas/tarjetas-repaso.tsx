@@ -3,7 +3,6 @@
 import { useEffect, useReducer, useRef, useState } from "react";
 import Link from "next/link";
 
-import { decidirAtajo } from "./atajos.ts";
 import { estadoInicialDelMazo, reducirMazo } from "./mazo.ts";
 import type { TarjetaDeRepaso } from "./tarjetas-repaso.datos.ts";
 
@@ -31,14 +30,15 @@ type Props = {
 };
 
 /**
- * Acento morado de repaso: "categoría/temática" (tag del frente) y "revelar"
- * (badge del dorso). Nunca dorado ni celeste, nunca el rol del verde
- * (correcto). Tokens del `brand-specialist` (`--color-acento-repaso-*`).
+ * Etiqueta cuadrada del frente (categoría) y del dorso («Respuesta revelada»):
+ * mismo tamaño y forma, con fondo propio en las dos caras. Acento morado de
+ * repaso, nunca dorado ni celeste, y sin el rol del verde/rojo: el color no
+ * dice si se acertó. Tokens y contrastes del `brand-specialist`
+ * (`identidad-argentum`, «Acento morado de repaso»).
  */
-const morado = {
-  bg: "bg-acento-repaso-100",
-  text: "text-acento-repaso-700",
-};
+const ETIQUETA = "inline-block border px-[10px] py-xs font-cuerpo text-[9px] tracking-[0.14em] uppercase";
+const ETIQUETA_FRENTE = `${ETIQUETA} border-acento-repaso-700 bg-acento-repaso-100 text-acento-repaso-700`;
+const ETIQUETA_DORSO = `${ETIQUETA} border-acento-repaso-invertido bg-acento-repaso-700 text-acento-repaso-100`;
 
 /**
  * "Tarjeta N de M": la pantalla de repaso tipo flashcard (ticket #91), en su
@@ -63,22 +63,18 @@ export function TarjetasRepaso({ mazoNombre, tarjetas, onResponder, onAbrirFicha
   const tituloRef = useRef<HTMLHeadingElement>(null);
   const siguienteRef = useRef<HTMLButtonElement>(null);
   const cierreRef = useRef<HTMLHeadingElement>(null);
-  const mazoRef = useRef<HTMLElement>(null);
 
   const tarjeta = estado.terminado ? undefined : tarjetas[estado.indice];
   // Paso de la barra: la tarjeta actual cuenta como vista; al terminar, todas.
   const pasoActual = estado.terminado ? tarjetas.length : estado.indice + 1;
   const respondida = estado.resultado !== null;
-  // Con la tarjeta respondida la cara queda fija en el dorso: ahí vive el feedback.
+  // Con la tarjeta respondida la cara queda fija en el dorso, y lo que sigue es «Siguiente».
   const dorsoVisible = mostrandoDorso || respondida;
-  // Único texto de la región en vivo: solo el feedback y la respuesta. Al pasar
-  // de tarjeta queda vacío; el cambio de tarjeta lo anuncia el foco en el <h1>.
+  // Único texto de la región en vivo: solo con la tarjeta respondida, dice la
+  // respuesta revelada. Al pasar de tarjeta queda vacío; el cambio de tarjeta
+  // lo anuncia el foco en el <h1>.
   const anuncio =
-    tarjeta !== undefined && estado.resultado !== null
-      ? `${estado.resultado === "acierto" ? "Acertaste" : "No era esa: mirá la respuesta"}. ${
-          tarjeta.esVerdadero ? "Sí" : "No"
-        }: ${tarjeta.respuesta}`
-      : "";
+    tarjeta !== undefined && respondida ? `Respuesta revelada: ${tarjeta.esVerdadero ? "Verdadero" : "Falso"}.` : "";
 
   // Foco: el botón que se toca desaparece al cambiar de paso, así que el foco
   // se lleva a mano al elemento que sigue (si no, cae al <body>).
@@ -102,53 +98,6 @@ export function TarjetasRepaso({ mazoNombre, tarjetas, onResponder, onAbrirFicha
       tituloRef.current?.focus();
     }
   }, [clave, estado.terminado]);
-
-  // Atajos (ticket #133): la decisión es la función pura `decidirAtajo`; acá solo
-  // se reduce el evento a datos y se despacha lo que devuelva. Se ignoran con el
-  // foco en un campo de texto (no en botones ni enlaces: ahí las flechas y las
-  // letras no tienen acción nativa y, al responder, el foco cae en «Siguiente»).
-  // Enter, Espacio y Tab nunca se manejan, así que siguen nativos.
-  //
-  // WCAG 2.1.4 (atajos de un solo carácter): V y F solo actúan con el foco
-  // dentro del `<main>` del mazo o en `<body>` (opción «activo solo con el
-  // foco»: la más simple que cumple, sin pantalla de configuración ni
-  // remapeo). `→` no es un carácter imprimible y queda global.
-  useEffect(() => {
-    function alPresionar(evento: KeyboardEvent) {
-      const objetivo = evento.target;
-      const enCampo = objetivo instanceof Element && objetivo.closest(SELECTOR_DE_CAMPOS) !== null;
-      const enAmbitoDelMazo =
-        objetivo === document.body ||
-        objetivo === document.documentElement ||
-        (objetivo instanceof Node && mazoRef.current !== null && mazoRef.current.contains(objetivo));
-      const accion = decidirAtajo(
-        {
-          tecla: evento.key,
-          ctrl: evento.ctrlKey,
-          meta: evento.metaKey,
-          alt: evento.altKey,
-          enCampo,
-          defaultPrevented: evento.defaultPrevented,
-          isComposing: evento.isComposing,
-          enAmbitoDelMazo,
-        },
-        estado,
-      );
-      if (accion === null) {
-        return;
-      }
-      evento.preventDefault();
-      if (accion.tipo === "responder") {
-        manejarRespuesta(accion.elegido);
-      } else {
-        irALaSiguiente();
-      }
-    }
-    window.addEventListener("keydown", alPresionar);
-    return () => {
-      window.removeEventListener("keydown", alPresionar);
-    };
-  });
 
   function alternarDorso() {
     setMostrandoDorso((valor) => !valor);
@@ -192,7 +141,7 @@ export function TarjetasRepaso({ mazoNombre, tarjetas, onResponder, onAbrirFicha
   }
 
   return (
-    <main ref={mazoRef} id="contenido" className="mx-auto w-full max-w-[1800px] px-lg py-2xl">
+    <main id="contenido" className="mx-auto w-full max-w-[1800px] px-lg py-2xl">
       {/* ── Encabezado ─────────────────────────────────────────────────── */}
       <header className="text-center">
         <p className="font-cuerpo text-[10px] font-semibold tracking-[0.18em] text-celeste-text uppercase">
@@ -292,12 +241,12 @@ export function TarjetasRepaso({ mazoNombre, tarjetas, onResponder, onAbrirFicha
              * salvo el `<Link>`, que recupera `pointer-events-auto`.
              * `aria-pressed` anuncia frente/dorso. La cara NO es una región en
              * vivo: la única es el `role="status"` de abajo, que anuncia solo
-             * el feedback de la respuesta. Nunca gira en 3D: es un swap de contenido, con
+             * la respuesta revelada. Nunca gira en 3D: es un swap de contenido, con
              * el mismo `min-h-[360px]` en las dos caras.
              *
              * Una vez respondida la tarjeta el botón de dar vuelta no se
-             * renderiza: la cara queda fija en el dorso, que es donde vive el
-             * feedback, y lo que sigue es «Siguiente».
+             * renderiza: la cara queda fija en el dorso y lo que sigue es
+             * «Siguiente».
              *
              * El anillo de foco va a 12px del borde: más afuera que el marco
              * "passe-partout" (6px) y que las dos capas del mazo (5px y 10px).
@@ -315,7 +264,7 @@ export function TarjetasRepaso({ mazoNombre, tarjetas, onResponder, onAbrirFicha
 
               <div className="pointer-events-none relative z-10 flex flex-1">
                 {dorsoVisible ? (
-                  <Dorso tarjeta={tarjeta} resultado={estado.resultado} onAbrirFicha={onAbrirFicha} />
+                  <Dorso tarjeta={tarjeta} onAbrirFicha={onAbrirFicha} />
                 ) : (
                   <Frente tarjeta={tarjeta} />
                 )}
@@ -329,6 +278,7 @@ export function TarjetasRepaso({ mazoNombre, tarjetas, onResponder, onAbrirFicha
               <button
                 ref={siguienteRef}
                 type="button"
+                aria-describedby="anuncio-respuesta"
                 onClick={irALaSiguiente}
                 className={`${BOTON_DORADO} flex-1`}
               >
@@ -364,37 +314,15 @@ export function TarjetasRepaso({ mazoNombre, tarjetas, onResponder, onAbrirFicha
             </div>
           )}
 
-          {/* Única región en vivo, siempre montada (si se montara con el texto, no se anunciaría). */}
-          <p role="status" className="sr-only">
+          {/* Única región en vivo, montada mientras haya tarjeta (si se montara con el texto, no se anunciaría). */}
+          <p id="anuncio-respuesta" role="status" className="sr-only">
             {anuncio}
           </p>
-
-          <LeyendaDeAtajos />
         </>
       )}
 
       {children}
     </main>
-  );
-}
-
-/** Campos que consumen letras y flechas por sí mismos: los atajos no se disparan ahí. */
-const SELECTOR_DE_CAMPOS =
-  'input, textarea, select, [contenteditable]:not([contenteditable="false"]), [role="textbox"], [role="combobox"]';
-
-/**
- * Leyenda visible de los atajos. `<kbd>`: texto `texto-titulo` sobre blanco
- * 11.73:1; el resto del texto `texto-secundario` sobre crema 5.98:1. `←` no
- * figura: el mazo no vuelve atrás.
- */
-function LeyendaDeAtajos() {
-  const kbd =
-    "inline-block min-w-[1.75em] border border-borde-strong bg-blanco px-xs py-px text-center font-cuerpo text-[12px] text-texto-titulo";
-  return (
-    <p className="mt-lg text-center font-cuerpo text-[12px] text-texto-secundario pointer-coarse:hidden">
-      Atajos: <kbd className={kbd}>V</kbd> Verdadero · <kbd className={kbd}>F</kbd> Falso ·{" "}
-      <kbd className={kbd}>→</kbd> Siguiente
-    </p>
   );
 }
 
@@ -456,11 +384,7 @@ function Frente({ tarjeta }: { tarjeta: TarjetaDeRepaso }) {
         {tarjeta.numeral}
       </span>
 
-      <span
-        className={`inline-block rounded-full ${morado.bg} ${morado.text} px-md py-xs font-cuerpo text-[11px] font-semibold tracking-[0.08em] uppercase`}
-      >
-        {tarjeta.categoria}
-      </span>
+      <span className={ETIQUETA_FRENTE}>{tarjeta.categoria}</span>
 
       <h2 className="m-0 mt-xl max-w-[19ch] text-balance text-center font-titulo text-[30px] leading-[1.22] font-normal text-texto-titulo sm:text-[40px]">
         {tarjeta.pregunta}
@@ -475,70 +399,20 @@ function Frente({ tarjeta }: { tarjeta: TarjetaDeRepaso }) {
   );
 }
 
-/**
- * Íconos Tabler (outline, 24px, trazo 2, MIT, https://tabler.io/icons), copiados
- * en línea y sin dependencia (ADR 0003/0008): `circle-check` e `info-circle`.
- * Decorativos: el texto de al lado es el portador del significado.
- */
-function IconoDeFeedback({ acierto }: { acierto: boolean }) {
-  return (
-    <svg
-      aria-hidden="true"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className="size-6 shrink-0"
-    >
-      <path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0" />
-      {acierto ? (
-        <path d="M9 12l2 2l4 -4" />
-      ) : (
-        <>
-          <path d="M12 9h.01" />
-          <path d="M11 12h1v4h1" />
-        </>
-      )}
-    </svg>
-  );
-}
-
 function Dorso({
   tarjeta,
-  resultado,
   onAbrirFicha,
 }: {
   tarjeta: TarjetaDeRepaso;
-  resultado: "acierto" | "error" | null;
   onAbrirFicha?: (entidadId: string) => void;
 }) {
   return (
     <div className="relative flex flex-1 flex-col items-center justify-center border border-accent-600 bg-celeste-900 px-lg py-[56px] sm:px-[60px] sm:py-[64px]">
       <Marco tono="invertido" />
-      {/*
-       * Feedback, en texto MÁS ícono (el color nunca es el único portador).
-       * Sobre celeste-900: acierto `--color-ok-invertido` 4.86:1; «no era esa»
-       * en blanco 11.22:1 — neutro a propósito, sin rojo: equivocarse enseña,
-       * no castiga. Sin animación propia: nada que reducir.
-       */}
-      {resultado !== null && (
-        <p
-          className={`mb-md flex items-center gap-[10px] font-cuerpo text-[16px] font-semibold ${
-            resultado === "acierto" ? "text-ok-invertido" : "text-blanco"
-          }`}
-        >
-          <IconoDeFeedback acierto={resultado === "acierto"} />
-          {resultado === "acierto" ? "Acertaste" : "No era esa: mirá la respuesta"}
-        </p>
-      )}
-      <span className="inline-block border border-acento-repaso-invertido px-[10px] py-xs font-cuerpo text-[9px] tracking-[0.14em] text-acento-repaso-100 uppercase">
-        Respuesta revelada
-      </span>
+      <span className={ETIQUETA_DORSO}>Respuesta revelada</span>
 
       <p className="mt-[18px] max-w-[24ch] text-center font-titulo text-[28px] leading-[1.35] font-normal text-accent-300 sm:text-[34px]">
-        {tarjeta.esVerdadero ? "Sí" : "No"}: {tarjeta.respuesta}
+        {tarjeta.esVerdadero ? "Verdadero" : "Falso"}
       </p>
 
       <div
