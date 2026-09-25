@@ -20,8 +20,16 @@ import { Header } from "./header.tsx";
  * por el 600 más cercano o generaba negrita sintética, que es el bug que
  * corrige este cambio—, 600 para h3, 700 para display/h1/h2, este último ya
  * corregido a 700 por el ADR 0008), 400/500/600 para Lora (cuerpo, label,
- * botón, meta). No se pide la itálica: la escala tipográfica no la usa en
- * ningún componente.
+ * botón, meta). Cormorant Garamond carga además la itálica: el único peso con
+ * el que se usa `italic` en la interfaz es el 400 (epíteto y pie de
+ * imagen de la ficha, hint y nota de cierre de `/tarjetas`, pista del quiz,
+ * meta de las láminas, resumen del resultado; todos `font-titulo` sin clase
+ * de peso). `next/font` no permite pedir un solo peso por estilo: emite las
+ * declaraciones 400/600/700 de la itálica, pero Google sirve la itálica
+ * como un único archivo variable, así que los pesos de más no agregan
+ * ningún archivo que descargar. Sin la itálica el navegador fabricaba una oblicua sintética, que
+ * deforma el trazo fino/grueso de la fuente. Lora no se usa en itálica en
+ * ningún componente, así que no la carga.
  *
  * Lora reemplaza a Montserrat en toda la interfaz (ADR 0015, giro
  * museístico v2 — sistema-de-diseno-v2.md §4): no solo el cuerpo de
@@ -37,6 +45,7 @@ import { Header } from "./header.tsx";
 const cormorantGaramond = Cormorant_Garamond({
   subsets: ["latin"],
   weight: ["400", "600", "700"],
+  style: ["normal", "italic"],
   display: "swap",
   variable: "--font-cormorant-garamond",
 });
