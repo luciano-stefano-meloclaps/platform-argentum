@@ -203,17 +203,17 @@
   /*
    * --- Acento morado de repaso (ticket #91, formalizado por el
    * `brand-specialist`) ---
-   * Nace como hex suelto en `tarjetas-repaso.tsx` para el tag de
-   * "dominio/temática de la tarjeta" y el badge "Respuesta revelada" del
-   * dorso — el ticket #91 pedía explícitamente NO usar dorado ni celeste
-   * ahí (esos dos ya tienen significado propio: logros/marca y estructura
-   * de interfaz). Se formaliza como token porque se usa en dos lugares de
-   * la misma pantalla con un rol semántico estable ("acento de repaso"),
-   * no como decoración puntual.
+   * Nace en el ticket #91 como acento de "dominio/temática" de la pantalla
+   * de repaso, con la consigna de NO usar dorado ni celeste (esos dos ya
+   * tienen significado propio: logros/marca y estructura de interfaz).
+   * Hoy la etiqueta de categoría de /tarjetas usa --color-cat-*; este
+   * acento sigue vivo en el stat "Dominio de esta ficha"
+   * (`franja-de-datos.tsx`) y en el resultado del quiz
+   * (`resultado-quiz.tsx`).
    *
    * Contraste medido (fórmula WCAG, luminancia relativa):
-   *   texto / fondo propio (el pill):      #6B3FA0 / #EDE4F5 → 5.98:1
-   *   texto / --color-blanco (stat "Dominio de esta ficha"): → 7.38:1
+   *   #6B3FA0 / #EDE4F5 (-700 sobre -100):                  5.98:1
+   *   #6B3FA0 / --color-blanco (stat "Dominio de esta ficha"): 7.38:1
    * Los dos pasan AA con margen.
    *
    * ⚠️ Riesgo señalado, no bloqueante: este morado queda MUY cerca del de
@@ -233,34 +233,6 @@
    */
   --color-acento-repaso-100: #EDE4F5;
   --color-acento-repaso-700: #6B3FA0;
-
-  /*
-   * --color-acento-repaso-invertido: variante del acento de repaso para el
-   * dorso de la tarjeta (panel invertido, fondo --color-celeste-900). Mismo
-   * patrón de "variante acotada a una superficie" que --error-invertido y
-   * --foco-invertido (ADR 0015), con UNA diferencia que importa: esos dos
-   * existen para que el color PASE contraste; este no.
-   *
-   * SOLO BORDE, NUNCA TEXTO. Contraste (fórmula WCAG, luminancia relativa):
-   *   #A785D6 / --color-celeste-900 (#0A3D66): 3.72:1 — pasa el piso
-   *     no-texto de 3:1 (WCAG 1.4.11). Como texto NO se usa: no llega a AA
-   *     (4.5:1) y no es su rol.
-   *   La etiqueta ahora lleva fondo propio --color-acento-repaso-700
-   *     (#6B3FA0) y texto --color-acento-repaso-100 (#EDE4F5): 5.98:1, pasa
-   *     AA. El borde va por fuera de ese relleno, contra la cara.
-   * Decisión del usuario: seguir el umbral de 3:1 también para este borde.
-   * El valor original de la especificación de /tarjetas (ticket #91) era
-   * #8B5FC9, que daba 2.45:1 y solo se aceptaba por rol decorativo; se
-   * reemplazó por #A785D6, el mismo matiz (H 265°, S ~50%) a L 68%. El borde
-   * sigue siendo decorativo (enmarca una etiqueta NO interactiva cuyo texto
-   * se entiende sin él), pero ahora también cumple el número.
-   *
-   * Un único consumidor hoy (el badge "Respuesta revelada", verificado con
-   * grep sobre todo el repo); se tokeniza en vez de escribir el hex en línea
-   * para que el acento de repaso siga teniendo una sola fuente, y porque el
-   * resto de la familia (--acento-repaso-100/700) ya vive acá.
-   */
-  --color-acento-repaso-invertido: #A785D6;
 
   /*
    * --- /tarjetas: valores EXACTOS de la especificación, PROVISORIOS ---
@@ -290,8 +262,6 @@
    * la carta. Contraste sobre él (fórmula WCAG; luminancia de #F5FAFF = 0.950):
    *   --color-texto-titulo (#1F3B4D):          11.17:1
    *   --color-texto-secundario (#6B5D4A):       6.08:1
-   *   --color-acento-repaso-700 sobre su pill (#EDE4F5): 5.98:1 (el pill
-   *     lleva su propio fondo; no depende de este)
    *   `.au` centro #FFD250 (numerales romanos): 1.37:1 — decorativo,
    *     aria-hidden, aceptado por rol (regla 16 de `identidad-argentum`).
    *   --color-celeste-150 (#BFE0FC, bordes y filetes): 1.31:1 — decorativo.
@@ -327,20 +297,6 @@
   /* --error (ADR 0008): #C94A4A → #C23A3A. Sobre --color-error-bg: 4.53:1 (medido). */
   --color-error:    #C23A3A;
   --color-error-bg: #FBE9E9;
-
-  /*
-   * --ok-invertido: variante del verde de acierto, EXCLUSIVA de paneles
-   * invertidos (fondo --color-celeste-900); mismo patrón que --error-invertido
-   * y --foco-invertido (ADR 0015), deuda que el ADR 0015 dejó anotada.
-   * Método del ADR 0015: subir la L de #2E7C5A en HSL (H 153.8°, S 45.9%
-   * intactos) hasta pasar 4.5:1 con la fórmula WCAG. Primera derivación del
-   * frontend-specialist: L 49.3% -> #44B885, 4.51:1 (margen de 0.01, sin
-   * holgura). Corregido por el brand-specialist a L 53% -> #50BE8E: 4.86:1
-   * sobre --color-celeste-900 (--color-ok daba 2.21:1). Nunca sobre
-   * crema/blanco: ahí va --color-ok. Uso: el feedback de acierto del dorso
-   * de /tarjetas (ticket #132), texto de 16px semibold + ícono.
-   */
-  --color-ok-invertido: #50BE8E;
 
   /* --alerta (ADR 0008): #B26A00 → #9F5F00. Sobre --color-alerta-bg: 4.52:1 (según el ADR; no remedido en este ticket). */
   --color-alerta:    #9F5F00;

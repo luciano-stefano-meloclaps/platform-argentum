@@ -35,7 +35,7 @@ export type TarjetaDeRepaso = {
   entidadNombre: string;
 };
 
-export type NivelDeDominio = "Bajo" | "Medio" | "Alto";
+type NivelDeDominio = "Bajo" | "Medio" | "Alto";
 
 /** Las estadísticas del propio mazo — no de la cuenta del visitante. */
 export type EstadisticasDeMazo = {
