@@ -3,6 +3,7 @@
 import { useEffect, useReducer, useRef, useState } from "react";
 import Link from "next/link";
 
+import { decidirAtajo } from "./atajos.ts";
 import { estadoInicialDelMazo, reducirMazo } from "./mazo.ts";
 import type { TarjetaDeRepaso } from "./tarjetas-repaso.datos.ts";
 
@@ -92,6 +93,33 @@ export function TarjetasRepaso({ mazoNombre, tarjetas, onResponder, onAbrirFicha
       tituloRef.current?.focus();
     }
   }, [clave, estado.terminado]);
+
+  // Atajos (ticket #133): la decisión es la función pura `decidirAtajo`; acá solo
+  // se reduce el evento a datos y se despacha lo que devuelva. Se ignoran con el
+  // foco en cualquier control o campo, así Enter, Espacio y Tab siguen nativos.
+  useEffect(() => {
+    function alPresionar(evento: KeyboardEvent) {
+      const objetivo = evento.target;
+      const enControl = objetivo instanceof Element && objetivo.closest(SELECTOR_DE_CONTROLES) !== null;
+      const accion = decidirAtajo(
+        { tecla: evento.key, ctrl: evento.ctrlKey, meta: evento.metaKey, alt: evento.altKey, enControl },
+        estado,
+      );
+      if (accion === null) {
+        return;
+      }
+      evento.preventDefault();
+      if (accion.tipo === "responder") {
+        manejarRespuesta(accion.elegido);
+      } else {
+        irALaSiguiente();
+      }
+    }
+    window.addEventListener("keydown", alPresionar);
+    return () => {
+      window.removeEventListener("keydown", alPresionar);
+    };
+  });
 
   function alternarDorso() {
     setMostrandoDorso((valor) => !valor);
@@ -306,11 +334,33 @@ export function TarjetasRepaso({ mazoNombre, tarjetas, onResponder, onAbrirFicha
               </button>
             </div>
           )}
+
+          <LeyendaDeAtajos />
         </>
       )}
 
       {children}
     </main>
+  );
+}
+
+/** Todo lo que consume las teclas por sí mismo: los atajos no se disparan ahí. */
+const SELECTOR_DE_CONTROLES =
+  'button, a, input, textarea, select, summary, [contenteditable]:not([contenteditable="false"]), [role="button"], [role="link"], [role="textbox"], [role="combobox"]';
+
+/**
+ * Leyenda visible de los atajos. `<kbd>`: texto `texto-titulo` sobre blanco
+ * 11.73:1; el resto del texto `texto-secundario` sobre crema 5.98:1. `←` no
+ * figura: el mazo no vuelve atrás.
+ */
+function LeyendaDeAtajos() {
+  const kbd =
+    "inline-block min-w-[1.75em] border border-borde-strong bg-blanco px-xs py-px text-center font-cuerpo text-[12px] text-texto-titulo";
+  return (
+    <p className="mt-lg text-center font-cuerpo text-[12px] text-texto-secundario">
+      Atajos: <kbd className={kbd}>V</kbd> Verdadero · <kbd className={kbd}>F</kbd> Falso ·{" "}
+      <kbd className={kbd}>→</kbd> Siguiente
+    </p>
   );
 }
 
