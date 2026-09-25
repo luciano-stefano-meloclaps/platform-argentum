@@ -18,7 +18,7 @@
 export type TarjetaDeRepaso = {
   /** Numeral romano decorativo de la esquina de la carta (aria-hidden). */
   numeral: string;
-  /** La categoría/temática de la tarjeta — el tag morado del frente. */
+  /** La sala/temática de la tarjeta ("Próceres") — el tag morado del frente. */
   categoria: string;
   pregunta: string;
   respuesta: string;
@@ -32,6 +32,7 @@ export type NivelDeDominio = "Bajo" | "Medio" | "Alto";
 
 /** Las estadísticas del propio mazo — no de la cuenta del visitante. */
 export type EstadisticasDeMazo = {
+  /** Aciertos del mazo actual; la vista los muestra como "aciertos/total de tarjetas". */
   aciertos: number;
   racha: number;
   dominio: NivelDeDominio;
@@ -50,7 +51,7 @@ const MAZO_PROCERES: MazoDeRepaso = {
   tarjetas: [
     {
       numeral: "I",
-      categoria: "Prócer",
+      categoria: "Próceres",
       pregunta: "¿Cruzó la cordillera de los Andes al frente de un ejército propio, en 1817?",
       respuesta: "Sí: José de San Martín cruzó los Andes en 1817 y venció en Chacabuco y Maipú.",
       entidadId: "jose-de-san-martin",
@@ -58,7 +59,7 @@ const MAZO_PROCERES: MazoDeRepaso = {
     },
     {
       numeral: "II",
-      categoria: "Prócer",
+      categoria: "Próceres",
       pregunta: "¿Creó la bandera argentina en las barrancas del río Paraná, en Rosario?",
       respuesta: "Sí: Manuel Belgrano izó por primera vez la bandera el 27 de febrero de 1812.",
       entidadId: "manuel-belgrano",
@@ -66,7 +67,7 @@ const MAZO_PROCERES: MazoDeRepaso = {
     },
     {
       numeral: "III",
-      categoria: "Prócer",
+      categoria: "Próceres",
       pregunta: "¿Presidió el Congreso de Tucumán que declaró la independencia en 1816?",
       respuesta: "No: quien lo presidió fue Francisco Narciso de Laprida, no un militar de campaña.",
       entidadId: "jose-de-san-martin",
@@ -74,7 +75,7 @@ const MAZO_PROCERES: MazoDeRepaso = {
     },
     {
       numeral: "IV",
-      categoria: "Prócer",
+      categoria: "Próceres",
       pregunta: "¿Nació en Yapeyú, Corrientes, en 1778?",
       respuesta: "Sí: José de San Martín nació en Yapeyú el 25 de febrero de 1778.",
       entidadId: "jose-de-san-martin",
@@ -82,7 +83,7 @@ const MAZO_PROCERES: MazoDeRepaso = {
     },
     {
       numeral: "V",
-      categoria: "Prócer",
+      categoria: "Próceres",
       pregunta: "¿Fue el primer vocal de la Primera Junta, en 1810?",
       respuesta: "No: fue vocal de la Primera Junta, pero no el primero — la presidió Cornelio Saavedra.",
       entidadId: "manuel-belgrano",
@@ -90,10 +91,10 @@ const MAZO_PROCERES: MazoDeRepaso = {
     },
   ],
   stats: {
-    aciertos: 34,
-    racha: 6,
+    aciertos: 3,
+    racha: 4,
     dominio: "Medio",
-    ultimoRepaso: "Hoy",
+    ultimoRepaso: "hace 3 días",
   },
 };
 

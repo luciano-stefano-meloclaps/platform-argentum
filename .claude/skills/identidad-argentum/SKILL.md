@@ -57,6 +57,15 @@ pendiente de aplicar en `src/app/globals.css` (borrar la declaración de
 `bg-white`, o el token de utilidad que Tailwind genere para `--blanco`) —
 ninguno de los dos es del `brand-specialist`.
 
+**Relación con `/tarjetas` (no es una reversión del descarte).** El mismo
+hex `#F5FAFF` reaparece como `--color-tarjetas-carta-provisorio`, pero por
+otra razón y con otro alcance: es un pedido explícito del usuario de usar el
+valor exacto de la especificación de `/tarjetas` como fondo de la carta (ver
+"Valores exactos de `/tarjetas`", sección 1). **No** es un escalón de la rampa
+`--celeste-*`, **no** reintroduce `--celeste-25` y **no** está disponible para
+la grilla de salas ni para ninguna otra pantalla: la decisión de #88 sobre la
+grilla (`--blanco` + `--celeste-50`) sigue vigente tal cual.
+
 ### Dorado — v1 (logros, ligas)
 
 | Token | Valor | Fuente | Nota |
@@ -412,6 +421,111 @@ evita); queda para que `frontend-specialist` evalúe si conviene, a futuro,
 repasar con el color real de la categoría (`--color-cat-*`) en vez de un
 acento fijo único.
 
+### Dorso de la tarjeta de repaso: tokens de panel invertido (rebanada `feat/tarjetas-rediseno`, `/tarjetas`)
+
+Dos elementos nuevos en `globals.css`, ambos **acotados al dorso** (panel
+invertido, fondo `--celeste-900` `#0A3D66`). Valores confirmados leyendo
+`globals.css` y `src/app/tarjetas/tarjetas-repaso.tsx`, no de un resumen.
+
+| Token | Valor | Rol | Regla de uso |
+| --- | --- | --- | --- |
+| `--color-acento-repaso-invertido` | `#A785D6` (H 265°, S ~50%, L 68%: mismo matiz que `-700`) | **Solo borde** del badge "Respuesta revelada" (`border-acento-repaso-invertido`), sobre `--celeste-900` | **Nunca texto**. **Pasa el piso no-texto de 3:1: 3.72:1.** Decisión del usuario de seguir el umbral de 3:1 también para este borde: el valor original de la spec (`#8B5FC9`, 2.45:1) se reemplazó por este. Sigue siendo decorativo (enmarca una etiqueta no interactiva cuyo texto, `--color-acento-repaso-100` `#EDE4F5`, tiene 9.09:1 y se lee sin el borde), pero ahora también cumple el número. Un solo consumidor, confirmado con grep sobre el repo (`tarjetas-repaso.tsx:268`). El resto del badge no cambió |
+| `--gradiente-filete-invertido` | `linear-gradient(90deg, transparent, var(--color-accent-300), #fff3d0, var(--color-accent-300), transparent)` | Filete decorativo estático del dorso, `h-[2px] w-[70px]`, `aria-hidden`; uso: `bg-[image:var(--gradiente-filete-invertido)]` | **Estático y sin banda de brillo**: no es `.filete-dorado`, que es exclusivo del header (regla 8). Centro `--color-accent-300` `#F7DE9B` (8.48:1 sobre `--celeste-900`), punto más claro `#FFF3D0` — el mismo centro de `.au-dark` (10.14:1). Los extremos son `transparent`, sin par de contraste que medir. Dorado sobre celeste **autorizado** por la excepción del dorso / paneles invertidos (regla 3, ADR 0015). **Nota:** `#fff3d0` va escrito en línea dentro de la variable, sin token propio (es el mismo hex de `.au-dark`); si un segundo consumidor lo necesita, corresponde tokenizarlo |
+
+**Por qué `--color-acento-repaso-invertido` no es un `--error-invertido`:**
+`--error-invertido` y `--color-foco-invertido` existen para que el color
+**pase** contraste dentro del panel invertido. Con el valor vigente
+(`#A785D6`, 3.72:1) este también pasa el piso no-texto de 3:1, pero por
+**decisión del usuario de seguir el umbral de 3:1**, no porque el rol lo
+exija: sigue siendo solo un borde decorativo de una etiqueta cuyo texto se
+lee sin él. No lo cites como precedente para un borde funcional (foco, borde
+de control), que tiene su propio token de foco.
+
+### Valores exactos de `/tarjetas` — dos tokens nuevos, **PROVISORIOS**
+
+**Decisión explícita del usuario** (reemplaza los mapeos que esta skill
+proponía antes). La spec de `/tarjetas` pide dos hex que la rampa no tiene.
+El `brand-specialist` los había mapeado a tokens existentes
+(`#8A5E12` → `--color-accent-700`, `#F5FAFF` → `--color-celeste-50`); el
+usuario **no los aceptó** y pidió los **valores exactos** como tokens nuevos,
+de uso acotado a `/tarjetas`. Ambos viven en `globals.css` y llevan el sufijo
+`-provisorio` a propósito.
+
+| Token | Valor | Utilidades de Tailwind | Dónde se usa | Contraste medido |
+| --- | --- | --- | --- | --- |
+| `--color-tarjetas-dorado-provisorio` | `#8A5E12` | `text-tarjetas-dorado-provisorio` (también `border-`, `outline-`, `fill-`…) | Cifra "Tarjeta N" del `<h1>` (40px, `tarjetas-repaso.tsx:105`) y valor "Racha actual" (24px, `franja-de-datos.tsx:23`). Texto plano, sin `.au` | **5.33:1** sobre `--color-crema` `#FBF7F0`; **5.69:1** sobre `--color-blanco`. Pasa AA de texto normal y AA-large con margen. Más oscuro que `--color-accent-700` (4.58:1 / 4.89:1): sin regresión |
+| `--color-tarjetas-carta-provisorio` | `#F5FAFF` (L relativa 0.950) | `bg-tarjetas-carta-provisorio` (también `border-`, `outline-`…) | Fondo de la cara frontal de la carta (`tarjetas-repaso.tsx:220`, hoy `bg-celeste-50`) | Ver la tabla de la sección 3 (filas "sobre `#F5FAFF`"): `--texto-titulo` 11.17:1, `--texto-secundario` 6.08:1, pill 5.98:1 |
+
+**Alcance y reglas:**
+
+- **Solo `/tarjetas`.** No están disponibles para el resto del sitio. No son
+  un escalón de ninguna rampa: `--color-tarjetas-carta-provisorio` **no
+  resucita `--celeste-25`** (descartado en #88; ver sección 1, celeste) ni
+  compite con `--celeste-50`.
+- **`--color-accent-700` y `--color-celeste-50` no se tocaron.** Siguen con sus
+  valores y sus usos actuales en el resto de la aplicación.
+- **Dos vecindades a revisar cuando se cambie la carta a `#F5FAFF`:** (1) la
+  diferencia entre el relleno de la carta y el fondo de página baja a
+  **1.02:1** (`#F5FAFF` contra `#FBF7F0`; con `--celeste-50` era 1.04:1): el
+  relleno casi se funde con la página y el marco (`--celeste-150`, 1.29:1
+  contra crema, ya presente antes) es lo que la delimita, junto con las dos
+  capas doradas del mazo; no es una regresión, pero es un tinte apenas
+  perceptible. (2) Los bordes y filetes `--celeste-150` sobre la carta dan
+  **1.31:1**: decorativos, sin información única.
+- **PENDIENTE de aprobación del usuario:** el usuario **decidirá más adelante**
+  si estos dos colores exactos se extienden a **toda la página** y, en ese
+  caso, si se cambia la variable global (`--color-accent-700` y
+  `--color-celeste-50`). Hasta entonces esa decisión no está tomada y **nada
+  global se modifica**. Cuando llegue, los tokens `*-provisorio` se retiran o
+  se renombran; hasta entonces no se usan fuera de `/tarjetas`.
+
+### Numerales romanos de esquina en la carta de repaso — **ACEPTADO por el usuario**
+
+**Decisión explícita del usuario (en mayúsculas, sobre el punto señalado por
+el `brand-specialist`):** los numerales romanos en las esquinas de la carta
+de `/tarjetas` **se quedan como "detalle de naipe"**. v2 documenta el romano
+para índices y salas, no como detalle de esquina de carta; esto es una
+**extensión aceptada**, no una lectura de v2.
+
+Alcance, cerrado:
+
+- **Dónde:** esquina superior izquierda y, girado 180°, esquina inferior
+  derecha del frente de la carta (`src/app/tarjetas/tarjetas-repaso.tsx`),
+  como los índices de un naipe.
+- **Cómo:** solo con `.au`, decorativo y `aria-hidden`, 17px. El orden ya lo
+  dice el texto "Tarjeta N de M"; el numeral no lleva significado propio.
+- **Fondo real:** `--color-tarjetas-carta-provisorio` (`#F5FAFF`, ver
+  "Valores exactos de `/tarjetas`"), con contraste de **1.37:1** (centro `.au`
+  `#FFD250` sobre `#F5FAFF`, sección 3). Antes de la decisión del usuario era
+  `--celeste-50` con 1.29:1. Se acepta por rol (decorativo, sin información
+  única), no por número — igual que la regla 16 para `.au`.
+
+**No es precedente.** No autoriza el romano de esquina en otras pantallas, en
+otros componentes ni con otros tokens, ni un romano que cargue significado o
+sea el único identificador. Todo otro uso del romano sigue la fila "Números
+romanos (índice/salas)" de la sección 1 y la regla 8. Un uso nuevo se
+propone al `brand-specialist`.
+
+### Marco de la carta de repaso (`/tarjetas`) — extensión del `brand-specialist`, APROBADO por el usuario
+
+v2 §Plates cubre el medallón de retratos, no marcos de carta: caso no cubierto,
+resuelto con tokens existentes (ningún token nuevo). **El usuario dio su visto
+bueno al marco** (ticket #131). Frente y dorso comparten
+estructura: filete exterior de 1px (`border`), filete interior de 1px a 6px del
+borde y cuatro rombos de 6px (`rotate(45deg)`, `aria-hidden`) sobre las esquinas
+del filete interior. Sin `outline` de marco: el foco es del `<button>` (offset
+12px) y las dos capas del mazo (5px y 10px) hacen de contorno exterior.
+
+| Cara | Filete exterior | Filete interior | Rombos | Contraste medido |
+| --- | --- | --- | --- | ---: |
+| Frente (`#F5FAFF`) | `--color-accent-700` | `--color-accent-600` | `--color-accent-700` | 4.67:1 / 2.33:1 / 4.67:1 |
+| Dorso (`--celeste-900`) | `--color-accent-600` | `--color-accent-400` | `--color-accent-300` | 4.59:1 / 7.00:1 / 8.48:1 |
+
+Frente sin celeste dentro del marco (los dos `h-px bg-celeste-150` de la pista
+pasan a `--color-accent-600` por coherencia). Todo decorativo; solo el dorso
+usa dorado sobre celeste (regla 3, sin cambios). No es precedente para otros
+componentes (regla 8).
+
 ### Ligas (4, v1 — vigentes sin cambios)
 
 Nombres fijados por el ADR 0008 §6 y el vocabulario de `CONTEXT.md`. **No se
@@ -688,6 +802,18 @@ familia de marca completa.
     subió, de 6.05:1 a 6.53:1, consistente con escalar los tres puntos
     proporcionalmente en vez de tocar uno solo.
 
+19. `--color-acento-repaso-invertido` (`#A785D6`, 3.72:1 sobre
+    `--celeste-900`) es **solo borde**, solo dentro del panel invertido del
+    dorso de repaso, y solo alrededor de una etiqueta no interactiva cuyo
+    texto ya pasa AA por sí mismo. Pasa el piso no-texto de 3:1 (WCAG
+    1.4.11) porque el usuario decidió seguir ese umbral (el valor original,
+    `#8B5FC9`, daba 2.45:1). No lleva texto, no enmarca un control ni un
+    foco, y no se usa como precedente para un borde funcional.
+    `--gradiente-filete-invertido` es
+    estático y solo para paneles invertidos; el filete animado sigue siendo
+    exclusivo del header (`.filete-dorado`, regla 8). Ver la subsección
+    "Dorso de la tarjeta de repaso" de la sección 1.
+
 ---
 
 ## 3. Contraste verificado (todos los pares medidos)
@@ -702,6 +828,18 @@ familia de marca completa.
 | `--celeste-700` `#0978D0` (foco) / `--blanco` `#FFFFFF` (reposo de celda) | 4.56:1 (no-texto, piso 3:1) | `brand-specialist`, ticket #88 — reemplaza la medición contra `--celeste-25` (descartado). Contra `--celeste-50` (hover) sigue siendo 4.34:1, sin cambios |
 | `--color-acento-repaso-700` `#6B3FA0` / `--color-acento-repaso-100` `#EDE4F5` | 5.98:1 | `brand-specialist`, ticket #91 (pill de dominio, frente y dorso) |
 | `--color-acento-repaso-700` `#6B3FA0` / `--color-blanco` `#FFFFFF` | 7.38:1 | `brand-specialist`, ticket #91 (stat "Dominio de esta ficha") |
+| `--color-acento-repaso-invertido` `#A785D6` (**vigente**) / `--celeste-900` `#0A3D66` (borde del badge "Respuesta revelada") | **3.72:1 — pasa el piso no-texto de 3:1** (WCAG 1.4.11). Decisión del usuario de seguir el umbral de 3:1 (regla 19) | `brand-specialist`, rebanada `feat/tarjetas-rediseno`, medido (fórmula WCAG): L relativa 0.2985 contra 0.0436 |
+| `--color-acento-repaso-100` `#EDE4F5` (texto del badge) / `--celeste-900` `#0A3D66` | 9.09:1 | Ídem — el texto del badge se lee por sí mismo, sin depender del borde |
+| `#8B5FC9` (**superado**, valor original de la spec) / `--celeste-900` `#0A3D66` | 2.45:1 — fallaba el piso no-texto de 3:1; se aceptaba solo por rol decorativo. `globals.css` citaba 2.44:1: misma cifra (2.445), redondeada distinto | Ídem — reemplazado por `#A785D6` por decisión del usuario |
+| `--color-accent-300` `#F7DE9B` (centro de `--gradiente-filete-invertido`, texto de la respuesta del dorso) / `--celeste-900` `#0A3D66` | 8.48:1 | Ídem — dorado sobre celeste, excepción del dorso (regla 3) |
+| `#FFF3D0` (punto más claro de `--gradiente-filete-invertido`) / `--celeste-900` `#0A3D66` | 10.14:1 | Ídem — decorativo, sin texto |
+| `--color-tarjetas-dorado-provisorio` `#8A5E12` / `--color-bg` `#FBF7F0` (`<h1>` "Tarjeta N", 40px) | **5.33:1** — pasa AA normal y AA-large | `brand-specialist`, rebanada `feat/tarjetas-rediseno`, valor exacto de la spec por decisión del usuario (sección 1, "Valores exactos de `/tarjetas`") |
+| `--color-tarjetas-dorado-provisorio` `#8A5E12` / `--color-blanco` `#FFFFFF` ("Racha actual", 24px) | **5.69:1** — pasa AA normal y AA-large | Ídem. Referencia: `--color-accent-700` daba 4.58:1 / 4.89:1 en esos mismos fondos — el valor exacto es más oscuro, sin regresión |
+| `--color-tarjetas-carta-provisorio` `#F5FAFF` / `--color-bg` `#FBF7F0` (relleno de la carta contra la página) | 1.02:1 — no es texto; el relleno casi se funde con la página y la carta la delimitan el marco y las capas del mazo (con `--celeste-50` era 1.04:1) | Ídem — nota de vecindad, sin regresión relevante |
+| `--texto-titulo` `#1F3B4D` / `--color-tarjetas-carta-provisorio` `#F5FAFF` (pregunta, `<h2>` 30–40px) | **11.17:1** | Ídem — el fondo real de la carta desde la decisión del usuario (con `--celeste-50` había sido 10.54:1) |
+| `--texto-secundario` `#6B5D4A` / `#F5FAFF` (pista "tocá la lámina…", 14px cursiva) | **6.08:1** | Ídem (con `--celeste-50` había sido 5.74:1) |
+| `--color-acento-repaso-700` `#6B3FA0` / `--color-acento-repaso-100` `#EDE4F5` (pill de categoría sobre la carta) | 5.98:1 (ya medido arriba). El pill lleva su propio fondo, así que el texto no depende de `#F5FAFF`. El pill contra la carta: 1.18:1, decorativo (el texto del pill es el portador) | Ídem |
+| `--color-celeste-150` `#BFE0FC` (marco, outline "passe-partout" y filetes) / `#F5FAFF` | 1.31:1 — decorativo, sin información única. Contra `--color-bg` el marco da 1.29:1, ya presente antes del cambio de fondo | Ídem |
 | Blanco / `--color-error` `#C23A3A` (botón "Falso", texto 14px) | 5.30:1 | `brand-specialist`, ticket #91 |
 | Blanco / `--color-ok` `#2E7C5A` (botón "Verdadero", texto 14px) | 5.07:1 | `brand-specialist`, ticket #91 |
 | `--texto-titulo` `#1F3B4D` / `--celeste-50` `#EAF4FE` | 10.54:1 | `brand-specialist`, ticket #65 |
@@ -725,7 +863,8 @@ familia de marca completa.
 | `--color-accent` `#E0AC4C` / hueso `#FBF7F0` | **1.93:1 — falla, nunca texto** | ADR 0015 |
 | `.au`/`.shiny` centro `#8B6722` (ADR 0015, **superado**) / hueso | 4.85:1 — pasaba AA | ADR 0015, ya no vigente |
 | `.au`/`.shiny` centro `#FFD250` (**vigente**, L×0.85 de `#FFE18B`, esta vez incluido el centro) / `--color-bg` `#FBF7F0` | **1.35:1 — falla, sigue por debajo de AA-large (3:1)**, pero mejora sobre el 1.20:1 anterior — deuda aceptada explícitamente, ver regla de uso 16 | `brand-specialist`, corrección de rumbo explícita del usuario ("no más saturación, más oscuro en general", proporcional a los tres stops) |
-| `.au`/`.shiny` centro `#FFD250` (vigente) / `--celeste-50` `#EAF4FE` | **1.29:1 — falla**, mejora sobre el 1.15:1 anterior (banda que hoy no lo usa: `.au` va sobre `--color-crema`, `.shiny` sobre `--color-blanco`; se mide igual por si se aplicara ahí) | `brand-specialist`, corrección de rumbo explícita del usuario |
+| `.au`/`.shiny` centro `#FFD250` (vigente) / `--color-tarjetas-carta-provisorio` `#F5FAFF` | **1.37:1 — falla AA y AA-large; uso real, decorativo, aceptado por el usuario**: numerales romanos de esquina de la carta de repaso (`/tarjetas`, `.au`, `aria-hidden`, 17px, "detalle de naipe"). Se acepta por rol (decorativo, no carga significado), no por número; alcance y no-precedente en la sección 1, "Numerales romanos de esquina". Es el fondo real de la carta desde la decisión del usuario (sección 1, "Valores exactos de `/tarjetas`") |
+| `.au`/`.shiny` centro `#FFD250` (vigente) / `--celeste-50` `#EAF4FE` | 1.29:1 — falla AA y AA-large. **Ya no es el fondo real de la carta de `/tarjetas`** (era `--celeste-50` antes de la decisión del usuario); se conserva como referencia de este par. Ni `.shiny` (sobre `--color-blanco`) ni el `.au` del header (sobre `--color-crema`) usan este fondo. Mejora sobre el 1.15:1 anterior | `brand-specialist`, corrección de rumbo explícita del usuario; uso real y aceptación del usuario en la rebanada `feat/tarjetas-rediseno` |
 | `.au`/`.shiny` centro `#FFE18B` (**superado**, iteración inmediatamente anterior, más saturada, no más oscura) / `--color-bg` `#FBF7F0` | 1.20:1 — falla | `brand-specialist`, superado en esta misma conversación |
 | `.au`/`.shiny` centro `#FFE18B` (superado) / `--celeste-50` `#EAF4FE` | 1.15:1 — falla | `brand-specialist`, superado |
 | `.au`/`.shiny` centro `#FFF3D0` (**superado**, iteración inmediatamente anterior) / `--color-bg` `#FBF7F0` | 1.04:1 — falla, muy por debajo incluso de AA-large (3:1) | `brand-specialist`, superado en esta misma conversación |

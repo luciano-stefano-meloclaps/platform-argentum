@@ -3,12 +3,11 @@
 import { useState } from "react";
 import Link from "next/link";
 
-import type { TarjetaDeRepaso, EstadisticasDeMazo } from "./tarjetas-repaso.datos.ts";
+import type { TarjetaDeRepaso } from "./tarjetas-repaso.datos";
 
 type Props = {
   mazoNombre: string;
   tarjetas: TarjetaDeRepaso[];
-  stats: EstadisticasDeMazo;
   /**
    * Sin efecto real todavía: el enchufe a datos reales es de la nota de
    * revisión #92, fuera de alcance de esta rebanada. Si no se provee, cae a
@@ -20,17 +19,19 @@ type Props = {
    */
   onResponder?: (esVerdadero: boolean) => void;
   onAbrirFicha?: (entidadId: string) => void;
+  /**
+   * Lo que va debajo de los botones (la franja de datos y la nota de cierre):
+   * es estático, así que lo renderiza el servidor y entra acá como
+   * `children` en vez de volverse parte de la isla de cliente (ADR 0016,
+   * regla 4: el Client Component es el más chico posible).
+   */
+  children?: React.ReactNode;
 };
 
 /**
- * Tag de color puntual para esta pantalla: morado, para "categoría/temática"
- * y "dominio" — nunca dorado ni celeste (regla del ticket #91). No es la
- * paleta de las 6 categorías de contenido (`--color-cat-*`, `identidad-argentum`
- * §1): esos hex son distintos, y "dominio de una tarjeta" no es lo mismo que
- * "tipo de entidad" — mezclarlos ahí haría que dos conceptos usen exactamente
- * el mismo color y dejaran de distinguirse. Cerca del morado de "Animales"
- * sin ser el mismo token — aprobado así explícitamente por el usuario.
- * Tokens creados por el `brand-specialist` para este uso puntual.
+ * Acento morado de repaso: "categoría/temática" (tag del frente) y "revelar"
+ * (badge del dorso). Nunca dorado ni celeste, nunca el rol del verde
+ * (correcto). Tokens del `brand-specialist` (`--color-acento-repaso-*`).
  */
 const morado = {
   bg: "bg-acento-repaso-100",
@@ -38,18 +39,20 @@ const morado = {
 };
 
 /**
- * "Tarjeta N de M": la pantalla de repaso tipo flashcard, tal como pide el
- * ticket #91. Presentación pura sobre el mock de `tarjetas-repaso.datos.ts`.
+ * "Tarjeta N de M": la pantalla de repaso tipo flashcard (ticket #91), en su
+ * versión museística. Presentación pura sobre el mock de
+ * `tarjetas-repaso.datos.ts`.
  *
- * Client Component: hay estado (qué tarjeta, frente o dorso) e interacción de
- * teclado/click — no hace falta partir esto en una isla más chica, es
- * exactamente la interactividad de toda la pantalla.
+ * Client Component: hay estado (qué tarjeta, frente o dorso) que comparten el
+ * título, la barra de pasos, la carta y los botones. Lo que no depende de ese
+ * estado (franja de datos, nota de cierre) llega como `children` desde el
+ * servidor, así que la isla no lo arrastra al paquete del cliente.
  *
  * Estado: `mostrandoDorso` (frente/dorso de la carta actual) y
  * `tarjetaActual` (índice dentro del mazo); `pasos` (el arreglo de la barra
  * de progreso) es derivado de `tarjetas.length`, no estado propio.
  */
-export function TarjetasRepaso({ mazoNombre, tarjetas, stats, onResponder, onAbrirFicha }: Props) {
+export function TarjetasRepaso({ mazoNombre, tarjetas, onResponder, onAbrirFicha, children }: Props) {
   const [tarjetaActual, setTarjetaActual] = useState(0);
   const [mostrandoDorso, setMostrandoDorso] = useState(false);
 
@@ -57,13 +60,6 @@ export function TarjetasRepaso({ mazoNombre, tarjetas, stats, onResponder, onAbr
 
   function alternarDorso() {
     setMostrandoDorso((valor) => !valor);
-  }
-
-  function manejarTeclaDeCarta(evento: React.KeyboardEvent<HTMLDivElement>) {
-    if (evento.key === "Enter" || evento.key === " ") {
-      evento.preventDefault();
-      alternarDorso();
-    }
   }
 
   function manejarRespuesta(esVerdadero: boolean) {
@@ -85,100 +81,99 @@ export function TarjetasRepaso({ mazoNombre, tarjetas, stats, onResponder, onAbr
     // puede llegar sin tarjetas — nunca una pantalla en blanco sin
     // explicación.
     return (
-      <main id="contenido" className="mx-auto max-w-[760px] px-lg py-2xl text-center">
+      <main id="contenido" className="mx-auto w-full max-w-[760px] px-lg py-2xl text-center">
         <p className="font-cuerpo text-texto-secundario">Este mazo todavía no tiene tarjetas para repasar.</p>
       </main>
     );
   }
 
   return (
-    <main id="contenido" className="mx-auto max-w-[760px] px-lg py-2xl">
+    <main id="contenido" className="mx-auto w-full max-w-[1800px] px-lg py-2xl">
       {/* ── Encabezado ─────────────────────────────────────────────────── */}
       <header className="text-center">
         <p className="font-cuerpo text-[10px] font-semibold tracking-[0.18em] text-celeste-text uppercase">
           Repaso · mazo de {mazoNombre.toLowerCase()}
         </p>
 
-        <p className="mt-sm font-titulo text-[40px] leading-none font-normal text-texto-titulo">
-          {/*
-           * N en dorado oscuro PLANO, a propósito sin `.au` ni `.shiny`: es
-           * la única cifra destacada de la plataforma en color sólido — el
-           * resto usa el gradiente metálico de la marca (ver ticket #91).
-           * Mismo token que "Racha actual" en la franja de estadísticas,
-           * para que las dos cifras doradas de la pantalla usen el mismo
-           * color.
-           */}
-          <span className="tabular-nums text-accent-700">{tarjetaActual + 1}</span>
-          <span className="text-texto-secundario"> de {tarjetas.length}</span>
-        </p>
+        {/*
+         * Único `<h1>` de la pantalla. La cifra en dorado oscuro PLANO, a
+         * propósito sin `.au` ni `.shiny`: es la única cifra destacada de la
+         * plataforma sin gradiente ni animación, para no competir con el
+         * wordmark. El total va en un `<span>` gris, mismo tamaño y sin
+         * negrita.
+         */}
+        <h1 aria-live="polite" aria-atomic="true" className="m-0 mt-md font-titulo text-[40px] leading-[1.15] font-normal text-tarjetas-dorado-provisorio">
+          Tarjeta {tarjetaActual + 1}
+          <span className="text-texto-terciario"> de {tarjetas.length}</span>
+        </h1>
 
         {/*
-         * Barra de progreso: un segmento por tarjeta del mazo. `role="progressbar"`
-         * con los tres `aria-value*` es el estado real para un lector de
-         * pantalla; los segmentos individuales son decorativos
-         * (`aria-hidden`) porque el color no es el único portador de
-         * significado — el número "N de M" de arriba ya lo dice en texto.
+         * Barra de pasos: un segmento por tarjeta del mazo, solo DOS estados
+         * (ya vista / no vista todavía). `role="progressbar"` con los tres
+         * `aria-value*` es el estado real para un lector de pantalla; los
+         * segmentos son decorativos (`aria-hidden`) porque el color no es el
+         * único portador de significado: "Tarjeta N de M" ya lo dice en
+         * texto. Los segmentos encogen (flex-shrink por defecto) en
+         * pantallas angostas, donde 12 × 26px + huecos no entra.
          */}
         <div
           role="progressbar"
+          aria-label="Progreso del mazo"
           aria-valuemin={1}
           aria-valuemax={tarjetas.length}
           aria-valuenow={tarjetaActual + 1}
           aria-valuetext={`Tarjeta ${tarjetaActual + 1} de ${tarjetas.length}`}
-          className="mt-lg flex justify-center gap-xs"
+          className="mt-xl mb-[34px] flex justify-center gap-[5px]"
         >
           {tarjetas.map((unaTarjeta, indice) => (
             <span
               key={unaTarjeta.entidadId + String(indice)}
               aria-hidden="true"
-              className={`h-[3px] w-[20px] rounded-full ${
-                indice < tarjetaActual ? "bg-ok" : indice === tarjetaActual ? "bg-celeste-text" : "bg-arena-borde"
-              }`}
+              className={`h-[3px] w-[26px] ${indice < tarjetaActual + 1 ? "bg-celeste-400" : "bg-borde-strong"}`}
             />
           ))}
         </div>
       </header>
 
       {/* ── La carta ───────────────────────────────────────────────────── */}
-      <div className="relative mt-2xl min-h-[360px]">
-        {/* Capas decorativas del mazo apilado detrás de la carta activa. */}
+      <div className="relative">
+        {/* Capas decorativas del mazo apilado, ANTES de la carta real. */}
         <div
           aria-hidden="true"
-          className="absolute inset-0 translate-x-[10px] translate-y-[10px] rotate-[-2deg] rounded-xl border-2 border-accent-400 bg-blanco"
+          className="absolute top-[10px] -right-[10px] -bottom-[10px] left-[10px] border border-accent-300"
         />
         <div
           aria-hidden="true"
-          className="absolute inset-0 translate-x-[5px] translate-y-[5px] rotate-[1deg] rounded-xl border-2 border-accent-300 bg-blanco"
+          className="absolute top-[5px] -right-[5px] -bottom-[5px] left-[5px] border border-accent-400"
         />
 
         {/*
-         * La carta real, `position: relative` para quedar encima de las dos
-         * capas de arriba. El dorso contiene un `<Link>` real (navegación a
-         * la ficha): un `role="button"` no puede envolverlo sin dejar un
-         * interactivo anidado dentro de otro (hallazgo bloqueante de
-         * `ui-reviewer`, ticket #91) — un `<button>` nativo tampoco podría,
-         * por la misma razón, contener un `<a>`. Por eso el `role="button"`
-         * es un **hermano superpuesto** vía CSS (`absolute inset-0`, capa
-         * `z-0`), no un contenedor: cubre toda la carta para el click y el
-         * teclado, pero el contenido (con el `<Link>` del dorso) vive fuera
-         * de su árbol, en una capa `z-10` con `pointer-events-none` —
-         * excepto el propio `<Link>`, que recupera `pointer-events-auto`
-         * para seguir siendo alcanzable. `aria-pressed` anuncia el estado de
-         * frente/dorso, como un botón de alternar cualquiera. Nunca gira con
-         * animación 3D: es un reemplazo de contenido.
+         * La carta real. El elemento operable es un `<button>` HERMANO
+         * superpuesto y vacío (`absolute inset-0`, capa `z-0`), no un
+         * contenedor: el dorso contiene un `<Link>` real (navegación a la
+         * ficha), y un `<button>` no puede envolver un interactivo sin
+         * anidarlo ilegalmente (hallazgo bloqueante del `ui-reviewer`, ticket
+         * #91). Al ser nativo, Enter y Espacio funcionan sin handler propio. El contenido vive en una capa `z-10` con `pointer-events-none`
+         * —el click lo recibe el botón de abajo—, salvo el `<Link>`, que
+         * recupera `pointer-events-auto`. Al no estar anidado, tampoco hace
+         * falta `stopPropagation`. `aria-pressed` anuncia frente/dorso y el
+         * contenido de la cara actual es una región `aria-live="polite"`, así
+         * que el cambio de cara se anuncia. Nunca gira en 3D: es un swap de
+         * contenido, con el mismo `min-h-[360px]` en las dos caras.
+         *
+         * El anillo de foco va a 12px del borde: más afuera que el marco
+         * "passe-partout" (6px) y que las dos capas del mazo (5px y 10px).
          */}
-        <div className="relative min-h-[360px]">
-          <div
-            role="button"
-            tabIndex={0}
+        <div className="relative flex min-h-[360px]">
+          <button
+            type="button"
             aria-pressed={mostrandoDorso}
-            aria-label={mostrandoDorso ? "Volver a la pregunta de la tarjeta" : "Dar vuelta la tarjeta para ver la respuesta"}
+            aria-label="Dar vuelta la tarjeta"
             onClick={alternarDorso}
-            onKeyDown={manejarTeclaDeCarta}
-            className="absolute inset-0 z-0 cursor-pointer touch-manipulation rounded-xl outline-offset-[6px] motion-safe:transition-shadow motion-safe:duration-150 hover:shadow-sombra-md focus-visible:outline-2 focus-visible:outline-celeste-700"
+            className="absolute inset-0 z-0 cursor-pointer touch-manipulation outline-offset-[12px] focus-visible:outline-2 focus-visible:outline-foco"
           />
 
-          <div className="relative z-10 flex min-h-[360px] flex-col justify-center pointer-events-none">
+          <div aria-live="polite" className="pointer-events-none relative z-10 flex flex-1">
             {mostrandoDorso ? (
               <Dorso tarjeta={tarjeta} onAbrirFicha={onAbrirFicha} />
             ) : (
@@ -189,13 +184,18 @@ export function TarjetasRepaso({ mazoNombre, tarjetas, stats, onResponder, onAbr
       </div>
 
       {/* ── Botones de respuesta ──────────────────────────────────────── */}
-      <div className="mt-xl grid grid-cols-2 gap-md">
+      {/*
+       * Mismo tamaño y peso visual; ninguno es `.btn-primary` ni el botón
+       * secundario genérico. Rojo como borde de botón: único uso de la
+       * plataforma (en el resto es solo texto de estado). Verde = "correcto".
+       */}
+      <div className="mt-[34px] flex gap-[14px]">
         <button
           type="button"
           onClick={() => {
             manejarRespuesta(false);
           }}
-          className="min-h-[48px] cursor-pointer touch-manipulation rounded-lg border-2 border-error bg-error px-lg py-md font-cuerpo text-[14px] font-semibold tracking-[0.06em] text-blanco uppercase motion-safe:transition-[filter] motion-safe:duration-150 hover:brightness-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-celeste-700"
+          className="min-h-objetivo-tactil flex-1 cursor-pointer touch-manipulation border border-error bg-transparent py-[15px] font-cuerpo text-[14px] text-error motion-safe:transition-colors motion-safe:duration-150 hover:bg-error-bg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foco"
         >
           Falso
         </button>
@@ -204,86 +204,80 @@ export function TarjetasRepaso({ mazoNombre, tarjetas, stats, onResponder, onAbr
           onClick={() => {
             manejarRespuesta(true);
           }}
-          className="min-h-[48px] cursor-pointer touch-manipulation rounded-lg border-2 border-ok bg-ok px-lg py-md font-cuerpo text-[14px] font-semibold tracking-[0.06em] text-blanco uppercase motion-safe:transition-[filter] motion-safe:duration-150 hover:brightness-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-celeste-700"
+          className="min-h-objetivo-tactil flex-1 cursor-pointer touch-manipulation border border-ok bg-transparent py-[15px] font-cuerpo text-[14px] text-ok motion-safe:transition-colors motion-safe:duration-150 hover:bg-ok-bg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foco"
         >
           Verdadero
         </button>
       </div>
 
-      {/* ── Franja de estadísticas del mazo ──────────────────────────── */}
-      <dl className="mt-2xl grid grid-cols-2 gap-lg border-y border-celeste-150 bg-blanco py-lg text-center sm:grid-cols-4">
-        <div>
-          <dd className="font-titulo text-[26px] leading-none font-normal text-ok tabular-nums">{stats.aciertos}</dd>
-          <dt className="mt-xs font-cuerpo text-[10px] tracking-[0.14em] text-texto-terciario uppercase">
-            Aciertos en este mazo
-          </dt>
-        </div>
-        <div>
-          <dd className="font-titulo text-[26px] leading-none font-normal text-accent-700 tabular-nums">{stats.racha}</dd>
-          <dt className="mt-xs font-cuerpo text-[10px] tracking-[0.14em] text-texto-terciario uppercase">
-            Racha actual
-          </dt>
-        </div>
-        <div>
-          <dd className={`font-titulo text-[26px] leading-none font-normal ${morado.text}`}>{stats.dominio}</dd>
-          <dt className="mt-xs font-cuerpo text-[10px] tracking-[0.14em] text-texto-terciario uppercase">
-            Dominio de esta tarjeta
-          </dt>
-        </div>
-        <div>
-          <dd className="font-titulo text-[26px] leading-none font-normal text-texto-titulo">{stats.ultimoRepaso}</dd>
-          <dt className="mt-xs font-cuerpo text-[10px] tracking-[0.14em] text-texto-terciario uppercase">
-            Último repaso
-          </dt>
-        </div>
-      </dl>
-
-      {/* ── Cierre ────────────────────────────────────────────────────── */}
-      <p className="mt-lg text-center font-titulo text-[13px] italic text-texto-secundario">
-        Cada respuesta queda como un evento; los puntos se calculan al leer.
-      </p>
+      {children}
     </main>
+  );
+}
+
+const TONO_MARCO = {
+  claro: { linea: "border-accent-600", rombo: "bg-accent-700" },
+  invertido: { linea: "border-accent-400", rombo: "bg-accent-300" },
+};
+
+/**
+ * Marco de plate de museo: filete interior a 6px del borde y un rombo en cada
+ * esquina (rombo separador de v2, 5-6px). Decorativo, sin `outline`: el foco
+ * es del `<button>` (offset 12px) y las capas del mazo hacen de contorno.
+ * Frente = tono claro, dorso = invertido (dorado sobre celeste-900, excepcion
+ * de la regla 3). Marco aprobado por el usuario.
+ */
+function Marco({ tono }: { tono: "claro" | "invertido" }) {
+  const t = TONO_MARCO[tono];
+  const rombo = `absolute size-[6px] rotate-45 ${t.rombo}`;
+  return (
+    <span aria-hidden="true" className={`pointer-events-none absolute inset-[6px] border ${t.linea}`}>
+      <span className={`${rombo} -top-[4px] -left-[4px]`} />
+      <span className={`${rombo} -top-[4px] -right-[4px]`} />
+      <span className={`${rombo} -bottom-[4px] -left-[4px]`} />
+      <span className={`${rombo} -right-[4px] -bottom-[4px]`} />
+    </span>
   );
 }
 
 function Frente({ tarjeta }: { tarjeta: TarjetaDeRepaso }) {
   return (
-    <div className="relative border border-celeste-150 bg-celeste-50 p-2xl outline outline-celeste-150 outline-offset-[6px] rounded-xl">
+    <div className="relative flex flex-1 flex-col items-center justify-center border border-accent-700 bg-tarjetas-carta-provisorio px-lg py-[56px] sm:px-[60px] sm:py-[64px]">
+      <Marco tono="claro" />
       {/*
-       * Numeral romano decorativo, único lugar de esta carta con el
-       * gradiente `.au` de la marca — repetido y espejado (180°) en la
-       * esquina opuesta. Nunca leído por un lector de pantalla: el orden de
-       * la tarjeta ya lo dice "Tarjeta N de M" en el encabezado.
+       * Numeral romano de esquina, como un índice de naipe: único lugar de
+       * esta cara con el gradiente `.au` (detalle de esquina, no titular),
+       * repetido y girado 180° en la esquina opuesta. Decorativo
+       * (`aria-hidden`): el orden ya lo dice "Tarjeta N de M".
        */}
-      <span aria-hidden="true" className="au absolute top-md left-md font-titulo text-[32px] leading-none">
+      <span
+        aria-hidden="true"
+        className="au absolute top-[20px] left-[24px] font-titulo text-[17px] leading-none tracking-[0.08em]"
+      >
         {tarjeta.numeral}
       </span>
       <span
         aria-hidden="true"
-        className="au absolute bottom-md right-md rotate-180 font-titulo text-[32px] leading-none"
+        className="au absolute right-[24px] bottom-[20px] rotate-180 font-titulo text-[17px] leading-none tracking-[0.08em]"
       >
         {tarjeta.numeral}
       </span>
 
-      <div className="text-center">
-        <span className={`inline-block rounded-full ${morado.bg} ${morado.text} px-md py-xs font-cuerpo text-[11px] font-semibold tracking-[0.08em] uppercase`}>
-          {tarjeta.categoria}
-        </span>
+      <span
+        className={`inline-block rounded-full ${morado.bg} ${morado.text} px-md py-xs font-cuerpo text-[11px] font-semibold tracking-[0.08em] uppercase`}
+      >
+        {tarjeta.categoria}
+      </span>
 
-        {/*
-         * Único `<h1>` de la pantalla: la pregunta es, visualmente, el
-         * titular de la carta — y de toda la pantalla, no hay otro
-         * candidato (mismo criterio de heading real que
-         * `ficha-entidad.tsx`).
-         */}
-        <h1 className="m-0 mt-lg text-balance font-titulo text-[40px] leading-[1.15] font-normal text-texto-titulo">
-          {tarjeta.pregunta}
-        </h1>
+      <h2 className="m-0 mt-xl max-w-[19ch] text-balance text-center font-titulo text-[30px] leading-[1.22] font-normal text-texto-titulo sm:text-[40px]">
+        {tarjeta.pregunta}
+      </h2>
 
-        <p className="mt-lg font-titulo text-[14px] italic text-texto-secundario">
-          tocá la tarjeta para darla vuelta
-        </p>
-      </div>
+      <p className="mt-[30px] flex items-center gap-[10px] text-center font-titulo text-[14px] italic text-texto-secundario">
+        <span aria-hidden="true" className="h-px w-[40px] shrink-0 bg-accent-600" />
+        tocá la lámina para darla vuelta
+        <span aria-hidden="true" className="h-px w-[40px] shrink-0 bg-accent-600" />
+      </p>
     </div>
   );
 }
@@ -296,41 +290,38 @@ function Dorso({
   onAbrirFicha?: (entidadId: string) => void;
 }) {
   return (
-    <div className="border border-celeste-900 bg-celeste-900 p-2xl outline outline-celeste-text outline-offset-[6px] rounded-xl">
-      <div className="text-center">
-        <span className={`inline-block rounded-full ${morado.bg} ${morado.text} px-md py-xs font-cuerpo text-[11px] font-semibold tracking-[0.08em] uppercase`}>
-          Respuesta revelada
-        </span>
+    <div className="relative flex flex-1 flex-col items-center justify-center border border-accent-600 bg-celeste-900 px-lg py-[56px] sm:px-[60px] sm:py-[64px]">
+      <Marco tono="invertido" />
+      <span className="inline-block border border-acento-repaso-invertido px-[10px] py-xs font-cuerpo text-[9px] tracking-[0.14em] text-acento-repaso-100 uppercase">
+        Respuesta revelada
+      </span>
 
-        <p className="mt-lg text-balance font-titulo text-[34px] leading-[1.2] font-normal text-accent-300">
-          {tarjeta.respuesta}
-        </p>
+      <p className="mt-[18px] max-w-[24ch] text-center font-titulo text-[28px] leading-[1.35] font-normal text-accent-300 sm:text-[34px]">
+        {tarjeta.respuesta}
+      </p>
 
-        <div aria-hidden="true" className="filete-dorado mx-auto mt-lg h-[3px] w-24 rounded-full" />
+      <div
+        aria-hidden="true"
+        className="mt-[28px] mb-[18px] h-[2px] w-[70px] bg-[image:var(--gradiente-filete-invertido)]"
+      />
 
-        {/*
-         * `<Link>` real, hermano del `role="button"` de la carta (no
-         * descendiente): el padre inmediato tiene `pointer-events-none`
-         * (ver comentario en el render principal), así que este enlace
-         * necesita `pointer-events-auto` explícito para seguir siendo
-         * clicable y alcanzable por teclado. Ya no hace falta
-         * `stopPropagation`: al no estar anidado dentro del `role="button"`,
-         * no hay evento que burbujee hacia el toggle de frente/dorso.
-         */}
-        <Link
-          href="/ficha"
-          onClick={() => {
-            onAbrirFicha?.(tarjeta.entidadId);
-          }}
-          className="relative z-10 mt-lg inline-block pointer-events-auto font-cuerpo text-[13px] font-semibold tracking-[0.06em] text-blanco underline underline-offset-4 uppercase focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blanco"
-        >
-          Abrir la ficha de {tarjeta.entidadNombre}
-        </Link>
-
-        <p className="mt-lg font-titulo text-[14px] italic text-celeste-150">
-          tocá la tarjeta para volver a la pregunta
-        </p>
-      </div>
+      {/*
+       * `<Link>` real, hermano del `<button>` de la carta: el contenedor
+       * tiene `pointer-events-none`, así que el enlace recupera
+       * `pointer-events-auto`. El texto es de 11px, pero el área tocable mide
+       * 44px de alto (`min-h-objetivo-tactil`, regla de uso 18); el margen
+       * vertical negativo devuelve el espacio que ese alto le suma, para que
+       * el filete y el enlace conserven la separación de la spec.
+       */}
+      <Link
+        href="/ficha"
+        onClick={() => {
+          onAbrirFicha?.(tarjeta.entidadId);
+        }}
+        className="pointer-events-auto -my-[14px] inline-flex min-h-objetivo-tactil items-center text-center font-cuerpo text-[11px] tracking-[0.14em] text-celeste-150 uppercase underline underline-offset-4 hover:text-blanco focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foco-invertido"
+      >
+        Abrir la ficha de {tarjeta.entidadNombre}
+      </Link>
     </div>
   );
 }
