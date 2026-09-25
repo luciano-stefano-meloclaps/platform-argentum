@@ -18,11 +18,23 @@ export type TeclaPresionada = {
   meta: boolean;
   alt: boolean;
   /**
-   * El foco está en un control interactivo o un campo (button, enlace, input,
-   * textarea, select, contenteditable…). Lo calcula el componente con el
-   * elemento del evento; acá solo importa el booleano.
+   * El foco está en un campo que consume teclas por sí mismo (input, textarea,
+   * select, contenteditable, roles textbox/combobox). Los `<button>` y `<a>`
+   * NO cuentan: las flechas y las letras no tienen acción nativa ahí, y al
+   * responder el foco cae justo en «Siguiente», donde `→` tiene que andar.
+   * Enter y Espacio nunca los maneja `decidirAtajo`, así que siguen nativos.
    */
-  enControl: boolean;
+  enCampo: boolean;
+  /** Otro manejador ya resolvió la tecla (`KeyboardEvent.defaultPrevented`). */
+  defaultPrevented: boolean;
+  /** Composición de un IME en curso (`KeyboardEvent.isComposing`). */
+  isComposing: boolean;
+  /**
+   * El foco está dentro del contenedor del mazo o en `<body>`. Solo lo exigen
+   * las letras V/F (WCAG 2.1.4, atajos de un solo carácter): `→` es una tecla
+   * no imprimible y sigue global.
+   */
+  enAmbitoDelMazo: boolean;
 };
 
 export type AccionDeAtajo =
@@ -31,7 +43,14 @@ export type AccionDeAtajo =
   | { tipo: "siguiente" };
 
 export function decidirAtajo(entrada: TeclaPresionada, estado: EstadoDelMazo): AccionDeAtajo | null {
-  if (entrada.enControl || entrada.ctrl || entrada.meta || entrada.alt) {
+  if (
+    entrada.enCampo ||
+    entrada.defaultPrevented ||
+    entrada.isComposing ||
+    entrada.ctrl ||
+    entrada.meta ||
+    entrada.alt
+  ) {
     return null;
   }
   if (estado.terminado) {
@@ -42,10 +61,10 @@ export function decidirAtajo(entrada: TeclaPresionada, estado: EstadoDelMazo): A
   switch (entrada.tecla) {
     case "v":
     case "V":
-      return respondida ? null : { tipo: "responder", elegido: true };
+      return respondida || !entrada.enAmbitoDelMazo ? null : { tipo: "responder", elegido: true };
     case "f":
     case "F":
-      return respondida ? null : { tipo: "responder", elegido: false };
+      return respondida || !entrada.enAmbitoDelMazo ? null : { tipo: "responder", elegido: false };
     case "ArrowRight":
       return respondida ? { tipo: "siguiente" } : null;
     default:

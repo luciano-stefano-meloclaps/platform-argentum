@@ -4,7 +4,7 @@ import { decidirAtajo, type TeclaPresionada } from "./atajos.ts";
 import { estadoInicialDelMazo, reducirMazo, type EstadoDelMazo } from "./mazo.ts";
 
 function tecla(t: string, resto: Partial<TeclaPresionada> = {}): TeclaPresionada {
-  return { tecla: t, ctrl: false, meta: false, alt: false, enControl: false, ...resto };
+  return { tecla: t, ctrl: false, meta: false, alt: false, enCampo: false, defaultPrevented: false, isComposing: false, enAmbitoDelMazo: true, ...resto };
 }
 
 const sinResponder: EstadoDelMazo = estadoInicialDelMazo(3);
@@ -40,10 +40,28 @@ describe("decidirAtajo", () => {
     }
   });
 
-  it("se ignora con el foco en un enlace, control o campo", () => {
-    expect(decidirAtajo(tecla("v", { enControl: true }), sinResponder)).toBeNull();
-    expect(decidirAtajo(tecla("f", { enControl: true }), sinResponder)).toBeNull();
-    expect(decidirAtajo(tecla("ArrowRight", { enControl: true }), respondido)).toBeNull();
+  it("se ignora con el foco en un campo de texto", () => {
+    expect(decidirAtajo(tecla("v", { enCampo: true }), sinResponder)).toBeNull();
+    expect(decidirAtajo(tecla("f", { enCampo: true }), sinResponder)).toBeNull();
+    expect(decidirAtajo(tecla("ArrowRight", { enCampo: true }), respondido)).toBeNull();
+  });
+
+  it("con el foco en un botón (enCampo false) la flecha derecha sí avanza", () => {
+    // Caso del flujo normal: al responder, el foco va a «Siguiente».
+    expect(decidirAtajo(tecla("ArrowRight", { enCampo: false }), respondido)).toEqual({ tipo: "siguiente" });
+  });
+
+  it("V y F solo actúan dentro del mazo o en body; la flecha derecha es global", () => {
+    expect(decidirAtajo(tecla("v", { enAmbitoDelMazo: false }), sinResponder)).toBeNull();
+    expect(decidirAtajo(tecla("F", { enAmbitoDelMazo: false }), sinResponder)).toBeNull();
+    expect(decidirAtajo(tecla("ArrowRight", { enAmbitoDelMazo: false }), respondido)).toEqual({ tipo: "siguiente" });
+  });
+
+  it("se ignora si el evento ya fue resuelto o hay composición de IME", () => {
+    expect(decidirAtajo(tecla("v", { defaultPrevented: true }), sinResponder)).toBeNull();
+    expect(decidirAtajo(tecla("ArrowRight", { defaultPrevented: true }), respondido)).toBeNull();
+    expect(decidirAtajo(tecla("v", { isComposing: true }), sinResponder)).toBeNull();
+    expect(decidirAtajo(tecla("ArrowRight", { isComposing: true }), respondido)).toBeNull();
   });
 
   it("se ignora con teclas modificadoras", () => {

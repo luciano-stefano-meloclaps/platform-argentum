@@ -63,6 +63,7 @@ export function TarjetasRepaso({ mazoNombre, tarjetas, onResponder, onAbrirFicha
   const tituloRef = useRef<HTMLHeadingElement>(null);
   const siguienteRef = useRef<HTMLButtonElement>(null);
   const cierreRef = useRef<HTMLHeadingElement>(null);
+  const mazoRef = useRef<HTMLElement>(null);
 
   const tarjeta = estado.terminado ? undefined : tarjetas[estado.indice];
   // Paso de la barra: la tarjeta actual cuenta como vista; al terminar, todas.
@@ -70,6 +71,14 @@ export function TarjetasRepaso({ mazoNombre, tarjetas, onResponder, onAbrirFicha
   const respondida = estado.resultado !== null;
   // Con la tarjeta respondida la cara queda fija en el dorso: ahí vive el feedback.
   const dorsoVisible = mostrandoDorso || respondida;
+  // Único texto de la región en vivo: solo el feedback y la respuesta. Al pasar
+  // de tarjeta queda vacío; el cambio de tarjeta lo anuncia el foco en el <h1>.
+  const anuncio =
+    tarjeta !== undefined && estado.resultado !== null
+      ? `${estado.resultado === "acierto" ? "Acertaste" : "No era esa: mirá la respuesta"}. ${
+          tarjeta.esVerdadero ? "Sí" : "No"
+        }: ${tarjeta.respuesta}`
+      : "";
 
   // Foco: el botón que se toca desaparece al cambiar de paso, así que el foco
   // se lleva a mano al elemento que sigue (si no, cae al <body>).
@@ -96,13 +105,33 @@ export function TarjetasRepaso({ mazoNombre, tarjetas, onResponder, onAbrirFicha
 
   // Atajos (ticket #133): la decisión es la función pura `decidirAtajo`; acá solo
   // se reduce el evento a datos y se despacha lo que devuelva. Se ignoran con el
-  // foco en cualquier control o campo, así Enter, Espacio y Tab siguen nativos.
+  // foco en un campo de texto (no en botones ni enlaces: ahí las flechas y las
+  // letras no tienen acción nativa y, al responder, el foco cae en «Siguiente»).
+  // Enter, Espacio y Tab nunca se manejan, así que siguen nativos.
+  //
+  // WCAG 2.1.4 (atajos de un solo carácter): V y F solo actúan con el foco
+  // dentro del `<main>` del mazo o en `<body>` (opción «activo solo con el
+  // foco»: la más simple que cumple, sin pantalla de configuración ni
+  // remapeo). `→` no es un carácter imprimible y queda global.
   useEffect(() => {
     function alPresionar(evento: KeyboardEvent) {
       const objetivo = evento.target;
-      const enControl = objetivo instanceof Element && objetivo.closest(SELECTOR_DE_CONTROLES) !== null;
+      const enCampo = objetivo instanceof Element && objetivo.closest(SELECTOR_DE_CAMPOS) !== null;
+      const enAmbitoDelMazo =
+        objetivo === document.body ||
+        objetivo === document.documentElement ||
+        (objetivo instanceof Node && mazoRef.current !== null && mazoRef.current.contains(objetivo));
       const accion = decidirAtajo(
-        { tecla: evento.key, ctrl: evento.ctrlKey, meta: evento.metaKey, alt: evento.altKey, enControl },
+        {
+          tecla: evento.key,
+          ctrl: evento.ctrlKey,
+          meta: evento.metaKey,
+          alt: evento.altKey,
+          enCampo,
+          defaultPrevented: evento.defaultPrevented,
+          isComposing: evento.isComposing,
+          enAmbitoDelMazo,
+        },
         estado,
       );
       if (accion === null) {
@@ -163,7 +192,7 @@ export function TarjetasRepaso({ mazoNombre, tarjetas, onResponder, onAbrirFicha
   }
 
   return (
-    <main id="contenido" className="mx-auto w-full max-w-[1800px] px-lg py-2xl">
+    <main ref={mazoRef} id="contenido" className="mx-auto w-full max-w-[1800px] px-lg py-2xl">
       {/* ── Encabezado ─────────────────────────────────────────────────── */}
       <header className="text-center">
         <p className="font-cuerpo text-[10px] font-semibold tracking-[0.18em] text-celeste-text uppercase">
@@ -261,9 +290,9 @@ export function TarjetasRepaso({ mazoNombre, tarjetas, onResponder, onAbrirFicha
              * handler propio. El contenido vive en una capa `z-10` con
              * `pointer-events-none` —el click lo recibe el botón de abajo—,
              * salvo el `<Link>`, que recupera `pointer-events-auto`.
-             * `aria-pressed` anuncia frente/dorso y el contenido de la cara
-             * actual es una región `aria-live="polite"`, así que el cambio de
-             * cara se anuncia. Nunca gira en 3D: es un swap de contenido, con
+             * `aria-pressed` anuncia frente/dorso. La cara NO es una región en
+             * vivo: la única es el `role="status"` de abajo, que anuncia solo
+             * el feedback de la respuesta. Nunca gira en 3D: es un swap de contenido, con
              * el mismo `min-h-[360px]` en las dos caras.
              *
              * Una vez respondida la tarjeta el botón de dar vuelta no se
@@ -284,7 +313,7 @@ export function TarjetasRepaso({ mazoNombre, tarjetas, onResponder, onAbrirFicha
                 />
               )}
 
-              <div aria-live="polite" className="pointer-events-none relative z-10 flex flex-1">
+              <div className="pointer-events-none relative z-10 flex flex-1">
                 {dorsoVisible ? (
                   <Dorso tarjeta={tarjeta} resultado={estado.resultado} onAbrirFicha={onAbrirFicha} />
                 ) : (
@@ -335,6 +364,11 @@ export function TarjetasRepaso({ mazoNombre, tarjetas, onResponder, onAbrirFicha
             </div>
           )}
 
+          {/* Única región en vivo, siempre montada (si se montara con el texto, no se anunciaría). */}
+          <p role="status" className="sr-only">
+            {anuncio}
+          </p>
+
           <LeyendaDeAtajos />
         </>
       )}
@@ -344,9 +378,9 @@ export function TarjetasRepaso({ mazoNombre, tarjetas, onResponder, onAbrirFicha
   );
 }
 
-/** Todo lo que consume las teclas por sí mismo: los atajos no se disparan ahí. */
-const SELECTOR_DE_CONTROLES =
-  'button, a, input, textarea, select, summary, [contenteditable]:not([contenteditable="false"]), [role="button"], [role="link"], [role="textbox"], [role="combobox"]';
+/** Campos que consumen letras y flechas por sí mismos: los atajos no se disparan ahí. */
+const SELECTOR_DE_CAMPOS =
+  'input, textarea, select, [contenteditable]:not([contenteditable="false"]), [role="textbox"], [role="combobox"]';
 
 /**
  * Leyenda visible de los atajos. `<kbd>`: texto `texto-titulo` sobre blanco
@@ -357,7 +391,7 @@ function LeyendaDeAtajos() {
   const kbd =
     "inline-block min-w-[1.75em] border border-borde-strong bg-blanco px-xs py-px text-center font-cuerpo text-[12px] text-texto-titulo";
   return (
-    <p className="mt-lg text-center font-cuerpo text-[12px] text-texto-secundario">
+    <p className="mt-lg text-center font-cuerpo text-[12px] text-texto-secundario pointer-coarse:hidden">
       Atajos: <kbd className={kbd}>V</kbd> Verdadero · <kbd className={kbd}>F</kbd> Falso ·{" "}
       <kbd className={kbd}>→</kbd> Siguiente
     </p>
@@ -434,7 +468,7 @@ function Frente({ tarjeta }: { tarjeta: TarjetaDeRepaso }) {
 
       <p className="mt-[30px] flex items-center gap-[10px] text-center font-titulo text-[14px] italic text-texto-secundario">
         <span aria-hidden="true" className="h-px w-[40px] shrink-0 bg-accent-600" />
-        tocá la lámina para darla vuelta
+        tocá la tarjeta para darla vuelta
         <span aria-hidden="true" className="h-px w-[40px] shrink-0 bg-accent-600" />
       </p>
     </div>
@@ -485,7 +519,7 @@ function Dorso({
       <Marco tono="invertido" />
       {/*
        * Feedback, en texto MÁS ícono (el color nunca es el único portador).
-       * Sobre celeste-900: acierto `--color-ok-invertido` 4.51:1; «no era esa»
+       * Sobre celeste-900: acierto `--color-ok-invertido` 4.86:1; «no era esa»
        * en blanco 11.22:1 — neutro a propósito, sin rojo: equivocarse enseña,
        * no castiga. Sin animación propia: nada que reducir.
        */}
@@ -566,7 +600,7 @@ function CartaDeCierre({
           tabIndex={-1}
           className="m-0 max-w-[19ch] text-balance font-titulo text-[30px] leading-[1.22] font-normal text-texto-titulo focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-foco sm:text-[40px]"
         >
-          Recorriste {total} {total === 1 ? "lámina" : "láminas"}
+          Recorriste {total} {total === 1 ? "tarjeta" : "tarjetas"}
         </h2>
         <p className="mt-lg font-cuerpo text-[16px] text-texto-secundario">
           Acertaste {aciertos} de {total}
