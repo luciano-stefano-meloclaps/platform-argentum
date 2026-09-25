@@ -327,6 +327,20 @@
   --color-error:    #C23A3A;
   --color-error-bg: #FBE9E9;
 
+  /*
+   * --ok-invertido: variante del verde de acierto, EXCLUSIVA de paneles
+   * invertidos (fondo --color-celeste-900); mismo patrón que --error-invertido
+   * y --foco-invertido (ADR 0015), deuda que el ADR 0015 dejó anotada.
+   * Método del ADR 0015: subir la L de #2E7C5A en HSL (H 153.8°, S 45.9%
+   * intactos) hasta pasar 4.5:1 con la fórmula WCAG. L 33.3% -> 49.3% da
+   * #44B885: 4.51:1 sobre --color-celeste-900 (--color-ok daba 2.21:1). Nunca
+   * sobre crema/blanco: ahí va --color-ok. Uso: el feedback de acierto del
+   * dorso de /tarjetas (ticket #132). Derivado por el frontend-specialist
+   * porque no pudo convocar al brand-specialist: PENDIENTE de su visto bueno
+   * y de registrarlo en la skill identidad-argentum.
+   */
+  --color-ok-invertido: #44B885;
+
   /* --alerta (ADR 0008): #B26A00 → #9F5F00. Sobre --color-alerta-bg: 4.52:1 (según el ADR; no remedido en este ticket). */
   --color-alerta:    #9F5F00;
   --color-alerta-bg: #FBF0DA;

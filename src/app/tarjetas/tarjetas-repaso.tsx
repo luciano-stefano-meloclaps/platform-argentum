@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useReducer, useRef, useState } from "react";
 import Link from "next/link";
 
-import type { TarjetaDeRepaso } from "./tarjetas-repaso.datos";
+import { estadoInicialDelMazo, reducirMazo } from "./mazo.ts";
+import type { TarjetaDeRepaso } from "./tarjetas-repaso.datos.ts";
 
 type Props = {
   mazoNombre: string;
@@ -13,9 +14,9 @@ type Props = {
    * revisión #92, fuera de alcance de esta rebanada. Si no se provee, cae a
    * un registro en consola — mismo criterio que `onRepasar` en
    * `ficha-entidad.tsx` y `onAbrirFicha` en `grilla-laminas.tsx`. El registro
-   * ocurre siempre ANTES de avanzar a la siguiente tarjeta: es un requisito
-   * de orden del ticket, pensado para cuando esto tenga un backend real
-   * detrás.
+   * ocurre siempre ANTES de registrar el resultado en el estado del mazo: es
+   * un requisito de orden del ticket, pensado para cuando esto tenga un
+   * backend real detrás.
    */
   onResponder?: (esVerdadero: boolean) => void;
   onAbrirFicha?: (entidadId: string) => void;
@@ -48,35 +49,81 @@ const morado = {
  * estado (franja de datos, nota de cierre) llega como `children` desde el
  * servidor, así que la isla no lo arrastra al paquete del cliente.
  *
- * Estado: `mostrandoDorso` (frente/dorso de la carta actual) y
- * `tarjetaActual` (índice dentro del mazo); `pasos` (el arreglo de la barra
- * de progreso) es derivado de `tarjetas.length`, no estado propio.
+ * Estado (todo en memoria, nada se persiste): el recorrido del mazo —índice,
+ * aciertos, resultado de la tarjeta actual, fin— es el reducer puro de
+ * `mazo.ts`; `mostrandoDorso` (frente/dorso mientras todavía no se respondió)
+ * es lo único que queda acá. `pasos` (la barra de progreso) es derivado de
+ * `tarjetas.length`, no estado propio.
  */
 export function TarjetasRepaso({ mazoNombre, tarjetas, onResponder, onAbrirFicha, children }: Props) {
-  const [tarjetaActual, setTarjetaActual] = useState(0);
+  const [estado, despachar] = useReducer(reducirMazo, tarjetas.length, estadoInicialDelMazo);
   const [mostrandoDorso, setMostrandoDorso] = useState(false);
 
-  const tarjeta = tarjetas[tarjetaActual];
+  const tituloRef = useRef<HTMLHeadingElement>(null);
+  const siguienteRef = useRef<HTMLButtonElement>(null);
+  const cierreRef = useRef<HTMLHeadingElement>(null);
+
+  const tarjeta = estado.terminado ? undefined : tarjetas[estado.indice];
+  // Paso de la barra: la tarjeta actual cuenta como vista; al terminar, todas.
+  const pasoActual = estado.terminado ? tarjetas.length : estado.indice + 1;
+  const respondida = estado.resultado !== null;
+  // Con la tarjeta respondida la cara queda fija en el dorso: ahí vive el feedback.
+  const dorsoVisible = mostrandoDorso || respondida;
+
+  // Foco: el botón que se toca desaparece al cambiar de paso, así que el foco
+  // se lleva a mano al elemento que sigue (si no, cae al <body>).
+  // Al responder -> «Siguiente». Al terminar -> el <h2> de cierre. Al pasar a
+  // otra tarjeta (o repasar de nuevo) -> el título "Tarjeta N de M".
+  const clave = estado.terminado ? -1 : estado.indice;
+  const claveAnterior = useRef(clave);
+  useEffect(() => {
+    if (estado.resultado !== null) {
+      siguienteRef.current?.focus();
+    }
+  }, [estado.resultado]);
+  useEffect(() => {
+    if (claveAnterior.current === clave) {
+      return;
+    }
+    claveAnterior.current = clave;
+    if (estado.terminado) {
+      cierreRef.current?.focus();
+    } else {
+      tituloRef.current?.focus();
+    }
+  }, [clave, estado.terminado]);
 
   function alternarDorso() {
     setMostrandoDorso((valor) => !valor);
   }
 
-  function manejarRespuesta(esVerdadero: boolean) {
-    // El registro del evento va SIEMPRE antes de avanzar el estado: es un
+  function manejarRespuesta(elegido: boolean) {
+    if (tarjeta === undefined) {
+      return;
+    }
+    // El registro del evento va SIEMPRE antes de tocar el estado: es un
     // requisito del ticket, para que el orden ya esté bien cuando esto se
     // conecte a un backend real.
     if (onResponder !== undefined) {
-      onResponder(esVerdadero);
+      onResponder(elegido);
     } else {
-      console.log("[tarjetas] respuesta registrada:", esVerdadero, "para", tarjeta?.entidadId);
+      console.log("[tarjetas] respuesta registrada:", elegido, "para", tarjeta.entidadId);
     }
 
-    setMostrandoDorso(false);
-    setTarjetaActual((indice) => (indice + 1) % tarjetas.length);
+    despachar({ tipo: "responder", elegido, esVerdadero: tarjeta.esVerdadero });
   }
 
-  if (tarjeta === undefined) {
+  function irALaSiguiente() {
+    setMostrandoDorso(false);
+    despachar({ tipo: "siguiente" });
+  }
+
+  function repasarDeNuevo() {
+    setMostrandoDorso(false);
+    despachar({ tipo: "reiniciar" });
+  }
+
+  if (tarjetas.length === 0) {
     // Mazo vacío: no debería pasar con el mock, pero un mazo real algún día
     // puede llegar sin tarjetas — nunca una pantalla en blanco sin
     // explicación.
@@ -96,15 +143,26 @@ export function TarjetasRepaso({ mazoNombre, tarjetas, onResponder, onAbrirFicha
         </p>
 
         {/*
-         * Único `<h1>` de la pantalla. La cifra en dorado oscuro PLANO, a
+         * Único `<h1>` de la pantalla (recibe el foco al pasar de tarjeta).
+         * Con el mazo terminado dice «Fin del mazo». La cifra en dorado oscuro PLANO, a
          * propósito sin `.au` ni `.shiny`: es la única cifra destacada de la
          * plataforma sin gradiente ni animación, para no competir con el
          * wordmark. El total va en un `<span>` gris, mismo tamaño y sin
          * negrita.
          */}
-        <h1 aria-live="polite" aria-atomic="true" className="m-0 mt-md font-titulo text-[40px] leading-[1.15] font-normal text-tarjetas-dorado-provisorio">
-          Tarjeta {tarjetaActual + 1}
-          <span className="text-texto-terciario"> de {tarjetas.length}</span>
+        <h1
+          ref={tituloRef}
+          tabIndex={-1}
+          className="m-0 mt-md font-titulo text-[40px] leading-[1.15] font-normal text-tarjetas-dorado-provisorio focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-foco"
+        >
+          {estado.terminado ? (
+            "Fin del mazo"
+          ) : (
+            <>
+              Tarjeta {estado.indice + 1}
+              <span className="text-texto-terciario"> de {tarjetas.length}</span>
+            </>
+          )}
         </h1>
 
         {/*
@@ -121,99 +179,150 @@ export function TarjetasRepaso({ mazoNombre, tarjetas, onResponder, onAbrirFicha
           aria-label="Progreso del mazo"
           aria-valuemin={1}
           aria-valuemax={tarjetas.length}
-          aria-valuenow={tarjetaActual + 1}
-          aria-valuetext={`Tarjeta ${tarjetaActual + 1} de ${tarjetas.length}`}
+          aria-valuenow={pasoActual}
+          aria-valuetext={estado.terminado ? "Mazo completo" : `Tarjeta ${pasoActual} de ${tarjetas.length}`}
           className="mt-xl mb-[34px] flex justify-center gap-[5px]"
         >
           {tarjetas.map((unaTarjeta, indice) => (
             <span
-              key={unaTarjeta.entidadId + String(indice)}
+              key={unaTarjeta.id}
               aria-hidden="true"
-              className={`h-[3px] w-[26px] ${indice < tarjetaActual + 1 ? "bg-celeste-400" : "bg-borde-strong"}`}
+              className={`h-[3px] w-[26px] ${indice < pasoActual ? "bg-celeste-400" : "bg-borde-strong"}`}
             />
           ))}
         </div>
       </header>
 
-      {/* ── La carta ───────────────────────────────────────────────────── */}
-      <div className="relative">
-        {/* Capas decorativas del mazo apilado, ANTES de la carta real. */}
-        <div
-          aria-hidden="true"
-          className="absolute top-[10px] -right-[10px] -bottom-[10px] left-[10px] border border-accent-300"
-        />
-        <div
-          aria-hidden="true"
-          className="absolute top-[5px] -right-[5px] -bottom-[5px] left-[5px] border border-accent-400"
-        />
-
-        {/*
-         * La carta real. El elemento operable es un `<button>` HERMANO
-         * superpuesto y vacío (`absolute inset-0`, capa `z-0`), no un
-         * contenedor: el dorso contiene un `<Link>` real (navegación a la
-         * ficha), y un `<button>` no puede envolver un interactivo sin
-         * anidarlo ilegalmente (hallazgo bloqueante del `ui-reviewer`, ticket
-         * #91). Al ser nativo, Enter y Espacio funcionan sin handler propio. El contenido vive en una capa `z-10` con `pointer-events-none`
-         * —el click lo recibe el botón de abajo—, salvo el `<Link>`, que
-         * recupera `pointer-events-auto`. Al no estar anidado, tampoco hace
-         * falta `stopPropagation`. `aria-pressed` anuncia frente/dorso y el
-         * contenido de la cara actual es una región `aria-live="polite"`, así
-         * que el cambio de cara se anuncia. Nunca gira en 3D: es un swap de
-         * contenido, con el mismo `min-h-[360px]` en las dos caras.
-         *
-         * El anillo de foco va a 12px del borde: más afuera que el marco
-         * "passe-partout" (6px) y que las dos capas del mazo (5px y 10px).
-         */}
-        <div className="relative flex min-h-[360px]">
-          <button
-            type="button"
-            aria-pressed={mostrandoDorso}
-            aria-label="Dar vuelta la tarjeta"
-            onClick={alternarDorso}
-            className="absolute inset-0 z-0 cursor-pointer touch-manipulation outline-offset-[12px] focus-visible:outline-2 focus-visible:outline-foco"
-          />
-
-          <div aria-live="polite" className="pointer-events-none relative z-10 flex flex-1">
-            {mostrandoDorso ? (
-              <Dorso tarjeta={tarjeta} onAbrirFicha={onAbrirFicha} />
-            ) : (
-              <Frente tarjeta={tarjeta} />
-            )}
+      {tarjeta === undefined ? (
+        <>
+          <CartaDeCierre total={tarjetas.length} aciertos={estado.aciertos} tituloRef={cierreRef} />
+          <div className="mt-[34px] flex flex-col gap-[14px] sm:flex-row">
+            <button
+              type="button"
+              onClick={repasarDeNuevo}
+              className={`${BOTON_DORADO} flex-1`}
+            >
+              Repasar de nuevo
+            </button>
+            <Link href="/catalogo" className={`${BOTON_DORADO} flex-1`}>
+              Volver al catálogo
+            </Link>
           </div>
-        </div>
-      </div>
+        </>
+      ) : (
+        <>
+          {/* ── La carta ─────────────────────────────────────────────── */}
+          <div className="relative">
+            {/* Capas decorativas del mazo apilado, ANTES de la carta real. */}
+            <div
+              aria-hidden="true"
+              className="absolute top-[10px] -right-[10px] -bottom-[10px] left-[10px] border border-accent-300"
+            />
+            <div
+              aria-hidden="true"
+              className="absolute top-[5px] -right-[5px] -bottom-[5px] left-[5px] border border-accent-400"
+            />
 
-      {/* ── Botones de respuesta ──────────────────────────────────────── */}
-      {/*
-       * Mismo tamaño y peso visual; ninguno es `.btn-primary` ni el botón
-       * secundario genérico. Rojo como borde de botón: único uso de la
-       * plataforma (en el resto es solo texto de estado). Verde = "correcto".
-       */}
-      <div className="mt-[34px] flex gap-[14px]">
-        <button
-          type="button"
-          onClick={() => {
-            manejarRespuesta(false);
-          }}
-          className="min-h-objetivo-tactil flex-1 cursor-pointer touch-manipulation border border-error bg-transparent py-[15px] font-cuerpo text-[14px] text-error motion-safe:transition-colors motion-safe:duration-150 hover:bg-error-bg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foco"
-        >
-          Falso
-        </button>
-        <button
-          type="button"
-          onClick={() => {
-            manejarRespuesta(true);
-          }}
-          className="min-h-objetivo-tactil flex-1 cursor-pointer touch-manipulation border border-ok bg-transparent py-[15px] font-cuerpo text-[14px] text-ok motion-safe:transition-colors motion-safe:duration-150 hover:bg-ok-bg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foco"
-        >
-          Verdadero
-        </button>
-      </div>
+            {/*
+             * La carta real. El elemento operable es un `<button>` HERMANO
+             * superpuesto y vacío (`absolute inset-0`, capa `z-0`), no un
+             * contenedor: el dorso contiene un `<Link>` real (navegación a la
+             * ficha), y un `<button>` no puede envolver un interactivo sin
+             * anidarlo ilegalmente (hallazgo bloqueante del `ui-reviewer`,
+             * ticket #91). Al ser nativo, Enter y Espacio funcionan sin
+             * handler propio. El contenido vive en una capa `z-10` con
+             * `pointer-events-none` —el click lo recibe el botón de abajo—,
+             * salvo el `<Link>`, que recupera `pointer-events-auto`.
+             * `aria-pressed` anuncia frente/dorso y el contenido de la cara
+             * actual es una región `aria-live="polite"`, así que el cambio de
+             * cara se anuncia. Nunca gira en 3D: es un swap de contenido, con
+             * el mismo `min-h-[360px]` en las dos caras.
+             *
+             * Una vez respondida la tarjeta el botón de dar vuelta no se
+             * renderiza: la cara queda fija en el dorso, que es donde vive el
+             * feedback, y lo que sigue es «Siguiente».
+             *
+             * El anillo de foco va a 12px del borde: más afuera que el marco
+             * "passe-partout" (6px) y que las dos capas del mazo (5px y 10px).
+             */}
+            <div className="relative flex min-h-[360px]">
+              {!respondida && (
+                <button
+                  type="button"
+                  aria-pressed={mostrandoDorso}
+                  aria-label="Dar vuelta la tarjeta"
+                  onClick={alternarDorso}
+                  className="absolute inset-0 z-0 cursor-pointer touch-manipulation outline-offset-[12px] focus-visible:outline-2 focus-visible:outline-foco"
+                />
+              )}
+
+              <div aria-live="polite" className="pointer-events-none relative z-10 flex flex-1">
+                {dorsoVisible ? (
+                  <Dorso tarjeta={tarjeta} resultado={estado.resultado} onAbrirFicha={onAbrirFicha} />
+                ) : (
+                  <Frente tarjeta={tarjeta} />
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* ── Botones ──────────────────────────────────────────────── */}
+          {respondida ? (
+            <div className="mt-[34px] flex">
+              <button
+                ref={siguienteRef}
+                type="button"
+                onClick={irALaSiguiente}
+                className={`${BOTON_DORADO} flex-1`}
+              >
+                Siguiente
+              </button>
+            </div>
+          ) : (
+            /*
+             * Mismo tamaño y peso visual; ninguno es `.btn-primary` ni el
+             * botón secundario genérico. Rojo como borde de botón: único uso
+             * de la plataforma (en el resto es solo texto de estado). Verde =
+             * "correcto".
+             */
+            <div className="mt-[34px] flex gap-[14px]">
+              <button
+                type="button"
+                onClick={() => {
+                  manejarRespuesta(false);
+                }}
+                className="min-h-objetivo-tactil flex-1 cursor-pointer touch-manipulation border border-error bg-transparent py-[15px] font-cuerpo text-[14px] text-error motion-safe:transition-colors motion-safe:duration-150 hover:bg-error-bg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foco"
+              >
+                Falso
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  manejarRespuesta(true);
+                }}
+                className="min-h-objetivo-tactil flex-1 cursor-pointer touch-manipulation border border-ok bg-transparent py-[15px] font-cuerpo text-[14px] text-ok motion-safe:transition-colors motion-safe:duration-150 hover:bg-ok-bg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foco"
+              >
+                Verdadero
+              </button>
+            </div>
+          )}
+        </>
+      )}
 
       {children}
     </main>
   );
 }
+
+/**
+ * Botón de acción de la pantalla («Siguiente», «Repasar de nuevo», «Volver al
+ * catálogo»): mismo lenguaje que el botón primario v2 (outline dorado, relleno
+ * dorado claro al hover), 44px de alto mínimo. Texto `accent-700` 4.58:1 sobre
+ * crema; hover `accent-800` sobre `accent-300` 6.81:1. Sirve para `<button>` y
+ * `<Link>`.
+ */
+const BOTON_DORADO =
+  "inline-flex min-h-objetivo-tactil cursor-pointer touch-manipulation items-center justify-center border border-accent-700 bg-transparent px-lg py-[15px] text-center font-cuerpo text-[14px] text-accent-700 no-underline motion-safe:transition-colors motion-safe:duration-150 hover:bg-accent-300 hover:text-accent-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foco";
 
 const TONO_MARCO = {
   claro: { linea: "border-accent-600", rombo: "bg-accent-700" },
@@ -282,22 +391,70 @@ function Frente({ tarjeta }: { tarjeta: TarjetaDeRepaso }) {
   );
 }
 
+/**
+ * Íconos Tabler (outline, 24px, trazo 2, MIT, https://tabler.io/icons), copiados
+ * en línea y sin dependencia (ADR 0003/0008): `circle-check` e `info-circle`.
+ * Decorativos: el texto de al lado es el portador del significado.
+ */
+function IconoDeFeedback({ acierto }: { acierto: boolean }) {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="size-6 shrink-0"
+    >
+      <path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0" />
+      {acierto ? (
+        <path d="M9 12l2 2l4 -4" />
+      ) : (
+        <>
+          <path d="M12 9h.01" />
+          <path d="M11 12h1v4h1" />
+        </>
+      )}
+    </svg>
+  );
+}
+
 function Dorso({
   tarjeta,
+  resultado,
   onAbrirFicha,
 }: {
   tarjeta: TarjetaDeRepaso;
+  resultado: "acierto" | "error" | null;
   onAbrirFicha?: (entidadId: string) => void;
 }) {
   return (
     <div className="relative flex flex-1 flex-col items-center justify-center border border-accent-600 bg-celeste-900 px-lg py-[56px] sm:px-[60px] sm:py-[64px]">
       <Marco tono="invertido" />
+      {/*
+       * Feedback, en texto MÁS ícono (el color nunca es el único portador).
+       * Sobre celeste-900: acierto `--color-ok-invertido` 4.51:1; «no era esa»
+       * en blanco 11.22:1 — neutro a propósito, sin rojo: equivocarse enseña,
+       * no castiga. Sin animación propia: nada que reducir.
+       */}
+      {resultado !== null && (
+        <p
+          className={`mb-md flex items-center gap-[10px] font-cuerpo text-[16px] font-semibold ${
+            resultado === "acierto" ? "text-ok-invertido" : "text-blanco"
+          }`}
+        >
+          <IconoDeFeedback acierto={resultado === "acierto"} />
+          {resultado === "acierto" ? "Acertaste" : "No era esa: mirá la respuesta"}
+        </p>
+      )}
       <span className="inline-block border border-acento-repaso-invertido px-[10px] py-xs font-cuerpo text-[9px] tracking-[0.14em] text-acento-repaso-100 uppercase">
         Respuesta revelada
       </span>
 
       <p className="mt-[18px] max-w-[24ch] text-center font-titulo text-[28px] leading-[1.35] font-normal text-accent-300 sm:text-[34px]">
-        {tarjeta.respuesta}
+        {tarjeta.esVerdadero ? "Sí" : "No"}: {tarjeta.respuesta}
       </p>
 
       <div
@@ -322,6 +479,54 @@ function Dorso({
       >
         Abrir la ficha de {tarjeta.entidadNombre}
       </Link>
+    </div>
+  );
+}
+
+/**
+ * Carta de cierre: el mismo marco de plate que el frente (filete exterior
+ * `accent-700`, interior `accent-600`, rombos), fondo de la carta frontal. El
+ * `<h2>` recibe el foco al aparecer (lo hace el efecto del padre). Texto sin
+ * castigo: solo cuenta lo que pasó. Contrastes: `texto-titulo` 11.17:1 y
+ * `texto-secundario` 6.08:1 sobre `#F5FAFF`.
+ */
+function CartaDeCierre({
+  total,
+  aciertos,
+  tituloRef,
+}: {
+  total: number;
+  aciertos: number;
+  tituloRef: React.RefObject<HTMLHeadingElement | null>;
+}) {
+  return (
+    <div className="relative">
+      <div
+        aria-hidden="true"
+        className="absolute top-[10px] -right-[10px] -bottom-[10px] left-[10px] border border-accent-300"
+      />
+      <div
+        aria-hidden="true"
+        className="absolute top-[5px] -right-[5px] -bottom-[5px] left-[5px] border border-accent-400"
+      />
+      <div className="relative flex min-h-[360px] flex-col items-center justify-center border border-accent-700 bg-tarjetas-carta-provisorio px-lg py-[56px] text-center sm:px-[60px] sm:py-[64px]">
+        <Marco tono="claro" />
+        <h2
+          ref={tituloRef}
+          tabIndex={-1}
+          className="m-0 max-w-[19ch] text-balance font-titulo text-[30px] leading-[1.22] font-normal text-texto-titulo focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-foco sm:text-[40px]"
+        >
+          Recorriste {total} {total === 1 ? "lámina" : "láminas"}
+        </h2>
+        <p className="mt-lg font-cuerpo text-[16px] text-texto-secundario">
+          Acertaste {aciertos} de {total}
+        </p>
+        <p className="mt-sm flex items-center gap-[10px] font-titulo text-[14px] italic text-texto-secundario">
+          <span aria-hidden="true" className="h-px w-[40px] shrink-0 bg-accent-600" />
+          Cada repaso ayuda a fijar lo que viste
+          <span aria-hidden="true" className="h-px w-[40px] shrink-0 bg-accent-600" />
+        </p>
+      </div>
     </div>
   );
 }

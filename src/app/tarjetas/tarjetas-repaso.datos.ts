@@ -1,26 +1,29 @@
 /**
- * Mock del mazo que muestra la pantalla "Tarjetas" (ticket #91): presentación
- * pura, sin conexión a ningún módulo ni a la base — mismo criterio que
- * `salas-del-catalogo.datos.ts`, `estadisticas-catalogo.datos.ts` y
- * `ficha-entidad.datos.ts`. `obtenerMazoDeRepaso` anticipa la firma de la
- * consulta real que algún día va a vivir en el módulo `aprendizaje` (ADR
- * 0002: la capa web no consulta la base de datos, le pide al módulo) —
- * async, sin argumentos todavía porque hoy no hay selección de mazo, devuelve
- * el mazo completo. Cuando esa función exista, el cambio en
- * `tarjetas-repaso.tsx`/`page.tsx` es de import, no de componentes.
+ * DATOS SIMULADOS (ticket #91, forma ajustada en #132): el mazo que muestra la
+ * pantalla "Tarjetas". No hay conexión a ningún módulo ni a la base — mismo
+ * criterio que `ficha-entidad.datos.ts` y `quiz-pregunta.datos.ts`.
  *
- * La forma exacta del contrato (qué mazo, cuántas tarjetas, qué estadísticas)
- * es una de las preguntas abiertas de la nota de revisión #92 — este mock
- * no la resuelve, solo le da una forma plausible para construir la pantalla.
+ * SU FORMA NO ES UN CONTRATO. El módulo `aprendizaje` no existe y nadie
+ * aprobó su interfaz (`docs/decisiones-pendientes.md` §4): cuando llegue se
+ * diseña desde cero, y si la firma que sale es distinta, la que se cambia es
+ * la de esta pantalla. Ni `MazoDeRepaso`, ni `TarjetaDeRepaso` ni
+ * `obtenerMazoDeRepaso` deben citarse como la interfaz de ese módulo. La
+ * forma de la carta ya cambió una vez en este mock (#132: `esVerdadero`
+ * separado del texto) sin ningún ADR, justamente porque no es contrato.
  */
 
 /** Una tarjeta del mazo: pregunta de un lado, respuesta del otro (CONTEXT.md). */
 export type TarjetaDeRepaso = {
+  /** Id estable dentro del mazo simulado: sirve de `key` y de identidad de la carta. */
+  id: string;
   /** Numeral romano decorativo de la esquina de la carta (aria-hidden). */
   numeral: string;
   /** La sala/temática de la tarjeta ("Próceres") — el tag morado del frente. */
   categoria: string;
   pregunta: string;
+  /** Si la afirmación de la pregunta es verdadera. Separado del texto a propósito. */
+  esVerdadero: boolean;
+  /** La explicación, sin el «Sí:»/«No:» adelante: la vista lo antepone según `esVerdadero`. */
   respuesta: string;
   /** La entidad del catálogo que sustenta esta tarjeta. */
   entidadId: string;
@@ -50,42 +53,52 @@ const MAZO_PROCERES: MazoDeRepaso = {
   nombre: "Próceres",
   tarjetas: [
     {
+      id: "san-martin-andes",
       numeral: "I",
       categoria: "Próceres",
       pregunta: "¿Cruzó la cordillera de los Andes al frente de un ejército propio, en 1817?",
-      respuesta: "Sí: José de San Martín cruzó los Andes en 1817 y venció en Chacabuco y Maipú.",
+      esVerdadero: true,
+      respuesta: "José de San Martín cruzó los Andes en 1817 y venció en Chacabuco y Maipú.",
       entidadId: "jose-de-san-martin",
       entidadNombre: "José de San Martín",
     },
     {
+      id: "belgrano-bandera",
       numeral: "II",
       categoria: "Próceres",
       pregunta: "¿Creó la bandera argentina en las barrancas del río Paraná, en Rosario?",
-      respuesta: "Sí: Manuel Belgrano izó por primera vez la bandera el 27 de febrero de 1812.",
+      esVerdadero: true,
+      respuesta: "Manuel Belgrano izó por primera vez la bandera el 27 de febrero de 1812.",
       entidadId: "manuel-belgrano",
       entidadNombre: "Manuel Belgrano",
     },
     {
+      id: "laprida-tucuman",
       numeral: "III",
       categoria: "Próceres",
       pregunta: "¿Presidió el Congreso de Tucumán que declaró la independencia en 1816?",
-      respuesta: "No: quien lo presidió fue Francisco Narciso de Laprida, no un militar de campaña.",
+      esVerdadero: false,
+      respuesta: "Quien lo presidió fue Francisco Narciso de Laprida, no un militar de campaña.",
       entidadId: "jose-de-san-martin",
       entidadNombre: "José de San Martín",
     },
     {
+      id: "san-martin-yapeyu",
       numeral: "IV",
       categoria: "Próceres",
       pregunta: "¿Nació en Yapeyú, Corrientes, en 1778?",
-      respuesta: "Sí: José de San Martín nació en Yapeyú el 25 de febrero de 1778.",
+      esVerdadero: true,
+      respuesta: "José de San Martín nació en Yapeyú el 25 de febrero de 1778.",
       entidadId: "jose-de-san-martin",
       entidadNombre: "José de San Martín",
     },
     {
+      id: "belgrano-primera-junta",
       numeral: "V",
       categoria: "Próceres",
       pregunta: "¿Fue el primer vocal de la Primera Junta, en 1810?",
-      respuesta: "No: fue vocal de la Primera Junta, pero no el primero — la presidió Cornelio Saavedra.",
+      esVerdadero: false,
+      respuesta: "Fue vocal de la Primera Junta, pero no el primero — la presidió Cornelio Saavedra.",
       entidadId: "manuel-belgrano",
       entidadNombre: "Manuel Belgrano",
     },
@@ -99,9 +112,8 @@ const MAZO_PROCERES: MazoDeRepaso = {
 };
 
 /**
- * Anticipa la firma de la consulta real, igual que `contarEntidadesPorTipo` y
- * `obtenerEntidadDeFicha`: async, sin argumentos porque hoy no hay selección
- * de mazo (fuera de alcance de esta rebanada, ver #92).
+ * Devuelve el mazo simulado. Async y sin argumentos solo por comodidad de la
+ * pantalla; no anticipa ninguna firma de módulo (ver el encabezado).
  */
 export async function obtenerMazoDeRepaso(): Promise<MazoDeRepaso> {
   return MAZO_PROCERES;
