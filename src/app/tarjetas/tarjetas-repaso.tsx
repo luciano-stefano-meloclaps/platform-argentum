@@ -4,6 +4,7 @@ import { useEffect, useReducer, useRef, useState } from "react";
 import Link from "next/link";
 
 import { estadoInicialDelMazo, reducirMazo } from "./mazo.ts";
+import { tonoDeCategoria } from "./tono-de-categoria.ts";
 import type { TarjetaDeRepaso } from "./tarjetas-repaso.datos.ts";
 
 type Props = {
@@ -31,14 +32,18 @@ type Props = {
 
 /**
  * Etiqueta cuadrada del frente (categoría) y del dorso («Respuesta revelada»):
- * mismo tamaño y forma, con fondo propio en las dos caras. Acento morado de
- * repaso, nunca dorado ni celeste, y sin el rol del verde/rojo: el color no
- * dice si se acertó. Tokens y contrastes del `brand-specialist`
- * (`identidad-argentum`, «Acento morado de repaso»).
+ * mismo tamaño, forma y color en las dos caras. El color lo da la categoría de
+ * la tarjeta (`tono-de-categoria.ts`); no dice si se acertó.
  */
-const ETIQUETA = "inline-block border px-[10px] py-xs font-cuerpo text-[9px] tracking-[0.14em] uppercase";
-const ETIQUETA_FRENTE = `${ETIQUETA} border-acento-repaso-700 bg-acento-repaso-100 text-acento-repaso-700`;
-const ETIQUETA_DORSO = `${ETIQUETA} border-acento-repaso-invertido bg-acento-repaso-700 text-acento-repaso-100`;
+function Etiqueta({ categoria, children }: { categoria: string; children: React.ReactNode }) {
+  return (
+    <span
+      className={`inline-block border px-[10px] py-xs font-cuerpo text-[9px] tracking-[0.14em] uppercase ${tonoDeCategoria(categoria)}`}
+    >
+      {children}
+    </span>
+  );
+}
 
 /**
  * "Tarjeta N de M": la pantalla de repaso tipo flashcard (ticket #91), en su
@@ -384,7 +389,7 @@ function Frente({ tarjeta }: { tarjeta: TarjetaDeRepaso }) {
         {tarjeta.numeral}
       </span>
 
-      <span className={ETIQUETA_FRENTE}>{tarjeta.categoria}</span>
+      <Etiqueta categoria={tarjeta.categoria}>{tarjeta.categoria}</Etiqueta>
 
       <h2 className="m-0 mt-xl max-w-[19ch] text-balance text-center font-titulo text-[30px] leading-[1.22] font-normal text-texto-titulo sm:text-[40px]">
         {tarjeta.pregunta}
@@ -409,7 +414,7 @@ function Dorso({
   return (
     <div className="relative flex flex-1 flex-col items-center justify-center border border-accent-600 bg-celeste-900 px-lg py-[56px] sm:px-[60px] sm:py-[64px]">
       <Marco tono="invertido" />
-      <span className={ETIQUETA_DORSO}>Respuesta revelada</span>
+      <Etiqueta categoria={tarjeta.categoria}>Respuesta revelada</Etiqueta>
 
       <p className="mt-[18px] max-w-[24ch] text-center font-titulo text-[28px] leading-[1.35] font-normal text-accent-300 sm:text-[34px]">
         {tarjeta.esVerdadero ? "Verdadero" : "Falso"}

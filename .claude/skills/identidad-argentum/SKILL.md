@@ -407,7 +407,44 @@ temática de la tarjeta" en la pantalla de repaso (etiqueta del frente,
 etiqueta "Respuesta revelada" del dorso) — el ticket #91 pedía explícitamente
 no usar dorado ni celeste ahí, porque esos dos ya tienen significado propio.
 
-**Etiqueta de las dos caras (rebanada `feat/tarjetas-rediseno`, pedido del
+**Etiqueta de categoría, mismo color en las dos caras (VIGENTE, decisión
+explícita del usuario, `feat/tarjetas-rediseno`).** El acento morado único
+**deja de usarse en la etiqueta** (frente y dorso): el color de la etiqueta
+pasa a depender de la categoría de la tarjeta (las 6 de v1, sin cambios) y es
+**idéntico en las dos caras**. Sin token nuevo: sale de `--color-cat-*`. Solo la
+etiqueta se colorea, no el marco ni la carta (regla 8). Estructura única para
+ambas caras: `inline-block border px-[10px] py-xs font-cuerpo text-[9px]
+tracking-[0.14em] uppercase` + clases de la tabla (fondo `cat-bg`, borde y texto
+`cat-text`).
+
+| Categoría | Clases (estáticas) |
+| --- | --- |
+| Próceres | `border-cat-proceres-text bg-cat-proceres-bg text-cat-proceres-text` |
+| Monumentos | `border-cat-monumentos-text bg-cat-monumentos-bg text-cat-monumentos-text` |
+| Comidas | `border-cat-comidas-text bg-cat-comidas-bg text-cat-comidas-text` |
+| Fechas patrias | `border-cat-fechas-text bg-cat-fechas-bg text-cat-fechas-text` |
+| Animales | `border-cat-animales-text bg-cat-animales-bg text-cat-animales-text` |
+| Naturaleza | `border-cat-naturaleza-text bg-cat-naturaleza-bg text-cat-naturaleza-text` |
+| Categoría desconocida (neutro) | `border-texto-titulo bg-blanco text-texto-titulo` |
+
+Cómo se sostiene en las dos caras: el **texto** pasa AA sobre su fondo en
+ambas (mismo par). El **fondo claro** delimita la etiqueta sobre el dorso
+(9.5–10:1 contra `--celeste-900`); el **borde oscuro** la delimita sobre el
+frente (5.0–7.2:1 contra `#F5FAFF`). **Franqueza:** sobre el dorso el borde
+`cat-text` casi se funde con `--celeste-900` (1.5–2.1:1, no llega a 3:1); no es
+un problema porque el borde es redundante ahí (el fondo ya cumple 1.4.11), pero
+no se puede citar como borde visible en el dorso. Números en la sección 3.
+
+**Superado por lo anterior (no borrado, por historial):** la etiqueta con
+`acento-repaso-100/700/invertido` que sigue abajo. `--color-acento-repaso-100/700`
+**siguen vigentes** para otros consumidores (`franja-de-datos.tsx`, "Dominio de
+esta ficha"; `resultado-quiz.tsx`); `--color-acento-repaso-invertido` queda **sin
+consumidores** cuando se cambie `tarjetas-repaso.tsx` y es candidato a retiro.
+La colisión de matiz con Animales, descrita más abajo, ya no aplica a la
+etiqueta (ahora el morado de Animales es el correcto para Animales); persiste
+solo entre el stat "Dominio" y esa categoría.
+
+**(SUPERADO) Etiqueta de las dos caras (rebanada `feat/tarjetas-rediseno`, pedido del
 usuario).** Las dos caras usan **la misma etiqueta cuadrada con fondo**
 (`inline-block border px-[10px] py-xs font-cuerpo text-[9px]
 tracking-[0.14em] uppercase`, sin `rounded`), solo con los colores
@@ -847,12 +884,17 @@ familia de marca completa.
 | `--texto-secundario` `#6B5D4A` / `--blanco` `#FFFFFF` (reposo de celda) | 6.38:1 | `brand-specialist`, ticket #88 — reemplaza la medición contra `--celeste-25` (descartado) |
 | `--texto-terciario` `#7E705D` / `--celeste-50` `#EAF4FE` (hover de celda) | **4.33:1 — falla AA**, texto de 10px | `brand-specialist`, ticket #88. No usar `--texto-terciario` sobre `--celeste-50`; usar `--texto-secundario` (5.73:1 sobre `--celeste-50`, 6.38:1 sobre `--blanco`), que pasa en los dos estados. El componente real (`grilla-salas.tsx`) ya usa `--texto-secundario` en el caption, no `--texto-terciario` — este hallazgo es preventivo, no un bug encontrado en código |
 | `--celeste-700` `#0978D0` (foco) / `--blanco` `#FFFFFF` (reposo de celda) | 4.56:1 (no-texto, piso 3:1) | `brand-specialist`, ticket #88 — reemplaza la medición contra `--celeste-25` (descartado). Contra `--celeste-50` (hover) sigue siendo 4.34:1, sin cambios |
-| `--color-acento-repaso-700` `#6B3FA0` / `--color-acento-repaso-100` `#EDE4F5` | 5.98:1 | `brand-specialist`, ticket #91. **Vigente en las dos caras, en espejo**: frente = texto 700 sobre fondo 100; dorso = texto 100 sobre fondo 700 (etiqueta cuadrada, texto de 9px, pasa AA). La "píldora" redondeada del frente queda **superada** |
-| Borde `--color-acento-repaso-700` `#6B3FA0` / carta `#F5FAFF` (etiqueta del frente) | **7.03:1** — pasa 3:1 no-texto (L 0.0922 contra 0.9500) | `brand-specialist`, etiqueta unificada de `/tarjetas` |
-| Fondo `--color-acento-repaso-100` `#EDE4F5` / carta `#F5FAFF` (etiqueta del frente) | 1.18:1 — decorativo, el borde y el texto delimitan y portan | Ídem |
-| Fondo `--color-acento-repaso-700` `#6B3FA0` / `--celeste-900` `#0A3D66` (etiqueta del dorso) | 1.52:1 — decorativo, el borde delimita | Ídem |
-| Borde `--color-acento-repaso-invertido` `#A785D6` / `--celeste-900` (etiqueta del dorso) | 3.72:1 — pasa 3:1 no-texto (ya medido arriba; es el límite contra la cara) | Ídem |
-| Texto `--color-acento-repaso-100` `#EDE4F5` / fondo `--color-acento-repaso-700` (dorso) | 5.98:1 — pasa AA. Reemplaza al 9.09:1 sobre `--celeste-900` de la etiqueta sin fondo (**superado**) | Ídem |
+| **Etiqueta por categoría, texto `cat-text` / fondo `cat-bg` (igual en las dos caras; VIGENTE)**: Próceres `#4B6A2C`/`#EAF0DF` · Monumentos `#0A5FA8`/`#EAF4FE` · Comidas `#A8492A`/`#FBECE4` · Fechas `#96324F`/`#FBE9EF` · Animales `#5A45A0`/`#EFEAFB` · Naturaleza `#1F7A5C`/`#E4F4EF` | **5.31 · 5.87 · 4.99 · 6.28 · 6.38 · 4.62:1** — todas pasan AA. Neutro `#1F3B4D`/`#FFFFFF`: 11.72:1 | `brand-specialist`, etiqueta por categoría de `/tarjetas` |
+| Borde `cat-text` / carta frente `#F5FAFF` (mismo orden) | **5.89 · 6.22 · 5.48 · 6.98 · 7.16 · 5.00:1**; neutro 11.17:1 — pasan 3:1 no-texto | Ídem |
+| Borde `cat-text` / dorso `--celeste-900` `#0A3D66` (mismo orden) | 1.81 · 1.72 · 1.95 · 1.53 · 1.49 · 2.13:1; neutro 1.04:1 — **no llegan a 3:1**; el borde es redundante ahí porque el fondo delimita (fila siguiente) | Ídem |
+| Fondo `cat-bg` / dorso `--celeste-900` (mismo orden) | **9.63 · 10.08 · 9.73 · 9.62 · 9.53 · 9.87:1**; neutro blanco 11.22:1 — pasan 3:1 | Ídem |
+| Fondo `cat-bg` / carta frente `#F5FAFF` (mismo orden) | 1.11 · 1.06 · 1.10 · 1.11 · 1.12 · 1.08:1; neutro blanco 1.05:1 — decorativo, delimita el borde | Ídem |
+| **(SUPERADO por las filas de etiqueta por categoría)** `--color-acento-repaso-700` `#6B3FA0` / `--color-acento-repaso-100` `#EDE4F5` | 5.98:1 | `brand-specialist`, ticket #91. **Fue vigente en las dos caras, en espejo**: frente = texto 700 sobre fondo 100; dorso = texto 100 sobre fondo 700 (etiqueta cuadrada, texto de 9px, pasa AA). La "píldora" redondeada del frente queda **superada** |
+| **(SUPERADO)** Borde `--color-acento-repaso-700` `#6B3FA0` / carta `#F5FAFF` (etiqueta del frente) | **7.03:1** — pasa 3:1 no-texto (L 0.0922 contra 0.9500) | `brand-specialist`, etiqueta unificada de `/tarjetas` |
+| **(SUPERADO)** Fondo `--color-acento-repaso-100` `#EDE4F5` / carta `#F5FAFF` (etiqueta del frente) | 1.18:1 — decorativo, el borde y el texto delimitan y portan | Ídem |
+| **(SUPERADO)** Fondo `--color-acento-repaso-700` `#6B3FA0` / `--celeste-900` `#0A3D66` (etiqueta del dorso) | 1.52:1 — decorativo, el borde delimita | Ídem |
+| **(SUPERADO, sin consumidores tras el cambio del componente)** Borde `--color-acento-repaso-invertido` `#A785D6` / `--celeste-900` (etiqueta del dorso) | 3.72:1 — pasa 3:1 no-texto (ya medido arriba; es el límite contra la cara) | Ídem |
+| **(SUPERADO)** Texto `--color-acento-repaso-100` `#EDE4F5` / fondo `--color-acento-repaso-700` (dorso) | 5.98:1 — pasa AA. Reemplaza al 9.09:1 sobre `--celeste-900` de la etiqueta sin fondo (**superado**) | Ídem |
 | `--color-acento-repaso-700` `#6B3FA0` / `--color-blanco` `#FFFFFF` | 7.38:1 | `brand-specialist`, ticket #91 (stat "Dominio de esta ficha") |
 | `--color-acento-repaso-invertido` `#A785D6` (**vigente**) / `--celeste-900` `#0A3D66` (borde del badge "Respuesta revelada") | **3.72:1 — pasa el piso no-texto de 3:1** (WCAG 1.4.11). Decisión del usuario de seguir el umbral de 3:1 (regla 19) | `brand-specialist`, rebanada `feat/tarjetas-rediseno`, medido (fórmula WCAG): L relativa 0.2985 contra 0.0436 |
 | `--color-acento-repaso-100` `#EDE4F5` (texto del badge) / `--celeste-900` `#0A3D66` | 9.09:1 | Ídem — el texto del badge se lee por sí mismo, sin depender del borde |
