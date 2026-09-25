@@ -332,14 +332,14 @@
    * invertidos (fondo --color-celeste-900); mismo patrón que --error-invertido
    * y --foco-invertido (ADR 0015), deuda que el ADR 0015 dejó anotada.
    * Método del ADR 0015: subir la L de #2E7C5A en HSL (H 153.8°, S 45.9%
-   * intactos) hasta pasar 4.5:1 con la fórmula WCAG. L 33.3% -> 49.3% da
-   * #44B885: 4.51:1 sobre --color-celeste-900 (--color-ok daba 2.21:1). Nunca
-   * sobre crema/blanco: ahí va --color-ok. Uso: el feedback de acierto del
-   * dorso de /tarjetas (ticket #132). Derivado por el frontend-specialist
-   * porque no pudo convocar al brand-specialist: PENDIENTE de su visto bueno
-   * y de registrarlo en la skill identidad-argentum.
+   * intactos) hasta pasar 4.5:1 con la fórmula WCAG. Primera derivación del
+   * frontend-specialist: L 49.3% -> #44B885, 4.51:1 (margen de 0.01, sin
+   * holgura). Corregido por el brand-specialist a L 53% -> #50BE8E: 4.86:1
+   * sobre --color-celeste-900 (--color-ok daba 2.21:1). Nunca sobre
+   * crema/blanco: ahí va --color-ok. Uso: el feedback de acierto del dorso
+   * de /tarjetas (ticket #132), texto de 16px semibold + ícono.
    */
-  --color-ok-invertido: #44B885;
+  --color-ok-invertido: #50BE8E;
 
   /* --alerta (ADR 0008): #B26A00 → #9F5F00. Sobre --color-alerta-bg: 4.52:1 (según el ADR; no remedido en este ticket). */
   --color-alerta:    #9F5F00;

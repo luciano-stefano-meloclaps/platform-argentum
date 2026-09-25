@@ -561,7 +561,8 @@ suben ni se bajan**: son una función pura del total de puntos.
 
 | Token | Valor | Fuente | Nota |
 | --- | --- | --- | --- |
-| `--ok` | `#2E7C5A` | v1, corregido ADR 0008 | **Falla 2.21:1 contra panel invertido** — no usar ahí, deuda abierta |
+| `--ok` | `#2E7C5A` | v1, corregido ADR 0008 | **Falla 2.21:1 contra panel invertido** — no usar ahí; ahí va `--ok-invertido` |
+| `--ok-invertido` (`--color-ok-invertido`) | `#50BE8E` | `brand-specialist`, ticket #132 (método ADR 0015: L 33.3% → 53% en HSL, H/S intactos) | **Exclusivo** de paneles invertidos, 4.86:1 sobre `--celeste-900`. Nunca sobre crema/blanco. Primer intento `#44B885` daba 4.51:1 (sin margen) y se corrigió. Uso: "Acertaste" en el dorso de `/tarjetas`, siempre con ícono y texto |
 | `--ok-bg` | `#E9F5EF` | v1 | — |
 | `--error` | `#C23A3A` | v1, corregido ADR 0008 | Fondos claros únicamente |
 | `--error-bg` | `#FBE9E9` | v1 | — |
@@ -652,8 +653,13 @@ familia de marca completa.
    sección 1 (puntos 6-12).
 6. `--error-invertido` solo existe dentro de un panel invertido. Fuera de un
    panel invertido se usa `--error`.
-7. `--ok` **no se usa dentro de un panel invertido** hasta que exista
-   `--ok-invertido` (deuda abierta).
+7. `--ok` **no se usa dentro de un panel invertido**: ahí va
+   `--ok-invertido` (`#50BE8E`, 4.86:1). El feedback de error en panel
+   invertido de `/tarjetas` («No era esa») va en blanco (`--color-foco-invertido`/
+   `--color-blanco`, 11.21:1) más ícono `info-circle` y texto, sin rojo:
+   decisión de no castigar, ratificada por el `brand-specialist`.
+   `--error-invertido` queda para errores de sistema, no para respuestas
+   equivocadas.
 8. El ornamento de v2 (cinta, `.shiny`, medallón, rombo, números romanos,
    gradientes metálicos) aplica **solo** donde v2 lo cubre explícitamente. No
    se extiende por estética a un componente que v1 ya resuelve de otra forma.
@@ -849,7 +855,12 @@ familia de marca completa.
 | `--dorado-text` `#9A6900` / Blanco `#FFFFFF` | 4.78:1 | `brand-specialist`, ticket #65 (ya medido en `globals.css:117-126`, no estaba en esta tabla) |
 | `--texto-terciario` `#7E705D` / `--crema` `#FBF7F0` | 4.51:1 | ADR 0008 |
 | `--ok` `#2E7C5A` / `--ok-bg` `#E9F5EF` | 4.53:1 | ADR 0008 |
-| `--ok` `#2E7C5A` / `--celeste-900` `#0A3D66` | **2.21:1 — falla** | Hallazgo ADR 0015, deuda abierta |
+| `--ok` `#2E7C5A` / `--celeste-900` `#0A3D66` | **2.21:1 — falla** | Hallazgo ADR 0015; resuelto con `--ok-invertido` |
+| `--ok-invertido` `#50BE8E` / `--celeste-900` `#0A3D66` | **4.86:1** (L rel. 0.4051 contra 0.0436) | `brand-specialist`, ticket #132 |
+| `#44B885` (**superado**, primer intento) / `--celeste-900` | 4.51:1 — pasaba por 0.01, sin holgura | Frontend-specialist, corregido |
+| Blanco / `--celeste-900` (feedback «No era esa», 16px semibold) | 11.22:1 | `/tarjetas`, ticket #132 |
+| `--texto-titulo` `#1F3B4D` / `--blanco` (`<kbd>` de la leyenda de atajos, 12px) | 11.73:1 | `brand-specialist`, ticket #133 |
+| `--texto-secundario` / `--color-bg` (leyenda de atajos, 12px) | 5.98:1 | Ídem |
 | `--error` `#C23A3A` / `--error-bg` `#FBE9E9` | 4.53:1 | ADR 0008 |
 | `--error` `#C23A3A` / `--crema` `#FBF7F0` | 4.97:1 | ADR 0015 |
 | `--error` `#C23A3A` / `--celeste-900` `#0A3D66` | **2.11:1 — falla, no usar ahí** | ADR 0015 |
