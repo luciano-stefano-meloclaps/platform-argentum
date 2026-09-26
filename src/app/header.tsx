@@ -1,3 +1,4 @@
+import { cerrarSesionDesdeNav } from "./header.acciones.ts";
 import { NavPrincipal } from "./nav-principal.tsx";
 
 /**
@@ -85,8 +86,14 @@ import { NavPrincipal } from "./nav-principal.tsx";
  *   ("include skip link for main content"). Cada página expone `id="contenido"`
  *   en su `<main>` para que el ancla tenga destino.
  *
- * Server Component: todo lo de acá es marcado estático: ni estado, ni
- * efectos, ni una sola API del navegador.
+ * Server Component estático, sin `async` (ticket #120, ADR 0020): el layout
+ * no lee la sesión en el servidor —ni `obtenerSesion()`, ni `headers()`, ni
+ * `cookies()`—, porque hacerlo volvía dinámicas todas las rutas y rompía el
+ * prerenderizado que exige el ADR 0016. Quien resuelve "Ingresar"/"Salir" es
+ * la isla de cliente `NavPrincipal`, con `authClient.useSession()`.
+ * `cerrarSesionDesdeNav` (`./header.acciones.ts`) viaja como prop, mismo
+ * patrón que la Server Action de un formulario: es serializable de servidor
+ * a cliente aunque `NavPrincipal` sea un Client Component.
  */
 export function Header() {
   return (
@@ -133,7 +140,7 @@ export function Header() {
           <span className="h-px flex-1 bg-accent" />
         </div>
 
-        <NavPrincipal />
+        <NavPrincipal cerrarSesion={cerrarSesionDesdeNav} />
       </div>
     </header>
   );

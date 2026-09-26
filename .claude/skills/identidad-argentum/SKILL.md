@@ -109,7 +109,7 @@ Cobre 0–500 `#FBEDE4`·`#8A4E1F` — Plata 501–1500 `#F1F3F5`·`#5B666F` —
 | Logotipo, `display`/`h1`/`h2`, cifras destacadas | Cormorant Garamond (`font-titulo`), **400** (ADR 0015) |
 | `h3`, kickers | Cormorant Garamond, 600 (h3: interpretación, v2 §8). Única excepción: el kicker del hero de home (`hero.tsx`) va en Lora 500, por decisión del usuario; no se replica |
 | Todo lo demás: cuerpo, labels, botones, chips, nav, meta, cifras de dashboard | Lora (`font-cuerpo`), 400/500/600 — reemplaza a Montserrat (ADR 0015) |
-| Carga | `next/font/google` en `layout.tsx` (`--font-cormorant-garamond` 400/600/700 + itálica, `--font-lora` 400/500/600). Nunca `@import` |
+| Carga | `next/font/google` en `layout.tsx` (`--font-cormorant-garamond` 400/600/700 + itálica, `--font-lora` 400/500/600). Nunca `@import`. Itálica de Cormorant: en uso real solo 400 (epíteto, pie de foto, pista, resumen del quiz); 600/700 se emiten porque `next/font` no elige peso por estilo, sin sumar descargas. Lora no se carga en itálica |
 
 | Token | Tamaño / interlineado / peso |
 | --- | --- |

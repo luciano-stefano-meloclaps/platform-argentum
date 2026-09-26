@@ -18,6 +18,7 @@
     "db:migrate": "node --env-file-if-exists=.env src/db/migrar.mts"
   },
   "dependencies": {
+    "better-auth": "1.7.5",
     "drizzle-orm": "0.45.2",
     "next": "16.3.4",
     "pg": "8.23.0",

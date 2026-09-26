@@ -27,6 +27,12 @@ import { FichaProcer } from "./ficha-procer.tsx";
  * función deja una rama sin `return` y `pnpm typecheck` falla igual.
  */
 
+/**
+ * ADR 0016, Regla 5: un slug fuera de `generateStaticParams` es 404 en el
+ * acto, sin renderizar por pedido ni consultar la base en runtime.
+ */
+export const dynamicParams = false;
+
 export async function generateStaticParams() {
   const slugs = await listarSlugs();
 
