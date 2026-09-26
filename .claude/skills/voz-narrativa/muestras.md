@@ -6,12 +6,12 @@ baja nada de internet y no se trabaja de memoria: se abre y se lee.
 Tiene dos partes y hay que leer las dos, porque el sentido está en la diferencia
 entre ellas.
 
-- **El destino** — dos textos que escribió el usuario. Así tiene que sonar la
-  prosa del catálogo. De acá salen todas las reglas de [`SKILL.md`](./SKILL.md),
-  incluidos sus números.
-- **El contraejemplo** — un texto publicado en el repositorio, escrito en el
-  registro llano que el proyecto tenía antes del **ADR 0012**. Está bien escrito
-  y **no es esta voz**. Sirve para reconocer, de un vistazo, en qué se cae.
+- **El destino** — cinco textos que escribió el usuario. Así tiene que sonar la
+  prosa del catálogo. De acá salen todas las reglas de [`SKILL.md`](./SKILL.md);
+  sus números, de contar las muestras 1 y 2 (Brown y César).
+- **El contraejemplo** — el texto de Belgrano anterior al PR #86, que estuvo
+  publicado en el repositorio, escrito en el registro llano que el proyecto
+  tenía antes del **ADR 0012**. Está bien escrito y **no es esta voz**. Sirve para reconocer, de un vistazo, en qué se cae.
 
 > El proyecto cambió de audiencia: de «un catálogo para que chicos aprendan» a
 > **chicos grandes y adultos, de doce años en adelante**. El motivo lo registra
@@ -25,7 +25,7 @@ entre ellas.
 
 Escritos por el usuario. Transcritos tal cual, sin corregir ni normalizar,
 incluidas las marcas de cita `[2], [3]` que vienen de la herramienta con la que
-se generaron. **Esas marcas no van en una ficha** (SKILL.md, sección 7); es lo
+se generaron. **Esas marcas no van en una ficha** (SKILL.md, sección 8); es lo
 único de estas muestras que no se copia.
 
 ### Muestra 1 — Almirante Brown
@@ -261,15 +261,15 @@ variar en una palabra según cómo se cuente un inciso con raya.
 Las muestras son el destino, no un dogma. Tres cosas de ellas quedan afuera:
 
 1. **Las marcas de cita `[2], [3]`.** Salen del texto; la procedencia va en el
-   comentario del archivo de contenido (SKILL.md, sección 7).
-2. **`«fuego estratégico»`, que aparece en las dos.** Una frase que describe
-   igual a un marino irlandés y a un patricio romano no describe a ninguno de los
-   dos. Es una repetición a evitar, no un sello.
+   comentario del archivo de contenido (SKILL.md, sección 8).
+2. **`«fuego estratégico»`, que aparece en tres muestras**: Brown, César y
+   Balduino IV. Una frase que describe igual a un marino irlandés, a un patricio
+   romano y a un rey cruzado no describe a ninguno de los tres. Es una repetición a evitar, no un sello.
 3. **`viri militares`, sin glosa.** Es el único término técnico de las muestras
    que pasa sin explicación, y contra la propia práctica de las muestras, que
    glosan *optimates*, *populares* y *dignitas*.
 
-Y una diferencia entre las dos que hubo que resolver: **la cadencia**. La
+Y una diferencia entre Brown y César que hubo que resolver: **la cadencia**. La
 semblanza de César alterna períodos largos con oraciones de 13, 16 y 19 palabras;
 la de Brown no baja de 27 en ninguna. La regla de `SKILL.md` está escrita del
 lado de César, porque esa alternancia es lo que hace que el período amplio se lea
@@ -279,9 +279,10 @@ en vez de aplastar. **Es una elección, y se puede revisar.**
 
 ## Parte 2 — El contraejemplo
 
-**Este es el texto viejo, ya no el publicado.** Fue la primera prosa del
-catálogo, en `contenido/procer/manuel-belgrano.ts`, hasta que el ticket #51
-reescribió `contexto` y `semblanza` en el registro de esta skill. Se conserva
+**Este es el texto anterior al PR #86, ya no el publicado.** Fue la primera
+prosa del catálogo, en `contenido/procer/manuel-belgrano.ts`, hasta que el
+ticket #51 —cerrado por el PR #86, commit `4d39813`— reescribió `contexto` y
+`semblanza` en el registro de esta skill. Se conserva
 acá porque es material calibrado: se escribió cuando el producto era para
 chicos, y **está bien escrita para lo que se pedía entonces**. Con el ADR 0012
 dejó de ser el destino y pasó a ser lo que hay que reconocer para no caer ahí.
@@ -332,6 +333,6 @@ adjetivos.** No dice «era generoso»: dice que pagó al médico con un reloj po
 no le quedaba otra cosa. Es exactamente el movimiento de los piratas del Egeo, en
 el registro equivocado.
 
-Ese es el punto de la comparación. **El registro cambia; el método no.** Y esta
-ficha, tal como está, **hay que reescribirla**: es la primera consecuencia
-práctica del ADR 0012.
+Ese es el punto de la comparación. **El registro cambia; el método no.** La
+ficha ya se reescribió —fue la primera consecuencia práctica del ADR 0012—, y
+este texto queda acá solo como contraejemplo.

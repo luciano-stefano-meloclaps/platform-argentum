@@ -63,8 +63,7 @@ Antes de proponer o escribir nada:
    como mínimo el **0002** (límite entre capas) y el **0003** (stack: Tailwind
    v4, sin librería de componentes ni de íconos).
 5. Mirá el estado real del repositorio. **No supongas que existe un archivo que
-   no viste.** Hoy hay esqueleto de Next.js con Tailwind v4 conectado, pero
-   todavía **no hay tokens `@theme`**: ese es el ticket #26 y es tuyo.
+   no viste.**
 
 Si vas a contradecir un ADR, **no lo hagas**: decilo y esperá. Ver sección 9.
 
@@ -192,7 +191,7 @@ pide. Es el principio de arquitectura del proyecto aplicado a tu área: el míni
 necesario, diseñado para poder crecer.
 
 **Las fuentes se cargan con `next/font/google`** —Cormorant Garamond y
-Montserrat—, no con el `@import` que aparece en el documento de marca. Lo dice el
+Lora (ADR 0015)—, no con el `@import` que aparece en el documento de marca. Lo dice el
 ADR 0008: auto-hospedadas, sin salto de layout y sin una petición a un tercero
 desde el navegador de quien lee.
 
@@ -234,10 +233,15 @@ donde v2 los reemplaza, ver tabla siguiente):
 | Gradiente `.au`, stop 50% | `#C79331` | **`#8B6722`** | `--color-bg` | 4.85:1 |
 | `--error-invertido` *(nuevo)* | No existía | **`#DE9191`** | `--celeste-900` | 4.58:1 |
 
-**Deuda pendiente, no resuelta todavía:** `--ok` vigente da 2.21:1 contra
-`--celeste-900` (panel invertido) — el mismo problema que motivó
-`--error-invertido`, sin resolver porque no hay pantalla de quiz real todavía.
-Si te llega ese ticket, `--ok-invertido` es tuyo, con el mismo método.
+El centro del gradiente `.au` ya no es `#8B6722`: lo reemplazó el dorado
+brillante que pidió el usuario, y su valor vigente vive en
+`--dorado-brillante-stops` de `globals.css` (ver `identidad-argentum`).
+
+**`--ok` no se usa en panel invertido:** da 2.21:1 contra `--celeste-900`.
+`--ok-invertido` se derivó y se retiró en el ticket #138 junto con su único
+consumidor, así que no es deuda: hoy ningún panel invertido muestra acierto.
+Si una pantalla vuelve a necesitarlo, lo derivás de nuevo con el método del
+ADR 0015.
 
 Y dos reglas de uso que no se arreglan cambiando un valor:
 
@@ -449,6 +453,14 @@ Tenés precargadas:
   coincide con los documentos de marca o los ADR, corregís la skill, nunca al
   revés. Actualizala vos mismo cuando derives un token nuevo o el usuario
   apruebe otro giro — no dejes que se desactualice en silencio.
+
+  **Regla de sincronía.** `src/app/globals.css` es la fuente del **valor** de
+  cada token; la skill lo cita. Todo diff que toque `@theme`, `:root` o las
+  clases de marca (`.au`, `.shiny`, `.filete-dorado`, `.au-dark` y las que
+  vengan) **actualiza la skill en el mismo cambio**, nunca en uno posterior.
+  La skill describe el **estado vigente**, nunca el proceso: sin filas
+  "superado", sin bitácora de iteraciones, sin "en esta tarea". El historial
+  queda en git.
 - **`building-components`** — usá `design-tokens.mdx` y `styling.mdx`, que son tu
   área. La mitad sobre distribución (`registry`, `npm`, `marketplaces`, `docs`)
   **no aplica**: hacemos un producto, no una biblioteca de componentes.
@@ -489,9 +501,9 @@ Nunca:
   celeste fuera de las excepciones ya escritas (dorso de la tarjeta, y las que
   agregó el ADR 0015 para paneles invertidos).
 - Uses el color como único portador de significado.
-- Elimines el indicador de foco sin definir uno mejor en el sistema. Hoy solo
-  el botón primario tiene uno definido (ADR 0015) — cualquier componente
-  nuevo necesita el suyo, no queda "para después".
+- Elimines el indicador de foco sin reemplazarlo. El sistema ya tiene uno
+  (`--color-foco` y `--color-foco-invertido`, ticket #96): todo componente
+  nuevo lo usa, o justifica uno mejor.
 - Apliques el look ornamental/animado que autorizó el ADR 0015 (gradientes,
   `.shiny`, cinta, medallón) a un componente que v2 no menciona. Ligas,
   categorías y el resto de v1 siguen en editorial, bordes finos.
