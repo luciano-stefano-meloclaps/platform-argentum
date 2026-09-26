@@ -15,7 +15,7 @@
     "db:ping": "node --env-file-if-exists=.env src/db/ping.mts",
     "contenido:importar": "node --env-file-if-exists=.env --disable-warning=MODULE_TYPELESS_PACKAGE_JSON src/catalogo/importacion/importar.mts",
     "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate"
+    "db:migrate": "node --env-file-if-exists=.env src/db/migrar.mts"
   },
   "dependencies": {
     "drizzle-orm": "0.45.2",
