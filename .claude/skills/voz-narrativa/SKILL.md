@@ -52,8 +52,8 @@ texto que intenta las dos audiencias no consigue ninguna.
 
 ## 2. Ritmo — se cuenta, no se estima
 
-Los números salen de **contar las cuatro muestras**. Son conteos manuales y
-pueden variar en una palabra según cómo se cuente un inciso con raya:
+Los números salen de **contar los cuatro textos de las muestras 1 y 2**
+(Brown y César). Son conteos manuales y pueden variar en una palabra según cómo se cuente un inciso con raya:
 
 | Texto | Oraciones | Palabras | Media | Máximo |
 | --- | ---: | ---: | ---: | ---: |
@@ -75,7 +75,7 @@ De ahí salen las reglas:
 4. **Los párrafos dicen una sola cosa.** El contexto puede ser un párrafo único;
    la semblanza rara vez pasa de tres.
 
-**Acá las dos muestras no coinciden, y hay que decirlo.** La semblanza de César
+**Acá Brown y César no coinciden, y hay que decirlo.** La semblanza de César
 cumple la cadencia con holgura —tiene oraciones de 13, 16 y 19 palabras entre los
 períodos largos— y la de Brown no tiene ninguna por debajo de 27. La regla está
 escrita del lado de César, porque esa alternancia es lo que separa un período
@@ -126,7 +126,7 @@ narrador cuenta, no le habla al lector. Sin españolismos (*coger*, *ordenador*,
 
 **Ortografía completa.** Tildes todas, incluidas las de mayúscula. Apertura de
 interrogación y exclamación (`¿`, `¡`). Comillas latinas «» o rectas `"`. **Raya
-de inciso —así—**, que en este registro es un signo de trabajo: las dos muestras
+de inciso —así—**, que en este registro es un signo de trabajo: Brown y César
 la usan para incrustar la glosa sin romper el período.
 
 **Prohibido sin excepción:** emoji, negritas o cursivas de énfasis dentro de la
@@ -149,13 +149,14 @@ Capitolio—.
   un adorno.
 - **No se mezcla.** Un personaje no puede ser a la vez un faro, una aleación y
   una semilla. Dos familias de imágenes en el mismo texto se anulan.
-- **Se cobra al final.** Los dos contextos cierran con una imagen de la misma
+- **Se cobra al final.** Los contextos de Brown y César cierran con una imagen de la misma
   familia que abrió —«la clave de bóveda», «el mármol del Capitolio»—. Abrir una
   metáfora y no volver a ella es dejar la deuda impaga.
-- **No se reutiliza entre fichas.** *«En su interior ardía un fuego
-  estratégico»* aparece en las dos muestras, aplicado a un marino irlandés y a un
-  patricio romano. Una frase que sirve para los dos **no describe a ninguno**. Es
-  el único defecto que las muestras comparten, y no se hereda.
+- **No se reutiliza entre fichas.** El «fuego estratégico» aparece en tres
+  muestras —Brown, César y Balduino IV—, aplicado a un marino irlandés, a un
+  patricio romano y a un rey cruzado. Una frase que sirve para los tres **no
+  describe a ninguno**. Es el único defecto que las muestras comparten, y no
+  se hereda.
 
 **La prueba del traslado:** copiá la frase a la ficha de otro personaje. Si sigue
 funcionando igual, no dice nada y se reescribe. Es el control más rápido que hay

@@ -268,3 +268,42 @@ principio de arquitectura del proyecto prohíbe.
 contraseña no tiene, hoy, forma de recuperarla sin intervención manual del
 usuario del proyecto contra la base. Es la deuda técnica que el ADR 0019 ya
 declaró aceptada.
+
+---
+
+## 7. El alcance del agente de testing previsto
+
+**Qué está pendiente.** Cuando llegue el agente de testing, que ya está previsto
+como quinto especialista del nivel 3 (ver `CLAUDE.md`), ¿escribe él las
+pruebas, o cada dueño de área sigue escribiendo las de lo suyo y él las revisa?
+Y en cualquiera de los dos casos, ¿qué herramientas y qué dobles puede traer al
+proyecto?
+
+**Por qué no se decide hoy.** El agente no existe, y las pocas pruebas que hay
+las escribió el dueño de cada área sin fricción observable. Con ese volumen no
+hay evidencia de cuál de las dos formas conviene. Lo que sí apareció en la
+auditoría de agentes de septiembre de 2026 son tres límites que, si no se
+escriben ahora, el agente podría cruzar sin darse cuenta el día que llegue.
+Esos límites no deciden la pregunta de arriba: acotan cualquier respuesta.
+
+**Disparador.** Se crea el archivo del agente de testing en `.claude/agents/`.
+El ADR que lo define se escribe **antes** de crearlo, y nace con estos tres
+límites. Si pretende cambiar alguno, lo tiene que justificar ahí mismo.
+
+**Regla interina.** Cada especialista escribe las pruebas de su área, y el
+`delivery-specialist` lista en su informe de cierre cada criterio de aceptación
+del ticket: los verificados, con el comando o la prueba que los cubre, y los
+que quedan «a verificar por el usuario». A esto se suman tres límites que
+también van a regir para el agente cuando llegue:
+
+1. **Sin dobles de la base.** Las pruebas de los módulos corren contra
+   PostgreSQL real en Docker. El ADR 0018 pospuso el puerto de salida
+   apoyándose justamente en eso. Un doble en memoria de `db` reabriría el
+   ADR 0018 por la puerta de atrás, sin su disparador (entrada 5).
+2. **Sin Testing Library ni navegador.** No se agregan hasta que una pantalla
+   concreta tenga un comportamiento que solo se pueda verificar así, y hoy
+   ninguna lo tiene. Esa dependencia nueva pasa por la regla de la puerta del
+   arquitecto, como cualquier otra.
+3. **Las pruebas de la guarda del destino y de las migraciones siguen siendo
+   del `database-specialist`**, porque verifican una invariante de la base
+   (ADR 0023), no un comportamiento de producto.

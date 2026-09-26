@@ -1,6 +1,7 @@
 import { drizzle } from "drizzle-orm/node-postgres";
 
 import { entidad } from "../../db/esquema.ts";
+import { evaluarDestino } from "../../db/guarda-de-destino.mts";
 import {
   leerContenidoCurado,
   ubicacionEnElRepositorio,
@@ -93,12 +94,18 @@ async function main(): Promise<void> {
     return fallar("no hay ninguna ficha en `contenido/`. No hay nada que importar.");
   }
 
+  // La guarda corre antes de abrir la conexión (ticket #122): decide con
+  // el host, sin red, y solo informa el host.
+  const guarda = evaluarDestino(process.env.DATABASE_URL, process.env.DB_CONFIRMAR_DESTINO);
+
+  if (!guarda.permitido) {
+    return fallar(`${guarda.motivo} No se escribió nada.`);
+  }
+
   const url = process.env.DATABASE_URL;
 
   if (!url) {
-    return fallar(
-      "falta la variable de entorno DATABASE_URL. Copiá `.env.example` a `.env` y completala.",
-    );
+    return fallar("falta la variable de entorno DATABASE_URL.");
   }
 
   const destino = describirDestino(url);

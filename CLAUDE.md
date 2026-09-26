@@ -58,13 +58,11 @@ simplifica y no se baja de tono.** La regla verificable vive en la skill
 chicos** —otra lengua y quizás otro diseño— está **pospuesta, no cancelada**, con
 su disparador y su regla interina en `docs/decisiones-pendientes.md`.
 
-Ese cambio es reciente y **queda documentación vieja**: el `README.md` y las
-secciones de audiencia del `frontend-specialist`, el `ui-reviewer`, el
-`brand-specialist` y la skill `revision-de-ui` todavía dicen «lo usan chicos de
-ocho años». Sus **requisitos** siguen vigentes —contraste AA, objetivos táctiles,
-`prefers-reduced-motion`, el color como no-único portador de significado—; lo que
-envejeció es la justificación. Igual que el ADR 0008, cuyos valores no se tocan y
-cuya sección 8 quedó sin objeto.
+Los **requisitos** de accesibilidad que antes se justificaban con un lector de
+ocho años siguen vigentes —contraste AA, objetivos táctiles,
+`prefers-reduced-motion`, el color como no-único portador de significado—; lo
+que cambió es la justificación. La sección 8 del ADR 0008 quedó sin objeto, y
+sus valores no se tocan.
 
 **Stack decidido:** Next.js 16 · React 19 · TypeScript · PostgreSQL · Drizzle
 ORM · Zod · Tailwind v4 · Vitest (ADR 0003 y 0005). Despliegue en Vercel, base
@@ -364,8 +362,8 @@ Una consecuencia que arrastra y conviene tener presente: **el criterio de
 aceptación del ticket #30 —«redactado para chicos»— quedó falso** y lo corrige
 el `delivery-specialist` cuando el usuario se lo lleve. La otra ya está
 saldada: la semblanza de `contenido/procer/manuel-belgrano.ts` estaba en el
-registro llano y **se reescribió en registro épico** (commit `4d39813`, ticket
-#86).
+registro llano y **se reescribió en registro épico** (ticket #51, PR
+#86, commit `4d39813`).
 
 **`historiador-specialist` (ADR 0014).** Igual que el narrador, **no es par**
 de los tres especialistas: trabaja dentro del área del `backend-specialist`, y
@@ -676,9 +674,10 @@ el viejo en silencio.
   catálogo la cita**. Sus muestras están versionadas en
   `.claude/skills/voz-narrativa/muestras.md`, con el mismo criterio que
   `revision-de-ui`: no se baja nada de internet. Sus números —media de oración,
-  techo y cadencia— están **calibrados contando esas cuatro muestras**, así que
-  se cuentan, no se estiman. La ficha de Belgrano figura ahí como
-  **contraejemplo**: es el registro llano que el ADR 0012 dejó atrás. Desde el
+  techo y cadencia— están **calibrados contando los cuatro textos de las muestras 1 y 2**, así que
+  se cuentan, no se estiman. El texto de Belgrano **anterior al PR #86** figura ahí
+  como **contraejemplo**: es el registro llano que el ADR 0012 dejó atrás; la
+  ficha vigente ya está en registro épico. Desde el
   ADR 0014 incluye también la regla de **neutralidad ante disputas políticas**
   (sección 7): se narra el hecho duro sin eufemismo, y se agrega un contrapunto
   breve para las interpretaciones en disputa de una lista acotada, sin tomar

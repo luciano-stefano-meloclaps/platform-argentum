@@ -1,6 +1,6 @@
 # 0006 — Infraestructura: Vercel y Neon, con PostgreSQL local en Docker
 
-- **Estado:** Aceptado
+- **Estado:** Aceptado. **Supersedido parcialmente por el [ADR 0023](0023-bases-separadas-por-entorno-y-guarda-del-destino.md)**: «una rama de base por pull request» pasa a ser una rama fija `preview`. El resto sigue vigente.
 - **Fecha:** 2026-08-30
 - **Decide:** Luciano Melo Claps
 
