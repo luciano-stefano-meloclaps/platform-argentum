@@ -203,17 +203,17 @@
   /*
    * --- Acento morado de repaso (ticket #91, formalizado por el
    * `brand-specialist`) ---
-   * Nace como hex suelto en `tarjetas-repaso.tsx` para el tag de
-   * "dominio/temática de la tarjeta" y el badge "Respuesta revelada" del
-   * dorso — el ticket #91 pedía explícitamente NO usar dorado ni celeste
-   * ahí (esos dos ya tienen significado propio: logros/marca y estructura
-   * de interfaz). Se formaliza como token porque se usa en dos lugares de
-   * la misma pantalla con un rol semántico estable ("acento de repaso"),
-   * no como decoración puntual.
+   * Nace en el ticket #91 como acento de "dominio/temática" de la pantalla
+   * de repaso, con la consigna de NO usar dorado ni celeste (esos dos ya
+   * tienen significado propio: logros/marca y estructura de interfaz).
+   * Hoy la etiqueta de categoría de /tarjetas usa --color-cat-*; este
+   * acento sigue vivo en el stat "Dominio de esta ficha"
+   * (`franja-de-datos.tsx`) y en el resultado del quiz
+   * (`resultado-quiz.tsx`).
    *
    * Contraste medido (fórmula WCAG, luminancia relativa):
-   *   texto / fondo propio (el pill):      #6B3FA0 / #EDE4F5 → 5.98:1
-   *   texto / --color-blanco (stat "Dominio de esta ficha"): → 7.38:1
+   *   #6B3FA0 / #EDE4F5 (-700 sobre -100):                  5.98:1
+   *   #6B3FA0 / --color-blanco (stat "Dominio de esta ficha"): 7.38:1
    * Los dos pasan AA con margen.
    *
    * ⚠️ Riesgo señalado, no bloqueante: este morado queda MUY cerca del de
@@ -233,6 +233,41 @@
    */
   --color-acento-repaso-100: #EDE4F5;
   --color-acento-repaso-700: #6B3FA0;
+
+  /*
+   * --- /tarjetas: valores EXACTOS de la especificación, PROVISORIOS ---
+   * Decisión explícita del usuario. La especificación de /tarjetas pedía
+   * dos hex que la rampa de la marca no tiene: #8A5E12 (dorado de texto) y
+   * #F5FAFF (fondo de la cara frontal de la carta). Se habían mapeado a
+   * --color-accent-700 (#94691A) y --color-celeste-50 (#EAF4FE); el usuario
+   * pidió en cambio los valores exactos, como tokens de USO ACOTADO a
+   * /tarjetas. Por eso el sufijo `-provisorio`: quedan pendientes del visto
+   * bueno del usuario, que después decidirá si extiende los colores exactos
+   * a toda la página (y cambia la variable global). Hasta entonces
+   * --color-accent-700 y --color-celeste-50 NO se tocan, y estos dos no se
+   * usan fuera de /tarjetas. Nombre y valor NO son un escalón de la rampa:
+   * en particular, --color-tarjetas-carta-provisorio NO resucita
+   * --celeste-25 (descartado en el ticket #88 como escalón de la rampa
+   * celeste); es un valor de una sola pantalla.
+   *
+   * --color-tarjetas-dorado-provisorio: #8A5E12. Texto grande, plano (sin
+   * `.au`): el <h1> "Tarjeta N" (40px) y el valor "Racha actual" (24px).
+   *   sobre --color-crema (#FBF7F0):  5.33:1 — pasa AA normal y AA-large.
+   *   sobre --color-blanco (#FFFFFF): 5.69:1 — pasa AA normal y AA-large.
+   * Es más oscuro que --color-accent-700 (4.58:1 / 4.89:1), así que no hay
+   * regresión de contraste; el sistema ya usó #8A5E12 como extremo del
+   * gradiente dorado antes del paso 5 de `.au`.
+   *
+   * --color-tarjetas-carta-provisorio: #F5FAFF. Fondo de la cara frontal de
+   * la carta. Contraste sobre él (fórmula WCAG; luminancia de #F5FAFF = 0.950):
+   *   --color-texto-titulo (#1F3B4D):          11.17:1
+   *   --color-texto-secundario (#6B5D4A):       6.08:1
+   *   `.au` centro #FFD250 (numerales romanos): 1.37:1 — decorativo,
+   *     aria-hidden, aceptado por rol (regla 16 de `identidad-argentum`).
+   *   --color-celeste-150 (#BFE0FC, bordes y filetes): 1.31:1 — decorativo.
+   */
+  --color-tarjetas-dorado-provisorio: #8A5E12;
+  --color-tarjetas-carta-provisorio:  #F5FAFF;
 
   /* --- Neutrales cálidos (§3) — la clave anti-gubernamental --- */
   --color-crema:             #FBF7F0; /* fondo de página principal — nunca blanco puro */
@@ -696,6 +731,30 @@
 
   --gradiente-filete: linear-gradient(90deg, var(--dorado-brillante-stops));
   --gradiente-au: linear-gradient(100deg, var(--dorado-brillante-stops));
+
+  /*
+   * `--gradiente-filete-invertido` — filete decorativo del dorso de la
+   * tarjeta de repaso (panel invertido, fondo --color-celeste-900), a pedido
+   * del usuario (spec de /tarjetas, ticket #91). ESTÁTICO y SIN banda de
+   * brillo: no es `.filete-dorado`, que es el dorado brillante animado del
+   * header y no lo cubre v2 fuera de ahí (regla de uso 8). Degradé claro que
+   * se desvanece a transparente en los dos extremos: centro --color-accent-300
+   * (#F7DE9B, 8.48:1 sobre #0A3D66), punto más claro #FFF3D0 (el mismo centro
+   * de `.au-dark`, 10.14:1 sobre #0A3D66). Los extremos son transparentes,
+   * así que no hay par de contraste que medir en ellos; el elemento es
+   * decorativo (`aria-hidden`, sin texto). Dorado sobre celeste está
+   * autorizado acá por la excepción del dorso / paneles invertidos (v1 §7,
+   * ADR 0015). Uso: `bg-[image:var(--gradiente-filete-invertido)]` con
+   * `h-[2px] w-[70px]`.
+   */
+  --gradiente-filete-invertido: linear-gradient(
+    90deg,
+    transparent,
+    var(--color-accent-300),
+    #fff3d0,
+    var(--color-accent-300),
+    transparent
+  );
 }
 
 /*
