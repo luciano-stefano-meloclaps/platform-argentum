@@ -268,3 +268,63 @@ principio de arquitectura del proyecto prohíbe.
 contraseña no tiene, hoy, forma de recuperarla sin intervención manual del
 usuario del proyecto contra la base. Es la deuda técnica que el ADR 0019 ya
 declaró aceptada.
+
+## 7. Dividir el backend en más de un agente
+
+**Qué está pendiente.** ¿Conviene partir al `backend-specialist` —hoy dueño de
+los cinco módulos— en más agentes: uno por módulo, o uno por función
+transversal (autorización, validación, auditoría de límites)?
+
+**Por qué no se decide hoy.** El arquitecto y el `backend-specialist` lo
+revisaron juntos a pedido del usuario, que buscaba repartir mejor el trabajo y
+reducir la carga de contexto de un solo agente. Conclusión: **no todavía**. Se
+probaron tres líneas de corte y las tres fallan, cada una por una razón
+distinta:
+
+- **Por módulo** (un agente por `catalogo`, `moderacion`, `aprendizaje`,
+  `progreso`, `identidad`): hoy `catalogo` es el único módulo con una rebanada
+  entregada, y los otros cuatro todavía no existen en código. `identidad` ya
+  tiene su ADR (0019, aceptado) pero sin implementar, y `moderacion` es fase
+  posterior. Los módulos están acoplados por el mismo descriptor (ADR 0001):
+  `aprendizaje` lee entidades de `catalogo` para sus distractores, y
+  `moderacion` va a escribir entidades que `catalogo` lee. La mayoría de las
+  rebanadas tempranas cruzan más de un módulo, así que partir convierte un
+  cambio que hoy resuelve un solo agente en coordinación entre dos por mensaje:
+  el costo que el ADR 0002 usó para descartar microservicios («separar en
+  procesos no crea buenos límites: solo los vuelve caros de cruzar»), aplicado
+  a agentes en vez de procesos.
+- **Un auditor de límites entre módulos**, análogo al `ui-reviewer`: sobra,
+  porque la invariante que auditaría —la capa web no toca la base— **ya la hace
+  cumplir el compilador** vía `server-only` (ADR 0002, Consecuencias). El
+  `ui-reviewer` existe porque la accesibilidad no es verificable por `tsc`; esta
+  invariante sí.
+- **Un agente de autorización o de validación**, separado del módulo:
+  contradice el ADR 0002 en su propio motivo, que pide la autorización **inline,
+  en el punto de acceso a datos de cada función**, no en una capa. Un agente
+  definido como «autorización» tiene el incentivo de extraer una abstracción
+  reusable (`canX()`, un middleware) para tener algo propio, que es la capa que
+  el ADR pide evitar. Con validación pasa lo mismo por el ADR 0001: el
+  descriptor Zod ya es la fuente única; un dueño aparte repite ese conocimiento
+  o queda de envoltorio de `.parse()`.
+
+Tampoco hace falta para repartir contexto: el `delivery-specialist` invoca al
+`backend-specialist` **un ticket por vez**, así que el contexto por invocación
+ya está acotado al ticket, no a los cinco módulos. Y aunque se dividiera, no
+habilitaría paralelismo: el reparto de un ticket a la vez existe para que el
+diff se pueda separar en commits, y cambiarlo es una decisión de otro nivel,
+no una división del `backend-specialist`.
+
+**Disparador.** Que `identidad` deje de ser una porción más del dominio y pase
+a ser una disciplina de la que dependen los otros módulos: el primer módulo
+distinto de `identidad` que tenga que invocar la verificación de sesión o de rol
+de `identidad` para autorizar una función suya (`progreso` atado a una cuenta,
+`moderacion` con roles). El ADR 0019 ya cumplió la mitad del disparador original
+—la fase de cuentas está aprobada—, pero dejó `identidad` **sin conectar** a
+`progreso`: mientras nadie más la consuma, sigue siendo una porción y no una
+disciplina. Es el mismo tipo de corte que separó al `brand-specialist` (una
+disciplina que el resto consume) de construir pantallas, no un corte por
+volumen de trabajo.
+
+**Regla interina.** El `backend-specialist` sigue siendo dueño de los cinco
+módulos. No se crea ningún agente de backend nuevo, ni por módulo ni transversal,
+y la autorización sigue inline dentro de cada función del módulo.

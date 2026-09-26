@@ -1,10 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useRef } from "react";
+import { useFormStatus } from "react-dom";
+
+import { authClient } from "./auth-cliente.ts";
+import { debeRefrescarSesion } from "./nav-refresco.ts";
 
 /**
- * Los 12 ítems de la Nav/TabsBar de tipografía pura (ticket #82), en el
+ * Los ítems estáticos de la Nav/TabsBar (más el dinámico Ingresar/Salir) de tipografía pura (ticket #82), en el
  * orden exacto que pide el ticket. Hoy hay pantalla real para "Explorar"
  * (`/`, `src/app/page.tsx`), "Ficha" (`/ficha`, `src/app/ficha/page.tsx`) e
  * "Índice" (`/catalogo`, `src/app/catalogo/page.tsx`) — el resto
@@ -17,6 +22,12 @@ import { usePathname } from "next/navigation";
  * (`/quiz`, `src/app/quiz/page.tsx`) y "Resultado" en el #107
  * (`/quiz/resultado`, creada por el #106); las tres se renderizan como link,
  * igual que "Explorar", "Ficha" e "Índice".
+ *
+ * "Ingresar" salió de esta lista estática en el ticket #114: ya no es un
+ * botón inerte, es el ítem dinámico que se arma más abajo a partir de
+ * `sesionActiva` — "Ingresar" (link a `/ingresar`) o "Salir" (Server Action
+ * que cierra la sesión), la señal visible de en cuál de los dos estados está
+ * el visitante. Se renderiza en la misma posición, al final.
  */
 const ITEMS = [
   { etiqueta: "Explorar", href: "/" },
@@ -30,7 +41,6 @@ const ITEMS = [
   { etiqueta: "Resultado", href: "/quiz/resultado" },
   { etiqueta: "Perfil" },
   { etiqueta: "Usuarios" },
-  { etiqueta: "Ingresar" },
 ] as const;
 
 /**
@@ -76,6 +86,22 @@ const clasesBase =
  */
 const clasesActivo = "border-b-celeste-text text-celeste-text";
 
+/** "Salir" con estado de envío: se deshabilita mientras la acción corre, para no dispararla dos veces. `useFormStatus` exige ser hijo del `<form>`. */
+function BotonSalir() {
+  const { pending } = useFormStatus();
+
+  return (
+    <button type="submit" disabled={pending} className={`${clasesBase} disabled:cursor-wait disabled:opacity-60`}>
+      Salir
+    </button>
+  );
+}
+
+type Props = {
+  /** Server Action que cierra la sesión (`./header.acciones.ts`), pasada como prop por el mismo motivo que cualquier Server Action se pasa de un Server Component a un Client Component. */
+  cerrarSesion: () => Promise<void>;
+};
+
 /**
  * Nav/TabsBar de tipografía pura (ticket #82), reemplazo del `NavPrincipal`
  * con subrayado grueso y fondo `rounded-sm`. Nav simple, no widget ARIA
@@ -87,9 +113,59 @@ const clasesActivo = "border-b-celeste-text text-celeste-text";
  * Contenedor: ancho completo del header (sin `max-width` propio, se centra
  * por `justify-content`), `flex-wrap` deja 2-3 líneas en mobile —nunca
  * hamburguesa ni scroll horizontal— cada una centrada.
+ *
+ * El último ítem (tickets #114 y #120, ADR 0020) es dinámico y su estado sale
+ * de `authClient.useSession()`, en el navegador: el `Header` es estático y no
+ * lee la sesión en el servidor. Dos estados, siempre con el mismo ancho
+ * (una grilla de una celda, con la visible como flex item para tener la misma caja que el resto de la nav donde se apilan las dos etiquetas y la que no se
+ * ve queda `invisible`, así el ancho es el de la más larga y nada se corre
+ * al llegar la respuesta):
+ *
+ * - Cargando o sin sesión: `<Link>` a `/ingresar`. Nunca "Salir" antes de
+ *   confirmar la sesión (ADR 0020, Regla 3); y como "Ingresar" es un link
+ *   real, sirve también sin JavaScript.
+ * - Con sesión confirmada: `<form>` de un solo botón "Salir".
+ *
+ * Refresco (ADR 0020, Regla 5). Las señales de `useSession()` solo se
+ * disparan con llamadas hechas desde el cliente de Better Auth
+ * (`atomListeners`, `$sessionSignal`), y el login/logout acá son Server
+ * Actions, así que el estado quedaría viejo. Se llama a `refetch()`
+ * (documentación de Better Auth, "Manually refetch session"):
+ * - tras el logout, dentro de la propia acción del formulario, antes de
+ *   navegar a la home;
+ * - tras el login por email o el registro, solo cuando la ruta anterior era
+ *   una de `RUTAS_DE_ENTRADA` (`/ingresar`, `/registrarse`; la acción redirige
+ *   a `/`). Navegar entre otras rutas no pide nada: la sesión se lee una vez
+ *   por carga, más el refresco por foco de ventana que Better Auth trae por
+ *   defecto. Google no necesita nada (redirección completa, recarga la
+ *   página). La decisión vive en `nav-refresco.ts`.
+ *
+ * Solo es una señal de interfaz: autorizar sigue siendo del módulo, con
+ * `obtenerSesion()` (ADR 0020, Regla 4).
  */
-export function NavPrincipal() {
+export function NavPrincipal({ cerrarSesion }: Props) {
   const pathname = usePathname();
+  const router = useRouter();
+  const { data, isPending, refetch } = authClient.useSession();
+  const sesionActiva = !isPending && data !== null && data !== undefined;
+
+  const pathnameAnterior = useRef(pathname);
+  useEffect(() => {
+    const anterior = pathnameAnterior.current;
+    if (anterior === pathname) return;
+    pathnameAnterior.current = pathname;
+    if (debeRefrescarSesion(anterior, pathname)) void refetch();
+  }, [pathname, refetch]);
+
+  async function salir() {
+    try {
+      await cerrarSesion();
+    } finally {
+      // Aunque la acción falle, la nav vuelve a preguntar cuál es el estado real.
+      await refetch();
+    }
+    router.push("/");
+  }
 
   return (
     <nav aria-label="Principal" className="flex flex-wrap items-center justify-center gap-x-xs gap-y-0 pt-[6px]">
@@ -115,6 +191,28 @@ export function NavPrincipal() {
           </Link>
         );
       })}
+
+      <div className="inline-grid">
+        <div className="col-start-1 row-start-1 flex">
+          {sesionActiva ? (
+            <form action={salir}>
+              <BotonSalir />
+            </form>
+          ) : (
+            <Link
+              href="/ingresar"
+              aria-current={esActivo(pathname, "/ingresar") ? "page" : undefined}
+              className={esActivo(pathname, "/ingresar") ? `${clasesBase} ${clasesActivo}` : clasesBase}
+            >
+              Ingresar
+            </Link>
+          )}
+        </div>
+        {/* Reserva de ancho: la etiqueta que no se muestra, invisible y fuera del árbol de accesibilidad. */}
+        <span aria-hidden="true" className={`col-start-1 row-start-1 invisible ${clasesBase}`}>
+          {sesionActiva ? "Ingresar" : "Salir"}
+        </span>
+      </div>
     </nav>
   );
 }

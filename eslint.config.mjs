@@ -148,7 +148,17 @@ const configuracion = [
     // (por ejemplo `Tipo`, de `descriptores/registro.ts`) es tan parte del
     // interior que hay que pedirle a `catalogo.ts` como cualquier otra cosa,
     // no una excepción al límite.
+    //
+    // Ticket #112, ADR 0019: mismo tratamiento para `identidad` que para
+    // `catalogo`, con la excepción del propio módulo apuntando a
+    // `identidad.ts` (su interfaz pública). Se excluye por completo
+    // `src/app/api/auth/[...all]/route.ts` de este bloque (`ignores`, no una
+    // excepción más al patrón): esa ruta es la única nombrada por el ADR 0019
+    // (Regla 3) que necesita la instancia cruda de Better Auth
+    // (`identidad/auth.ts`) en vez del contrato de dominio del módulo, porque
+    // sirve el protocolo propio de Better Auth, no una llamada de negocio.
     files: archivosCapaWeb,
+    ignores: ["src/app/api/auth/**"],
     rules: {
       "no-restricted-imports": [
         "error",
@@ -162,6 +172,11 @@ const configuracion = [
               group: ["**/catalogo/**", "!**/catalogo/catalogo.ts"],
               message:
                 "Desde `src/app` solo se importa la interfaz pública del módulo, `catalogo/catalogo.ts` (ADR 0002).",
+            },
+            {
+              group: ["**/identidad/**", "!**/identidad/identidad.ts"],
+              message:
+                "Desde `src/app` solo se importa la interfaz pública del módulo, `identidad/identidad.ts` (ADR 0019).",
             },
           ],
         },
