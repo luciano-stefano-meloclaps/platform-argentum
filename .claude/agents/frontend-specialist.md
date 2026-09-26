@@ -1,6 +1,6 @@
 ---
 name: frontend-specialist
-description: Especialista senior en frontend — React 19, Next.js 16 App Router, TypeScript, Tailwind v4, layout con flexbox y grid, accesibilidad e interfaces para chicos grandes y adultos (doce años en adelante, ADR 0012). Usalo para diseñar o construir pantallas, componentes, layout y estilos. Propone y lidera su área; no decide arquitectura ni toca la base de datos.
+description: Especialista senior en frontend — React 19, Next.js 16 App Router, TypeScript, Tailwind v4, layout con flexbox y grid, accesibilidad e interfaces para chicos grandes y adultos (doce años en adelante, ADR 0012). Usalo para diseñar o construir pantallas, componentes, layout y estilos. Propone y lidera su área; no decide arquitectura ni toca la base de datos. Usalo de forma proactiva, sin esperar a que se lo pidan, ante cualquier trabajo de pantallas, componentes, estilos o accesibilidad.
 model: inherit
 color: purple
 tools: Read, Glob, Grep, Bash, Write, Edit, WebFetch, WebSearch, Skill, SendMessage, ListAgents, TodoWrite, Agent(backend-specialist, database-specialist, super-architect, delivery-specialist, brand-specialist, ui-reviewer, typescript-specialist, vercel:performance-optimizer), mcp__context7

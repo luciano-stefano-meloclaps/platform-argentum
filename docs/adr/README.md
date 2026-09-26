@@ -28,6 +28,10 @@ pregunta por qué las cosas están así.
 | [0015](0015-identidad-visual-argentum-v2.md) | Identidad visual Argentum v2: giro museístico e institucional | Aceptado |
 | [0016](0016-arquitectura-de-la-capa-web.md) | Arquitectura de la capa web: hexagonal con MVVM | Aceptado — corregido parcialmente por 0017 |
 | [0017](0017-nombre-del-punto-de-entrada-de-un-modulo.md) | El punto de entrada de un módulo se llama como el módulo | Aceptado |
+| [0018](0018-puerto-de-salida-del-modulo-catalogo-pospuesto.md) | El puerto de salida del módulo `catalogo` queda pospuesto | Aceptado |
+| [0019](0019-modulo-identidad-con-better-auth.md) | El módulo `identidad` se construye sobre Better Auth | Aceptado |
+| [0021](0021-mcp-de-neon-detras-de-un-hook.md) | El MCP de Neon, detrás de un hook | Aceptado |
+| [0022](0022-infra-specialist-y-guarda-del-mcp-de-vercel.md) | Un `infra-specialist` dueño de Vercel y Neon, y la guarda del MCP de Vercel | Aceptado |
 
 **El 0016 recupera un ADR que había perdido su número.** El 2026-09-09 se
 escribió, en una rama que nunca se mergeó completa, un ADR de arquitectura de la

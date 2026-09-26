@@ -154,10 +154,10 @@ El equipo tiene **tres niveles**, y cada uno decide una cosa distinta:
                         │
                 delivery-specialist     en cuántos pedazos, quién lo hace
                         │               y qué entra al historial
-      ┌─────────────────┼─────────────────┐
-      ▼                 ▼                 ▼
-  backend-          frontend-         database-      cómo se resuelve
-  specialist        specialist        specialist
+      ┌─────────────────┼─────────────────┬─────────────────┐
+      ▼                 ▼                 ▼                 ▼
+  backend-          frontend-         database-         infra-       cómo se
+  specialist        specialist        specialist        specialist   resuelve
       │                 │
  ┌────┴────┐   ┌────────┴────────┐
  ▼         ▼   ▼                 ▼
@@ -292,13 +292,28 @@ issue.
 
 ### Nivel 3 — Especialistas de área
 
-La implementación la hacen tres especialistas, en `.claude/agents/`:
+La implementación la hacen cuatro especialistas, en `.claude/agents/`:
 
 | Agente | Dueño de | No toca |
 | ------ | -------- | ------- |
 | `backend-specialist` | Los cinco módulos, contratos, autorización, validación, y el contenido curado de `contenido/` con su importación | Esquema, migraciones, interfaz |
 | `frontend-specialist` | Pantallas, componentes, estilos, accesibilidad | Base de datos, lógica de negocio |
-| `database-specialist` | Esquema, migraciones, índices, entornos de base | Lógica de negocio, interfaz |
+| `database-specialist` | Esquema, migraciones, índices; el MCP de Neon **solo para leer** | Lógica de negocio, interfaz, operar plataformas |
+| `infra-specialist` | Vercel, Neon y sus ramas, variables de entorno, despliegues, `docker-compose.yml`, `.env.example`, runbooks, CI futuro; el **único que escribe en Neon** (ADR 0022) | Esquema, `src/`, `contenido/`, interfaz, git, `.claude/` —incluidas sus propias guardas— |
+
+**`infra-specialist` (ADR 0022).** Dueño de **dónde corre el sistema y cómo se
+conecta**; el `database-specialist` sigue siendo dueño de **lo que hay adentro
+de la base**. La costura: el `database-specialist` escribe la migración y la
+prueba en Docker; si hace falta ensayarla con datos reales, el
+`infra-specialist` crea una rama descartable de Neon, la corre ahí, devuelve el
+resultado y la borra. **Migrar e importar en producción lo sigue ejecutando el
+usuario** (#121, #124): el `infra-specialist` prepara el runbook y el comando.
+Opera Neon **solo por el MCP** —nada de `neonctl`, que no pasa por la guarda—,
+nunca compra ni toca facturación, y **no edita sus guardas**: el criterio de
+`limitar-neon.sh`, `limitar-vercel.sh` y `limitar-vercel-mcp.sh` es suyo, el
+archivo lo escribe la sesión principal o el arquitecto, porque un agente que
+edita su propia guarda no tiene guarda. Lo convocan el arquitecto, el
+`delivery-specialist`, el `database-specialist` y el `backend-specialist`.
 
 Claude puede delegarles solo, o se los invoca con `@agent-<nombre>`.
 
@@ -487,7 +502,7 @@ de lo que traiga.
 | ------ | ---------- | -------- |
 | `vercel:performance-optimizer` | `frontend-specialist` | Core Web Vitals, estrategia de renderizado, caché, imágenes, tipografías, tamaño del paquete |
 | `vercel:ai-architect` | `super-architect` | Alternativas de plataforma cuando aparezca alcance de AI, que hoy no existe |
-| `vercel:deployment-expert` | `super-architect` | Diagnosticar un despliegue, un build o una variable de entorno |
+| `vercel:deployment-expert` | `infra-specialist` (ADR 0022; antes el arquitecto) | Diagnosticar un despliegue, un build o una variable de entorno |
 
 **Responsable quiere decir dueño de la conclusión, no mensajero.** Lo que el
 agente devuelve es una recomendación de vendor: la traduce a una decisión del
@@ -503,10 +518,40 @@ preguntar, y para cualquier escritura —`deploy`, `env add/rm`, `promote`,
 de ejecutarse, con el comando exacto a la vista. `deployment-expert` puede
 diagnosticar y ejecutar lo que propone, siempre bajo esa confirmación.
 
+**El MCP de Vercel tiene su propia guarda** (ADR 0022), porque una herramienta
+MCP no pasa por `Bash`: `limitar-vercel-mcp.sh` deja leer sin preguntar; pide
+confirmación, con la entrada completa a la vista, para toda escritura y para
+lo que trae o crea credenciales; agrega un aviso de **PRODUCCIÓN** para
+promover, rollback, pausar, dominios, DNS, firewall y lo que mencione
+`production`; y **deniega compras, facturación y cambios de propiedad de la
+cuenta** (`buy_*`, transferencias, `join_team`), que son del usuario desde el
+panel. Los agentes del plugin traen todas las herramientas, así que tampoco
+escriben en Neon: el hook de Neon se lo deniega.
+
+#### El plugin de Neon (ADR 0021)
+
+`neon-postgres@neon` —un servidor MCP que lee y escribe en Neon, más ocho
+skills— está habilitado **solo en la configuración personal del usuario**
+(`.claude/settings.local.json`), no para el equipo. No trae agentes. **Escribe
+en Neon únicamente el `infra-specialist`**; el `database-specialist` lo usa para
+leer y diagnosticar, y a cualquier otro subagente el hook le deniega todo lo
+que no sea lectura (ADR 0022). No hay skill propia de plataforma (el disparador
+está en el ADR 0022). La guarda no es un párrafo: `limitar-neon.sh` deja
+leer sin preguntar; pide confirmación para crear ramas, escribir en una rama
+descartable o traer credenciales; pide confirmación **con un aviso de
+PRODUCCIÓN** en mayúsculas para toda escritura en producción —sin `branchId` o
+sobre una rama protegida—, por decisión del usuario; y **deniega** las
+herramientas de migración del MCP (las migraciones van por drizzle-kit, ADR
+0005), crear o borrar proyectos, restaurar snapshots, y Neon Auth, Functions,
+Object Storage, Data API y AI Gateway. La regla de #121 y #124 queda así:
+**migrar e importar en producción lo ejecuta el usuario**, y **ninguna otra
+escritura en producción ocurre sin que el usuario la apruebe en el momento,
+viendo la sentencia**.
+
 #### Previsto, todavía no existe
 
 Un **agente de testing**, que el usuario ya anunció. Cuando llegue va al **nivel
-3**, como cuarto especialista de área: sería dueño de las pruebas y de la
+3**, como quinto especialista de área: sería dueño de las pruebas y de la
 configuración de Vitest, que son archivos concretos, y acá el permiso de
 escritura sigue a la propiedad exclusiva de un artefacto. **No va al nivel 2**,
 porque el nivel 2 no es dueño de ningún archivo y eso es precisamente lo que lo
@@ -733,6 +778,22 @@ el viejo en silencio.
   trato especial (antes se denegaba siempre por materializar credenciales de
   producción en disco): pasa por la misma confirmación que cualquier otra
   escritura.
+- `.claude/hooks/limitar-neon.sh` — el cuarto, y el único que no mira `Bash`:
+  mira las herramientas MCP de Neon (`mcp__…neon__*`), que los otros tres no
+  ven. Lista blanca de lectura; `ask` para ramas descartables, credenciales y
+  lo desconocido; `ask` **con aviso de PRODUCCIÓN** para escribir en
+  producción; `deny` para las migraciones del MCP, proyectos, snapshots y los
+  productos de Neon que el proyecto no eligió (ADR 0021). Se versiona aunque el
+  plugin sea personal: sin el plugin no matchea nada y no corre. Lee la
+  variable de entorno opcional `NEON_RAMAS_PROTEGIDAS` (ids `br-…` separados
+  por comas) para reconocer la rama de producción cuando se la nombra por id:
+  sin ella esa escritura igual pregunta, pero sin el aviso. Desde el ADR 0022
+  mira también **quién** llama: fuera de la lectura, solo el `infra-specialist`.
+- `.claude/hooks/limitar-vercel-mcp.sh` — el quinto: lo mismo para el MCP de
+  Vercel (`mcp__…vercel__*`), que `limitar-vercel.sh` no ve. Lectura libre;
+  `ask` para escrituras y credenciales, con la entrada a la vista; `ask` con
+  aviso de PRODUCCIÓN para lo que toca el sitio publicado; `deny` para
+  compras, facturación y propiedad de la cuenta (ADR 0022).
 - `.claude/settings.local.json` — configuración personal, ignorada por git.
 
 <!-- rtk-instructions v2 -->
