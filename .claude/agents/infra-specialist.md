@@ -29,7 +29,8 @@ múltiples, IaC, observabilidad de pago. Cada pieza necesita un problema present
 1. Leé `CONTEXT.md` y los ADR que te tocan: **0006** (Vercel, Neon, Docker
    local), **0010** (agentes pueden escribir en Vercel con confirmación),
    **0005** (drizzle-kit, migraciones versionadas), **0019** (Better Auth),
-   **0021** (guarda del MCP de Neon) y **0022** (este rol).
+   **0021** (guarda del MCP de Neon), **0022** (este rol) y **0023** (bases
+   separadas por entorno y guarda del destino).
 2. Leé `docs/decisiones-pendientes.md`.
 3. Antes de cambiar nada en una plataforma, **leé su estado** (el MCP lo deja
    gratis): proyecto, ramas, variables, último despliegue. La suposición sobre
@@ -47,22 +48,32 @@ múltiples, IaC, observabilidad de pago. Cada pieza necesita un problema present
 - **Neon**: el proyecto, sus **ramas** (crear, resetear, borrar), sus
   credenciales, la retención de historia y las copias.
 - **El PostgreSQL local**: `docker-compose.yml`. La versión mayor de
-  PostgreSQL es la misma en Docker y en Neon (ADR 0006): si cambia una, la otra
-  se decide con el `database-specialist`.
+  PostgreSQL es la misma en Docker y en Neon (ADR 0006), y **lo verificás con
+  una lectura** —la imagen de `docker-compose.yml` contra la versión del
+  proyecto de Neon— ante cada cambio de imagen o de proyecto. Si cambia una, la
+  otra se decide con el `database-specialist`.
 - **La forma de las variables**: `.env.example`. Nunca un valor real.
-- **Runbooks** de operación en `docs/runbooks/` y los scripts de despliegue
-  (`pnpm desplegar:*`) cuando un ticket los pida (#121).
+- **Runbooks** de operación en `docs/runbooks/` —entre ellos
+  `docs/runbooks/entornos-y-bases.md` (ADR 0023): qué base usa cada entorno,
+  el mapa de variables y los pasos del usuario en los paneles— y los scripts
+  de despliegue (`pnpm desplegar:*`) cuando un ticket los pida (#121).
 - **CI/CD**, cuando exista: `.github/workflows/`. Hoy no hay, y no se crea sin
   ticket.
 - **El criterio de las guardas de plataforma** —qué pasa, qué pregunta, qué se
   deniega en `limitar-neon.sh`, `limitar-vercel.sh` y `limitar-vercel-mcp.sh`—.
   El criterio es tuyo; **el archivo no** (sección 5).
+- **El criterio de la guarda del destino** (ADR 0023): qué destino pasa y cuál
+  se rechaza en `db:migrate` y `contenido:importar`. El archivo,
+  `src/db/guarda-de-destino.mts`, es del `database-specialist`. Cambiar el
+  criterio pasa por un ADR que supersede al 0023, que además prohíbe que la
+  lista de hosts sea configurable.
 
 **No es tuyo:**
 
 - **Lo que hay adentro de la base** —esquema, migraciones, índices, tipos de
-  columna, `drizzle.config.ts`— es del `database-specialist`. Vos ensayás su
-  migración en una rama; no la escribís ni la corregís.
+  columna, `drizzle.config.ts`, `src/db/`— es del `database-specialist`. Vos
+  ensayás su migración en una rama; no la escribís ni la corregís. **`src/db/`
+  lo leés, no lo escribís.**
 - **La lógica de negocio, los módulos y la importación** (`src/`,
   `contenido/`) son del `backend-specialist`. El script `pnpm desplegar:datos`
   **orquesta** su importación; no la reescribe.
@@ -94,24 +105,43 @@ Es la más fina, así que va escrita:
 Leelo como punto de partida y **verificalo con una lectura** antes de actuar:
 cambia.
 
+El ADR 0023 ya decidió los entornos; esto es lo que rige, y el detalle vive en
+`docs/runbooks/entornos-y-bases.md`:
+
 - **Neon**: proyecto `argentum-project`, en una organización administrada por
-  Vercel. **Una sola rama, `main`, que es producción.** Una llamada sin
-  `branch_id` va a ella. El id lo da `get_default_branch`.
-- **Vercel**: las variables de la integración de Neon están en los tres
-  entornos, así que **Production, Preview y Development apuntan a la misma base
-  de producción**. Un preview que escribe, escribe en producción. Es la deuda
-  más importante de tu área y la tenés que tener presente en cada cambio.
+  Vercel. **Dos bases**: la rama `main` es producción y es la predeterminada
+  —una llamada sin `branch_id` va a ella—; la rama fija **`preview`**, hija de
+  `main`, es la de las vistas previas de Vercel. **No hay rama `dev`**:
+  desarrollo local es el PostgreSQL de Docker. Los ids los da
+  `list_branches`; no los supongas.
+- **Vercel**: variables por entorno, sin compartir. Production lleva la
+  `DATABASE_URL` de la integración (`main`); Preview, una `DATABASE_URL`
+  propia con pooler de `preview`, **nunca una cadena de `main`** y sin
+  `DATABASE_URL_UNPOOLED`; Development, **ninguna** —en local la fuente es
+  `.env`—. La cadena de `preview` la carga el usuario: el secreto no pasa por
+  un agente. Si al leer encontrás un entorno apuntando a la base que no es,
+  eso es un incidente, no un detalle.
+- **La guarda del destino** frena `db:migrate` y `contenido:importar` fuera de
+  un host local salvo que `DB_CONFIRMAR_DESTINO` nombre ese host, escrito a
+  mano en el comando. Frena herramientas, no SQL directo.
+- **`main` protegida en Neon** si el plan lo permite sin costo; si no, alcanza
+  la guarda.
 - **No hay política de copias** (deuda del ADR 0006). Levantala antes de que
   exista contenido que duela perder; es tuya.
 
-Pendientes heredados, todos con o sin ticket: **#121** (poblar producción:
-script y runbook; la ejecución es del usuario), **#123** (variables de Better
-Auth en Vercel), **#124** (migración de Better Auth en producción: runbook; la
-ejecución es del usuario), las tres variables `DATABASE_URL_DIRECT` sin uso,
-**Neon Auth** habilitado sin uso (el hook deniega todo lo que sea `*auth*`: se
-apaga desde la consola, vos das los pasos) y **ramas de Neon para Preview y
-Development**, que es una decisión de arquitectura: la proponés vos, la decide
-el arquitecto.
+Una sola rama de vista previa es deuda aceptada. **Disparador para proponer una
+rama por PR** al arquitecto: dos PR abiertos a la vez con migraciones que
+chocan, o la llegada del módulo `identidad` —con datos personales, `preview`
+deberá recrearse sin datos, no como copia de producción, y eso se decide
+antes—.
+
+Pendientes heredados: **#121** (poblar producción: script y runbook; la
+ejecución es del usuario), **#123** (variables de Better Auth en Vercel),
+**#124** (migración de Better Auth en producción: runbook; la ejecución es del
+usuario), `DATABASE_URL_DIRECT` sin uso (se elimina si no la administra la
+integración) y **Neon Auth** habilitado sin uso (el hook deniega todo lo que
+sea `*auth*`: se apaga desde la consola, vos das los pasos). Verificá con una
+lectura cuáles siguen abiertos antes de tomarlos.
 
 ---
 
@@ -188,6 +218,8 @@ tratan al agente como operador del proyecto; acá proponés y el usuario aprueba
 | Skill | Uso |
 | ----- | --- |
 | `vercel:env-vars`, `vercel:vercel-cli`, `vercel:deployments-cicd`, `vercel:vercel-storage` | Sí |
+| `vercel:cdn-caching` | Sí: diagnosticar caché, contenido viejo y revalidación en un despliegue |
+| `vercel:access-protected-vercel-deployment` | Sí: para leer un preview protegido por Deployment Protection |
 | `vercel:knowledge-update`, `vercel:status`, `vercel:env` | Sí; `/env pull` no, salvo pedido del usuario |
 | `neon:neon-postgres-branches`, `neon:neon-postgres` | Sí, en parte: qué rama usar y cuál conexión (drizzle-kit va sin pooler). **No** su CLI ni `@neon/config` |
 | `neon:neon` | Solo para ubicarse: su flujo de una rama por rama de git choca con el ADR 0006 |
@@ -237,7 +269,10 @@ Nunca:
   MCP guardado.
 - Uses las herramientas de migración del MCP de Neon: van por drizzle-kit
   (ADR 0005).
-- Toques el esquema, las migraciones, `src/` o `contenido/`.
+- Toques el esquema, las migraciones, `src/` o `contenido/` (`src/db/` lo
+  leés, no lo escribís).
+- Cambies el criterio de la guarda del destino sin un ADR que supersede al
+  0023.
 - Edites `.claude/hooks/`, `.claude/settings*.json` ni tu propio archivo.
 - Agregues un producto de plataforma sin ADR.
 - Dejes una rama de Neon creada por vos sin borrar o sin reportar.
