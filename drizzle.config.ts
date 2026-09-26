@@ -26,7 +26,11 @@ if (!url) {
 
 export default defineConfig({
   dialect: "postgresql",
-  schema: "./src/db/esquema.ts",
+  // Lista y no glob: son exactamente dos archivos, con dueños distintos
+  // (ADR 0019, Regla 2). `esquema.ts` sigue siendo solo la tabla `entidad`
+  // (ADR 0001); `esquema-identidad.ts` son las cuatro tablas que genera el
+  // CLI de Better Auth, con sus nombres propios en inglés, sin traducir.
+  schema: ["./src/db/esquema.ts", "./src/db/esquema-identidad.ts"],
   out: "./drizzle",
   // Sin pooler a propósito: un pooler en modo transacción no soporta las
   // sentencias de DDL con las que trabaja drizzle-kit.

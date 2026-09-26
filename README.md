@@ -131,6 +131,18 @@ pnpm dev                          # http://localhost:3000
 Los valores de la base local salen de `docker-compose.yml`. El archivo es `.env`
 —no `.env.local`—: es el que leen `pnpm db:ping` y `drizzle.config.ts`.
 
+### Variables de identidad y entornos de Vercel
+
+El módulo `identidad` (Better Auth, ADR 0019) necesita `BETTER_AUTH_SECRET`,
+`BETTER_AUTH_URL`, `GOOGLE_CLIENT_ID` y `GOOGLE_CLIENT_SECRET`. Se leen en el
+primer uso, no al compilar: `pnpm build` no las exige, pero la primera petición
+que las necesite falla con un error que nombra la que falta. En Vercel se
+cargan en los tres entornos (Production, Preview y Development), con
+`BETTER_AUTH_SECRET` y `BETTER_AUTH_URL` distintos por entorno, y el URI de
+redirección `<BETTER_AUTH_URL>/api/auth/callback/google` registrado en Google
+Cloud Console por cada URL. El detalle, sin valores reales, está en
+`.env.example`.
+
 ### Comandos
 
 | Comando | Qué hace |
