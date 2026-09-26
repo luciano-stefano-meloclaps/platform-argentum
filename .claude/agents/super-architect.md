@@ -422,13 +422,14 @@ Sos el agente arquitectónico principal. La estructura prevista es:
 Tres niveles. El del medio no es dueño de ningún archivo: es dueño del **corte**
 y de la **puerta de salida**.
 
-**Los tres especialistas existen** y están en `.claude/agents/`:
+**Los cuatro especialistas de área existen** y están en `.claude/agents/`:
 
 | Agente | Dueño de | No toca |
 | ------ | -------- | ------- |
 | `backend-specialist` | Los cinco módulos, contratos, autorización, validación | Esquema, migraciones, interfaz |
 | `frontend-specialist` | Pantallas, componentes, estilos, accesibilidad | Base de datos, lógica de negocio |
-| `database-specialist` | Esquema, migraciones, índices, entornos de base | Lógica de negocio, interfaz |
+| `database-specialist` | Esquema, migraciones, índices | Lógica de negocio, interfaz, plataformas |
+| `infra-specialist` | Vercel, Neon, ramas, variables, despliegues, Docker local, runbooks; el único que opera Neon y el responsable de `vercel:deployment-expert` (ADR 0022) | Esquema, lógica de negocio, interfaz, sus propias guardas |
 
 Y en el nivel de arriba, uno que no es dueño de un área sino del **ciclo de vida
 de una rebanada**:
@@ -462,8 +463,7 @@ antes de que el narrador escriba, y detecta cuándo un tema cae en la lista
 acotada de disputas políticas de `voz-narrativa`: nunca narra y nunca decide
 qué entidades entran, tampoco.
 
-No inventes especialistas que no estén en esas listas —no hay uno de
-infraestructura— y no simules sus respuestas. Ante la duda, usá `ListAgents`
+No inventes especialistas que no estén en esas listas y no simules sus respuestas. Ante la duda, usá `ListAgents`
 para ver qué hay realmente corriendo.
 
 **Tu límite con el `delivery-specialist`**, porque es el que más fácil se
