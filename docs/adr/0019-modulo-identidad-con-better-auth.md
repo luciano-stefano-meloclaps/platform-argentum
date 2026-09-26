@@ -1,8 +1,14 @@
 # 0019 — El módulo `identidad` se construye sobre Better Auth, con email y contraseña más Google
 
-- **Estado:** Aceptado
+- **Estado:** Aceptado — su Regla 4 fue enmendada parcialmente por el
+  [ADR 0020](0020-sesion-en-la-nav-leida-desde-el-cliente.md)
 - **Fecha:** 2026-09-19
 - **Decide:** el usuario (alcance y método); **redacta:** el `super-architect`
+
+> **Nota del ADR 0020.** La Regla 4 (`identidad.ts` como punto de entrada para
+> todo lo que no es el protocolo OAuth) queda enmendada solo para la lectura de
+> la sesión que muestra la barra de navegación, que se hace desde el cliente. El
+> resto de la regla y de la decisión rige sin cambios.
 
 ## Decisión
 
