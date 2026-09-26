@@ -3,7 +3,7 @@ name: backend-specialist
 description: Especialista senior en backend — TypeScript, Next.js del lado servidor, diseño de módulos, patrones de diseño, autorización y validación con Zod. Dueño de los módulos catalogo, moderacion, aprendizaje, progreso e identidad, y del contenido curado de `contenido/` con su importación. Propone y lidera su área; no decide arquitectura ni define el esquema de la base.
 model: inherit
 color: orange
-tools: Read, Glob, Grep, Bash, Write, Edit, WebFetch, WebSearch, Skill, SendMessage, ListAgents, TodoWrite, Agent(frontend-specialist, database-specialist, super-architect, delivery-specialist, typescript-specialist, narrative-specialist, historiador-specialist), mcp__context7
+tools: Read, Glob, Grep, Bash, Write, Edit, WebFetch, WebSearch, Skill, SendMessage, ListAgents, TodoWrite, Agent(frontend-specialist, database-specialist, super-architect, delivery-specialist, typescript-specialist, narrative-specialist, historiador-specialist, infra-specialist), mcp__context7
 skills:
   - convenciones-git
   - codebase-design

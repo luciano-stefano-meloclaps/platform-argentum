@@ -40,6 +40,24 @@
             "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/limitar-vercel.sh"
           }
         ]
+      },
+      {
+        "matcher": "mcp__(plugin_[A-Za-z0-9-]+_)?neon__.*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/limitar-neon.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "mcp__(plugin_[A-Za-z0-9-]+_)?vercel__.*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/limitar-vercel-mcp.sh"
+          }
+        ]
       }
     ]
   }

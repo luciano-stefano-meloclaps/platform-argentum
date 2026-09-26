@@ -16,7 +16,7 @@ pregunta por qué las cosas están así.
 | [0003](0003-stack-nextjs-postgresql.md) | Stack: Next.js 16, React 19, TypeScript y PostgreSQL | Aceptado |
 | [0004](0004-contenido-en-archivos-versionados.md) | Contenido curado en archivos versionados, importado a la base | Aceptado |
 | [0005](0005-acceso-a-datos-drizzle.md) | Acceso a datos con Drizzle ORM | Aceptado |
-| [0006](0006-infraestructura-vercel-neon.md) | Infraestructura: Vercel y Neon, con PostgreSQL local en Docker | Aceptado |
+| [0006](0006-infraestructura-vercel-neon.md) | Infraestructura: Vercel y Neon, con PostgreSQL local en Docker | Aceptado (parcialmente supersedido por el 0023) |
 | [0007](0007-severidad-del-compilador-de-typescript.md) | Severidad del compilador de TypeScript | Aceptado |
 | [0008](0008-identidad-visual-argentum.md) | Identidad visual Argentum | Aceptado — corregido parcialmente por 0015 |
 | [0009](0009-formato-del-contenido-curado.md) | Formato, ubicación e imágenes del contenido curado | Aceptado |
@@ -28,6 +28,11 @@ pregunta por qué las cosas están así.
 | [0015](0015-identidad-visual-argentum-v2.md) | Identidad visual Argentum v2: giro museístico e institucional | Aceptado |
 | [0016](0016-arquitectura-de-la-capa-web.md) | Arquitectura de la capa web: hexagonal con MVVM | Aceptado — corregido parcialmente por 0017 |
 | [0017](0017-nombre-del-punto-de-entrada-de-un-modulo.md) | El punto de entrada de un módulo se llama como el módulo | Aceptado |
+| [0018](0018-puerto-de-salida-del-modulo-catalogo-pospuesto.md) | El puerto de salida del módulo `catalogo` queda pospuesto | Aceptado |
+| [0019](0019-modulo-identidad-con-better-auth.md) | El módulo `identidad` se construye sobre Better Auth | Aceptado |
+| [0021](0021-mcp-de-neon-detras-de-un-hook.md) | El MCP de Neon, detrás de un hook | Aceptado |
+| [0022](0022-infra-specialist-y-guarda-del-mcp-de-vercel.md) | Un `infra-specialist` dueño de Vercel y Neon, y la guarda del MCP de Vercel | Aceptado |
+| [0023](0023-bases-separadas-por-entorno-y-guarda-del-destino.md) | Bases separadas por entorno en Neon y una guarda del destino para los comandos de base | Aceptado |
 
 **El 0016 recupera un ADR que había perdido su número.** El 2026-09-09 se
 escribió, en una rama que nunca se mergeó completa, un ADR de arquitectura de la
