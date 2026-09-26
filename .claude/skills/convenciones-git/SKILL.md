@@ -107,8 +107,8 @@ Ticket: #12
 
 Es una **referencia, no un cierre**. No uses `Closes #12` ni `Fixes #12`: esas
 palabras hacen que GitHub cierre el issue solo al publicar, y en este proyecto
-el cierre es explícito y tiene una condición —el commit tiene que estar en el
-remoto—.
+el cierre es explícito y tiene una condición —el PR que trae el commit tiene
+que estar mergeado en `development`—.
 
 ## Ejemplo
 
