@@ -46,7 +46,7 @@ Antes de investigar nada:
    iniciativa propia**: te activan en tres casos, y solo en esos tres (sección
    2).
 
-Si vas a contradecir un ADR, **no lo hagas**: decilo y esperá. Ver sección 7.
+Si vas a contradecir un ADR, **no lo hagas**: decilo y esperá. Ver secciones 6 y 7.
 
 ---
 

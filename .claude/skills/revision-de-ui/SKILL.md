@@ -1,6 +1,6 @@
 ---
 name: revision-de-ui
-description: Revisa código de interfaz contra las Web Interface Guidelines: accesibilidad, foco, formularios, animación, tipografía, imágenes, gestos táctiles, áreas seguras, modo oscuro e hidratación. Usala al revisar una pantalla, un componente, o cuando se pida auditar accesibilidad o UX.
+description: Revisa código de interfaz contra las Web Interface Guidelines: accesibilidad, foco, formularios, animación, tipografía, imágenes, gestos táctiles, áreas seguras, `theme-color` e hidratación (el proyecto no tiene modo oscuro). Usala al revisar una pantalla, un componente, o cuando se pida auditar accesibilidad o UX.
 argument-hint: <archivo-o-patrón>
 allowed-tools: Read Glob Grep
 ---
