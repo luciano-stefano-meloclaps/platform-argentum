@@ -146,14 +146,7 @@ export function ResultadoQuiz({ resultado }: Props) {
           </span>
         </h1>
 
-        {/*
-         * Itálica sintética, igual que la pista de `quiz-pregunta.tsx`: el
-         * layout no carga la variante itálica de ninguna de las dos familias
-         * (ver el comentario de `layout.tsx`). Es la misma deuda que ya
-         * asumió el ticket #94, no una nueva — se resuelve cargando la
-         * itálica de Cormorant Garamond, lo que es una decisión del
-         * `brand-specialist`, no de esta pantalla.
-         */}
+        {/* Resumen en itálica de Cormorant Garamond, peso 400. */}
         <p className="m-0 mt-sm font-titulo text-[22px] italic text-texto-sobre-celeste">{resultado.resumen}</p>
 
         {/*

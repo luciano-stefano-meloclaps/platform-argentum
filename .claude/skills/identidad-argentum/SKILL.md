@@ -610,7 +610,7 @@ suben ni se bajan**: son una función pura del total de puntos.
 | Kickers de sección | Cormorant Garamond, peso 600 | Sin cambios de v1. **Excepción puntual documentada:** el kicker del hero de home (`src/app/hero.tsx`, "Catálogo general · Edición 2026") usa Lora (`font-cuerpo`, peso `medium`) en lugar de Cormorant Garamond, por decisión explícita del usuario — no un cambio de la regla general. Tamaño, tracking y color (`--celeste-text`) no cambiaron, así que el contraste ya medido en esta skill sigue vigente sin remedición. No repliques esta excepción a otros kickers sin que se pida explícitamente. |
 | `--type-h3` | Cormorant Garamond, peso 600 (asumido) | Interpretación no confirmada — ver ADR 0015 |
 | Todo lo demás: cuerpo de ficha, labels, botones, chips, nav, meta, cifras de dashboard | **Lora** (ADR 0015 — reemplaza a Montserrat en todo el sistema) | Ver tabla de riesgo abajo |
-| Carga | `next/font/google` para las dos, nunca `@import` | ADR 0008 §5 |
+| Carga | `next/font/google` para las dos, nunca `@import` | ADR 0008 §5. **Itálica:** Cormorant Garamond la carga (`style: ["normal", "italic"]`, `src/app/layout.tsx`); el único peso en uso real en itálica es el 400 (epíteto, pie de foto, pista, resumen del quiz). Los pesos 600/700 de la itálica se emiten igual porque `next/font` no permite elegir peso por estilo, pero no suman descargas: Google sirve la itálica como un único archivo variable. Lora **no** se carga en itálica ni se usa así |
 
 **Riesgo de Lora en interfaz, documentado y no resuelto por adelantado**
 (sin evidencia de que Lora tenga los features OpenType `smcp`/`tnum`):
