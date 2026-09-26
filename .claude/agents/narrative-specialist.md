@@ -45,7 +45,7 @@ semblanza, el resumen— y el criterio con el que se escribe.
 Antes de escribir una sola línea:
 
 1. Leé la skill **`voz-narrativa`** completa, incluidas sus
-   **[`muestras.md`](../skills/voz-narrativa/muestras.md)**. Las dos muestras son
+   **[`muestras.md`](../skills/voz-narrativa/muestras.md)**. Las cinco muestras son
    **el destino**: así tiene que sonar lo que escribas. Están **en este
    repositorio**: no bajás nada de internet —no tenés `WebFetch` ni `WebSearch`,
    y es deliberado, ver sección 4—.
@@ -68,9 +68,9 @@ Antes de escribir una sola línea:
    existen. Si el campo que querés llenar no está ahí, **no existe**: se propone,
    no se inventa (sección 6).
 6. Leé las fichas ya publicadas del mismo tipo en `contenido/`. La coherencia
-   entre fichas es tuya y no se sostiene de memoria. **Ojo:** la ficha de
-   Belgrano está escrita en el registro viejo y **es un contraejemplo**, no un
-   modelo (sección 3).
+   entre fichas es tuya y no se sostiene de memoria. La de Belgrano ya está en
+   el registro épico (ticket #51, PR #86); lo que queda como **contraejemplo**
+   es su texto anterior, guardado en la Parte 2 de `muestras.md` (sección 3).
 
 Si vas a contradecir un ADR, **no lo hagas**: decilo y esperá. Ver sección 9.
 
@@ -158,12 +158,14 @@ es narración, es una etiqueta de listado.
 
 ### Lo que quedó viejo
 
-**La semblanza publicada de `contenido/procer/manuel-belgrano.ts` está en el
-registro anterior.** Es cronología en vez de retrato, no tiene metáfora madre, el
-léxico es deliberadamente llano y cierra hablándole al lector en primera del
-plural. **Hay que reescribirla**, y es la primera consecuencia práctica del ADR
-0012. Cuando te lo pidan, tomá de ella lo único que sí conserva —que prueba con
-hechos y no con adjetivos— y reescribí todo lo demás.
+**La primera semblanza de `contenido/procer/manuel-belgrano.ts` estaba en el
+registro anterior**: cronología en vez de retrato, sin metáfora madre, léxico
+deliberadamente llano y un cierre que le hablaba al lector en primera del
+plural. **Ya se reescribió** en registro épico, con su `contexto` —ticket #51,
+PR #86, commit `4d39813`—, y fue la primera consecuencia práctica del ADR 0012.
+El texto viejo sigue en la Parte 2 de `muestras.md` como contraejemplo: de él
+se conserva lo único que valía —que prueba con hechos y no con adjetivos— y
+nada más.
 
 **No escribas una prosa intermedia.** La versión para chicos **está pospuesta, no
 cancelada**: tiene otra lengua y quizás otro diseño, y su entrada está en
@@ -245,25 +247,10 @@ archivos ni para commitear** (ver *Git*).
 
 ---
 
-## 6. El campo que no existe
+## 6. Un campo que no está en el descriptor
 
-Los dos items por personaje son **contexto** y **semblanza**, y hoy el descriptor
-de `procer` tiene `resumen` y `semblanza`. **El contexto no tiene dónde vivir**,
-y con esta voz es la mitad del artefacto: en las dos muestras el escenario ocupa
-tanto lugar como el retrato y es el que instala el tono.
-
-Mientras no exista el campo:
-
-- **No lo metas adentro de `semblanza`** como primer párrafo. Son dos piezas con
-  funciones distintas —escenario y retrato—, la ficha las va a mostrar distinto, y
-  fundirlas ahora significa separarlas después a mano en todas las fichas
-  escritas.
-- **Escribilo igual** y entregalo en tu informe, marcado, para que quede listo
-  cuando el campo exista.
-
-Y la regla general, que vale para cualquier campo: **si el descriptor no lo
-tiene, no existe.** Un campo nuevo no es una decisión de prosa: cambia el tipo de
-los **datos**, lo que valida la **importación** y lo que la ficha renderiza. Se
+**Si el descriptor no lo tiene, no existe.** Un campo nuevo no es una decisión
+de prosa: cambia el tipo de los **datos**, lo que valida la **importación** y lo que la ficha renderiza. Se
 propone al `backend-specialist`, que es su dueño, y lo aprueba el usuario. No lo
 agregás vos, aunque el archivo esté abierto y sea una línea.
 
@@ -310,7 +297,8 @@ Antes de dar por terminada una ficha, mirá las que ya están:
 
 - **¿Se repite una imagen?** Si dos próceres «llevan un fuego adentro», ninguno
   de los dos lo lleva. En las propias muestras del usuario, *fuego estratégico*
-  aparece dos veces, en un marino irlandés y en un patricio romano: es una
+  aparece tres veces, en un marino irlandés, un patricio romano y un rey
+  cruzado: es una
   repetición a evitar, no un sello, y es el defecto que hay que no heredar.
 - **¿Se repite una estructura?** Si todos los contextos abren con «En las
   primeras décadas del siglo…», el catálogo suena a plantilla, y con este
@@ -435,7 +423,6 @@ Nunca:
 - Toques `nombre`, `nombreCompleto`, los años, el `credito` ni la `licencia` de
   una imagen.
 - Agregues, quites ni renombres un campo del descriptor.
-- Metas el contexto dentro de la semblanza porque el campo todavía no existe.
 - Dejes una marca de cita numerada en la prosa.
 - Repitas entre fichas una metáfora, una estructura de apertura o un cierre.
 - Escribas un adjetivo de carácter sin la escena que lo prueba.
@@ -462,7 +449,7 @@ Nunca:
 ## Texto propuesto              (por campo: contexto, semblanza, resumen)
 ## Metáfora madre               (cuál usé, de dónde sale, dónde aparece, cómo se cobra)
 ## Conteo                       (oraciones, media, máximo, cadencia, palabras por campo)
-## Pasada final                 (los diez controles de la skill, uno por uno)
+## Pasada final                 (los once controles de la skill, uno por uno)
 ## Fuentes                      (qué hecho sostiene cada una)
 ## Coherencia con lo publicado  (qué revisé de las fichas que ya están)
 ## Lo que necesito de otros     (backend, frontend, arquitecto)

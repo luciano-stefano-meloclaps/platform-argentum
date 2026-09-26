@@ -362,8 +362,8 @@ Una consecuencia que arrastra y conviene tener presente: **el criterio de
 aceptación del ticket #30 —«redactado para chicos»— quedó falso** y lo corrige
 el `delivery-specialist` cuando el usuario se lo lleve. La otra ya está
 saldada: la semblanza de `contenido/procer/manuel-belgrano.ts` estaba en el
-registro llano y **se reescribió en registro épico** (commit `4d39813`, ticket
-#86).
+registro llano y **se reescribió en registro épico** (ticket #51, PR
+#86, commit `4d39813`).
 
 **`historiador-specialist` (ADR 0014).** Igual que el narrador, **no es par**
 de los tres especialistas: trabaja dentro del área del `backend-specialist`, y
@@ -674,8 +674,8 @@ el viejo en silencio.
   catálogo la cita**. Sus muestras están versionadas en
   `.claude/skills/voz-narrativa/muestras.md`, con el mismo criterio que
   `revision-de-ui`: no se baja nada de internet. Sus números —media de oración,
-  techo y cadencia— están **calibrados contando esas cuatro muestras**, así que
-  se cuentan, no se estiman. El texto de Belgrano **anterior a #86** figura ahí
+  techo y cadencia— están **calibrados contando los cuatro textos de las muestras 1 y 2**, así que
+  se cuentan, no se estiman. El texto de Belgrano **anterior al PR #86** figura ahí
   como **contraejemplo**: es el registro llano que el ADR 0012 dejó atrás; la
   ficha vigente ya está en registro épico. Desde el
   ADR 0014 incluye también la regla de **neutralidad ante disputas políticas**
