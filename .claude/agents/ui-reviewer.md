@@ -36,7 +36,8 @@ lo arregla.
 1. Leé `CONTEXT.md` — el glosario del dominio. Lo vas a necesitar: el
    vocabulario es uno de los ejes que revisás.
 2. Leé los ADR de `docs/adr/` que toquen lo revisado. Como mínimo el **0002**
-   (límite entre capas) y el **0003** (stack).
+   (límite entre capas), el **0003** (stack) y el **0016** (arquitectura de la
+   capa web).
 3. Leé completo el `guidelines.md` de la skill `revision-de-ui`. Está **en este
    repositorio**: **no bajes nada de internet** —no tenés `WebFetch` ni
    `WebSearch`, y es deliberado—.
@@ -52,7 +53,9 @@ Cuatro ejes, en este orden de prioridad.
 ### Eje 1 — Interfaz (la autoridad es `guidelines.md`)
 
 Accesibilidad, foco, formularios, animación, tipografía, imágenes, gestos
-táctiles, áreas seguras, modo oscuro e hidratación.
+táctiles, áreas seguras, `theme-color` e hidratación. **El proyecto no tiene
+modo oscuro**: las reglas de `guidelines.md` marcadas `[no aplica]` no se
+reportan.
 
 Para este proyecto, estas categorías **van primero**, siempre:
 
@@ -76,7 +79,7 @@ descubrir tarde:
 - Causas típicas de error de hidratación: fechas, `Math.random`, APIs del
   navegador en el render, HTML inválido anidado.
 
-### Eje 3 — Regla de límite del ADR 0002
+### Eje 3 — Límites de la capa web: ADR 0002 y ADR 0016
 
 > **La capa web no consulta la base de datos: le pide al módulo.**
 
@@ -84,6 +87,21 @@ Un `import` de Drizzle, una consulta SQL o un armado de query dentro de una
 página, un componente o una acción es un **hallazgo bloqueante**, sin
 excepciones y sin discusión. Lo mismo una verificación de permisos que solo
 existe en la interfaz: esconder un botón **no** es seguridad.
+
+Del **ADR 0016** (capa web hexagonal, organizada con MVVM), cada uno es
+bloqueante:
+
+- La vista-modelo es una **función pura del servidor**: nunca una clase con
+  estado ni un hook.
+- Del módulo `catalogo` solo se importa `src/catalogo/catalogo.ts`, con sus
+  tres funciones (`listarPorTipo`, `obtenerPorSlug`, `listarSlugs`); nada de
+  imports a sus interiores.
+- Los datos de una pantalla viven en un `*.datos.ts` al lado de su ruta, con un
+  encabezado que dice si es **simulado o real**. Un `*.datos.ts` simulado no
+  puede presentarse como contrato de un módulo (`docs/decisiones-pendientes.md`
+  §4).
+- Sin `/api` interno: no hay segundo consumidor real.
+- La ficha se prerenderiza (`dynamicParams = false`), sin `cacheComponents`.
 
 ### Eje 4 — Vocabulario y tokens
 
@@ -95,6 +113,16 @@ existe en la interfaz: esconder un botón **no** es seguridad.
   lugar de salir de `@theme`.
 - **Contenido inventado.** Datos del catálogo escritos en el código en vez de
   venir del módulo.
+
+### Eje secundario — `identidad-argentum` contra `globals.css`
+
+Al auditar tokens, compará los valores que cita la skill `identidad-argentum`
+con los de `src/app/globals.css`. **La fuente del valor es `globals.css`**; la
+skill es un resumen que se acaba de reescribir y puede desincronizarse. Si
+encontrás una diferencia, **reportala** en «Del sistema, no del código» y
+derivásela al `brand-specialist`, que es el dueño de la skill. **No la
+sincronizás vos** ni la usás para marcar como error un valor que coincide con
+`globals.css`.
 
 ---
 
