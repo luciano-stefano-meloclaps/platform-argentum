@@ -2,12 +2,20 @@
 
 Ticket #121; ADR 0004 (contenido curado importado a la base), ADR 0005
 (migraciones con drizzle-kit), ADR 0022 (quién opera qué), ADR 0023 (guarda del
-destino); runbooks hermanos `entornos-y-bases.md` e `identidad-en-produccion.md`.
-Ningún valor secreto vive en este archivo.
+destino), ADR 0024 (agentes pueden ejecutar esto, con confirmación en el
+momento); runbooks hermanos `entornos-y-bases.md` e
+`identidad-en-produccion.md`. Ningún valor secreto vive en este archivo.
 
-**Esto lo ejecuta el usuario contra producción.** Ningún agente corre estos
-comandos contra la base de `main`; el `infra-specialist` prepara el comando y
-verifica después con lecturas.
+**Esto puede ejecutarlo el `infra-specialist` (o el `database-specialist`
+dentro de su área), contra producción, siempre que el usuario apruebe en el
+momento el comando exacto que va a correr** (ADR 0024). No es una autorización
+general para "correr esto cuando haga falta": es una confirmación por cada
+ejecución, viendo la línea completa —incluida la variable
+`DB_CONFIRMAR_DESTINO` con el host— antes de que el proceso arranque. Nada de
+esto se agrega a la lista `allow` de `.claude/settings.json`: eso convertiría la
+confirmación puntual en un permiso permanente, que es exactamente lo que el ADR
+0024 no autoriza. El usuario sigue pudiendo ejecutarlo él mismo en cualquier
+momento, como antes.
 
 ## Qué hace `pnpm desplegar:datos`
 
@@ -100,8 +108,10 @@ pnpm desplegar:datos
 
 ## Por qué no está automatizado (todavía)
 
-Hoy es un paso manual a propósito: el usuario ejecuta contra producción y ve el
-host que confirma (ADR 0022, ADR 0023). Es un solo comando.
+Sigue siendo un paso con supervisión a propósito, aunque desde el ADR 0024 lo
+pueda disparar un agente: cada corrida exige que alguien —el usuario, siempre;
+un agente, con confirmación en el momento— vea el host que confirma antes de
+que el comando arranque (ADR 0022, ADR 0023, ADR 0024). Es un solo comando.
 
 **Disparador para automatizarlo:** la **segunda vez** que alguien olvide el
 paso (un despliegue que llegó a producción sin importar, o sin redesplegar

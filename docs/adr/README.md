@@ -31,8 +31,9 @@ pregunta por qué las cosas están así.
 | [0018](0018-puerto-de-salida-del-modulo-catalogo-pospuesto.md) | El puerto de salida del módulo `catalogo` queda pospuesto | Aceptado |
 | [0019](0019-modulo-identidad-con-better-auth.md) | El módulo `identidad` se construye sobre Better Auth | Aceptado |
 | [0021](0021-mcp-de-neon-detras-de-un-hook.md) | El MCP de Neon, detrás de un hook | Aceptado |
-| [0022](0022-infra-specialist-y-guarda-del-mcp-de-vercel.md) | Un `infra-specialist` dueño de Vercel y Neon, y la guarda del MCP de Vercel | Aceptado |
-| [0023](0023-bases-separadas-por-entorno-y-guarda-del-destino.md) | Bases separadas por entorno en Neon y una guarda del destino para los comandos de base | Aceptado |
+| [0022](0022-infra-specialist-y-guarda-del-mcp-de-vercel.md) | Un `infra-specialist` dueño de Vercel y Neon, y la guarda del MCP de Vercel | Aceptado — corregido parcialmente por 0024 |
+| [0023](0023-bases-separadas-por-entorno-y-guarda-del-destino.md) | Bases separadas por entorno en Neon y una guarda del destino para los comandos de base | Aceptado — corregido parcialmente por 0024 |
+| [0024](0024-agentes-pueden-escribir-en-produccion-con-confirmacion-en-el-momento.md) | Agentes pueden escribir en producción, con confirmación del usuario en el momento | Aceptado |
 
 **El 0016 recupera un ADR que había perdido su número.** El 2026-09-09 se
 escribió, en una rama que nunca se mergeó completa, un ADR de arquitectura de la
