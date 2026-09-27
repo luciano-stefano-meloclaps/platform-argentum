@@ -6,12 +6,27 @@ este archivo. **Migrar e importar en producción lo ejecuta el usuario**; el
 `infra-specialist` prepara, verifica y, con autorización expresa, opera solo la
 rama `preview`.
 
-Estado leído el 2026-09-26 (solo lectura): proyecto Neon `long-night-55353572`,
-PostgreSQL 18, plan Free (`free_v3`, límite de 10 ramas). Ramas: `main`
-`br-super-leaf-awq2l79n` (producción, no protegida) y `preview`
-`br-bitter-resonance-aw8b55is`. En Vercel no existe ninguna de las cuatro
-variables de Better Auth, en ningún entorno. Producción sirve `main` sin
-identidad.
+Estado leído el 2026-09-26 (solo lectura, **HISTÓRICO: anterior a la migración
+0001 en `main`; ver la actualización de abajo**): proyecto Neon
+`long-night-55353572`, PostgreSQL 18, plan Free (`free_v3`, límite de 10
+ramas). Ramas: `main` `br-super-leaf-awq2l79n` (producción, no protegida) y
+`preview` `br-bitter-resonance-aw8b55is`. En Vercel no existe ninguna de las
+cuatro variables de Better Auth, en ningún entorno (sigue siendo cierto).
+Producción sirve `main` sin identidad (sigue siendo cierto: no se desplegó).
+
+**Actualización 2026-09-26:** la migración `0001` ya está aplicada y verificada
+en `main` (#124). Verificado por lectura: `main` tiene las tablas `account`,
+`comments`, `entidad`, `session`, `user` y `verification`. `comments` es ajena a
+este trabajo y no se toca. `entidad` tenía **0 filas**: falta poblar el
+catálogo (#121, paso 8). Sigue sin cargarse ninguna variable de Better Auth en
+Production ni en Preview (#123).
+
+**Constancia de la excepción:** la `0001` en `main` la ejecutó el
+`infra-specialist` **por excepción, con autorización expresa del usuario en esa
+sesión (2026-09-26)**. No sienta precedente: la regla del ADR 0022 (migrar e
+importar en producción lo ejecuta el usuario) sigue vigente. Además se **saltó
+el orden de este runbook**: el ensayo previo en `preview` (pasos 1 a 4) no se
+hizo, y tampoco se creó la rama de respaldo del paso 5.
 
 ## Qué requiere el código
 
@@ -88,14 +103,19 @@ pasos 1 a 4.
 3. **Probar en un preview** (rama `feat/111-identity-better-auth`): registrarse
    con email, cerrar e iniciar sesión, y el botón de Google si aplica.
 4. Solo con eso en verde, seguir con producción.
-5. **Copia de respaldo de `main`** antes de migrar (hoy no hay política de
-   copias, deuda del ADR 0006). Opción sin costo: en Neon crear una rama
-   `main-respaldo-0001` desde `main` (cuenta contra el límite de 10 ramas y
-   contra la cuota) y borrarla cuando la migración esté verificada. La ventana
-   de historia del proyecto es de 6 horas (`history_retention_seconds` 21600),
-   así que un restore a un punto anterior solo sirve dentro de ese margen. El
-   `infra-specialist` puede crear la rama con autorización expresa.
-6. **Migrar producción (#124), lo ejecuta el usuario:**
+5. **Copia de respaldo de `main`** antes de migrar. Para la `0001` este paso
+   quedó superado: **NO se creó `main-respaldo-0001`, es decir, la migración
+   corrió sin respaldo**. Sigue siendo válido antes de cualquier migración
+   futura (hoy no hay política de copias, deuda del ADR 0006). Opción sin
+   costo: en Neon crear una rama de respaldo desde `main` (cuenta contra el
+   límite de 10 ramas y contra la cuota) y borrarla cuando la migración esté
+   verificada. La ventana de historia del proyecto es de 6 horas
+   (`history_retention_seconds` 21600), así que un restore a un punto anterior
+   solo sirve dentro de ese margen. El `infra-specialist` puede crear la rama
+   con autorización expresa.
+6. **Migrar producción (#124). HECHO el 2026-09-26** (la `0001` está aplicada y
+   verificada en `main`; no repetir). Referencia del comando, que lo ejecuta
+   el usuario:
    ```bash
    DB_CONFIRMAR_DESTINO=<host de main, del panel de Neon> \
    DATABASE_URL_UNPOOLED='<cadena SIN pooler de main>' \
@@ -117,6 +137,16 @@ pasos 1 a 4.
    `backend-specialist` que lo aclare antes de correrlo dos veces.
 9. **Recién ahora**: mergear `development` a `main` y desplegar (lo hace el
    usuario). Verificar (abajo).
+
+   **Puerta antes de mergear `development` a `main`** (los dos, por lectura):
+   - `SELECT count(*) FROM entidad;` en `main` distinto de cero (#121 hecho).
+   - `vercel env ls` muestra en **Production** las cuatro variables:
+     `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `GOOGLE_CLIENT_ID` y
+     `GOOGLE_CLIENT_SECRET` (#123 hecho).
+
+   **Advertencia:** no usar `drizzle-kit push` contra `main`. La tabla
+   `comments` es ajena al esquema de Drizzle y `push` intentaría reconciliarla
+   (borrarla). Las migraciones van solo por `pnpm db:migrate`.
 
 ## Verificación
 
@@ -142,8 +172,10 @@ pasos 1 a 4.
   las tablas nuevas, así que el rollback es seguro sin tocar la base.
 - Migración `0001`: aditiva. Si hay que deshacerla, borrar las cuatro tablas
   (`account`, `session`, `user`, `verification`) desde una sesión SQL del
-  usuario, o restaurar la rama de respaldo. Solo antes de que existan usuarios
-  reales: después de eso se pierden cuentas.
+  usuario. **No hay rama de respaldo** (la `0001` corrió sin ella). Como
+  alternativa, un restore a un punto anterior de `main`, que solo sirve dentro
+  de la ventana de historia de 6 horas, contada desde la migración (2026-09-26).
+  Solo antes de que existan usuarios reales: después de eso se pierden cuentas.
 
 ## Riesgos
 
