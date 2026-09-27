@@ -112,9 +112,9 @@ pasos 1 a 4.
    DATABASE_URL='<cadena de main>' \
    pnpm contenido:importar
    ```
-   Confirmar en `src/catalogo/importacion/importar.mts` qué variable lee (aquí
-   se asume `DATABASE_URL`) y que es idempotente; si no lo es, pedirle al
-   `backend-specialist` que lo aclare antes de correrlo dos veces.
+   Es idempotente y lee `DATABASE_URL`. También existe `pnpm desplegar:datos`
+   (migrar e importar en un solo comando): ver `desplegar-datos.md`, que además
+   explica el **redespliegue** obligatorio tras importar.
 9. **Recién ahora**: mergear `development` a `main` y desplegar (lo hace el
    usuario). Verificar (abajo).
 
