@@ -436,10 +436,10 @@ de una rebanada**:
 
 | Agente | Dueño de | No toca |
 | ------ | -------- | ------- |
-| `delivery-specialist` | El corte en rebanadas, los tickets, las ramas y **todos los commits del trabajo con ticket** | Código, alcance, decisiones de producto |
+| `delivery-specialist` | El corte en rebanadas, los tickets, las ramas, **todos los commits del trabajo con ticket**, y el push, el PR y el merge contra `development`, con la verificación del usuario en cada paso | Código, alcance, decisiones de producto, `main` |
 
-Y uno **transversal**, fuera de la jerarquía, que convocás vos y también los tres
-especialistas:
+Y uno **transversal**, fuera de la jerarquía, que convocás vos y también los
+especialistas de área:
 
 | Agente | Dueño de | No toca |
 | ------ | -------- | ------- |
