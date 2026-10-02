@@ -39,52 +39,35 @@ Cuatro cosas, y las cuatro son obligatorias:
 
 ---
 
-## 1. Política de errores: excepciones o resultados tipados
+## 1. Política de errores — resuelta
 
-**Qué está pendiente.** Cuando una función de módulo no puede cumplir lo que le
-pidieron, ¿lanza una excepción o devuelve un resultado que representa el
-fallo como un valor? Y si son las dos cosas según el caso, ¿cuál es el criterio
-que las separa? La respuesta aplica a los cinco módulos, así que es una decisión
-transversal, no del módulo que la enfrente primero.
-
-**Por qué no se decide hoy.** Porque el caso que la necesita no existe. Hoy la
-única validación del sistema es la de la **importación**, y ahí lanzar es la
-conducta correcta y no hay tensión: contenido inválido tiene que voltear el
-proceso, no devolver algo que el llamador pueda ignorar. `validarDatos` lanza
-`ZodError`, y su firma está elegida a propósito para **no** fijar la política.
-No hay todavía una sola entrada de usuario en el sistema, que es donde la
-pregunta se vuelve real.
-
-**Disparador.** La primera función de módulo que reciba entrada de un usuario y
-necesite una rama recuperable —esto es, un fallo que la pantalla tenga que
-mostrar como un mensaje en vez de como una pantalla de error—. Concretamente:
-la rebanada de **moderación**, validando **propuestas**. El ADR se escribe
-**antes** de esa rebanada, no durante.
-
-**Regla interina.** *Una excepción señala un fallo del programa o del contenido,
-no una decisión del usuario.* Mientras no existan decisiones de usuario, lanzar
-está bien y no hay nada que envolver. El día que aparezca la primera, la regla
-se agotó y hay que decidir.
+**Decidida en el [ADR 0026](adr/0026-politica-de-errores-de-los-modulos.md).**
+El disparador se cumplió con el módulo `identidad` (ADR 0019), antes que con
+moderación: ausencia esperada como `undefined`, decisión del usuario como
+resultado `{ ok: false, mensaje, campo? }`, y fallo del programa como
+excepción. La entrada queda solo como marcador, para no renumerar las demás:
+el código y otros documentos las citan por número.
 
 ---
 
 ## 2. Identidad del visitante para el progreso
 
-**Qué está pendiente.** ¿A quién pertenece un **evento** de progreso cuando no
-hay cuentas? El MVP no tiene sesión —todo el mundo es **visitante**, que según
-`CONTEXT.md` no es un rol sino la ausencia de sesión—, pero el **progreso**
-necesita atribuir cada evento a alguien para poder sumar **puntos** y calcular
-la **liga** y las **áreas flojas**.
+**Qué está pendiente.** ¿A quién pertenece un **evento** de progreso cuando el
+que juega es un **visitante**? Desde el ADR 0019 existen las cuentas, pero usar
+el producto no exige iniciar sesión —el **visitante**, según `CONTEXT.md`, no es
+un rol sino la ausencia de sesión—, y el **progreso** necesita atribuir cada
+evento a alguien para poder sumar **puntos** y calcular la **liga** y las
+**áreas flojas**.
 
 Las candidatas obvias van desde no persistir nada y tener el progreso en la
 memoria de la pestaña, hasta un identificador anónimo en el navegador que
 después haya que reconciliar con la cuenta real cuando el usuario se registre.
 Cada una empuja el modelo de datos en una dirección distinta.
 
-**Por qué no se decide hoy.** Porque depende de dos cosas que todavía no
-sabemos: si el progreso tiene que sobrevivir al cierre del navegador —una
-pregunta de producto, no técnica— y qué forma va a tener la cuenta cuando
-llegue **identidad**. Decidirlo ahora fijaría la clave de la tabla de eventos
+**Por qué no se decide hoy.** Porque depende de dos cosas: si el progreso
+tiene que sobrevivir al cierre del navegador —una pregunta de producto, no
+técnica, todavía abierta— y qué forma tiene la cuenta. **La segunda ya se
+conoce** (nota del ADR 0019, abajo). Decidirlo ahora fijaría la clave de la tabla de eventos
 sin saber con qué se va a reconciliar, que es exactamente el tipo de error que
 después cuesta una migración de datos.
 
@@ -100,6 +83,12 @@ rebanada por completo: no se corta en tickets hasta que exista el ADR.
 persiste nada de progreso.** Las **tarjetas** de la rebanada 3 se diseñan sin
 guardar resultados. Si aparece la tentación de guardar "algo mínimo" antes de
 tiempo, es señal de que el disparador ya se cumplió y toca escribir el ADR.
+
+**Nota del ADR 0019.** La forma de la cuenta quedó fijada: un usuario de
+Better Auth, con email y contraseña o Google, y su sesión. Eso resuelve una de
+las dos incógnitas; la otra —qué pasa con el progreso del visitante, y si se
+reconcilia con la cuenta cuando se registra— sigue abierta, y el disparador no
+cambia.
 
 **Nota del ADR 0012.** Esta entrada se escribió cuando el producto era para
 chicos de ocho años, y su dimensión no técnica era el nudo del asunto. Con la
@@ -179,11 +168,12 @@ quiz se genera desde las entidades o se cura a mano, ni qué se guarda de una
 respuesta —esto último bloqueado por la entrada §2 de este mismo archivo—.
 
 Hay además un motivo específico para escribir esta entrada, y es el que la hace
-necesaria: **dos archivos de la capa web ya declaran anticipar esa firma**.
-`src/app/tarjetas/tarjetas-repaso.datos.ts` y
-`src/app/quiz/quiz-pregunta.datos.ts` dicen en su encabezado que su función
-mock «anticipa la firma de la consulta real que algún día va a vivir en el
-módulo `aprendizaje`». Nadie aprobó esa firma: el módulo no tiene dueño
+necesaria: **tres archivos de la capa web ya declaran anticipar esa firma**.
+`src/app/tarjetas/tarjetas-repaso.datos.ts`,
+`src/app/quiz/quiz-pregunta.datos.ts` y
+`src/app/quiz/resultado/resultado-quiz.datos.ts` (este último, también para
+`progreso`) dicen en su encabezado que su función mock anticipa la firma de la
+consulta real que algún día va a vivir en el módulo. Nadie aprobó esa firma: el módulo no tiene dueño
 asignado todavía y el `backend-specialist` no la revisó. Es exactamente la
 decisión que se toma sola por acumulación —la fija el primero que escribe
 código que la roza— que este archivo existe para evitar.
@@ -193,7 +183,7 @@ diseña ahí, con el `backend-specialist`, y si merece un ADR se escribe **antes
 de la primera función del módulo, no durante.
 
 **Regla interina.** **Los mocks no son contrato.** Cuando llegue el módulo se
-diseña desde cero, mirando el problema y no los dos archivos de la capa web; si
+diseña desde cero, mirando el problema y no los archivos de la capa web; si
 la firma que sale es distinta, la que se cambia es la de las pantallas. Mientras
 tanto, ningún archivo nuevo puede citar a `obtenerMazoDeRepaso` ni a
 `obtenerQuizMock` como si fueran la interfaz del módulo, y un `*.datos.ts` nuevo
@@ -233,9 +223,10 @@ En cualquiera de los tres casos, el ADR que reabra la pregunta se escribe
 se agregue solo al módulo afectado, no a los cinco por igual.
 
 **Regla interina.** `catalogo.ts` sigue con Drizzle directo (ver ADR 0018). Un
-módulo nuevo (`moderacion`, `aprendizaje`, `progreso`, `identidad`) que se
-diseñe mientras esta entrada siga abierta hace lo mismo: importa `db` directo,
-sin anticipar una interfaz de persistencia por si acaso.
+módulo nuevo (`moderacion`, `aprendizaje`, `progreso`) que se diseñe mientras
+esta entrada siga abierta hace lo mismo: importa `db` directo, sin anticipar
+una interfaz de persistencia por si acaso. `identidad` ya lo hace así, a través
+del adaptador de Drizzle de Better Auth (ADR 0019).
 
 ## 6. Proveedor de envío de correo, para verificar email y recuperar contraseña
 
@@ -283,9 +274,8 @@ distinta:
 
 - **Por módulo** (un agente por `catalogo`, `moderacion`, `aprendizaje`,
   `progreso`, `identidad`): hoy `catalogo` es el único módulo con una rebanada
-  entregada, y los otros cuatro todavía no existen en código. `identidad` ya
-  tiene su ADR (0019, aceptado) pero sin implementar, y `moderacion` es fase
-  posterior. Los módulos están acoplados por el mismo descriptor (ADR 0001):
+  entregada, `identidad` está implementado (ADR 0019) y los otros tres todavía
+  no existen en código; `moderacion` es fase posterior. Los módulos están acoplados por el mismo descriptor (ADR 0001):
   `aprendizaje` lee entidades de `catalogo` para sus distractores, y
   `moderacion` va a escribir entidades que `catalogo` lee. La mayoría de las
   rebanadas tempranas cruzan más de un módulo, así que partir convierte un

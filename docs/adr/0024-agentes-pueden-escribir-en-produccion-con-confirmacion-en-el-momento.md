@@ -7,6 +7,11 @@
   demás de esos dos ADR —dueños de plataforma, guarda del MCP de Vercel, guarda
   del destino de `db:migrate`/`contenido:importar`, bases separadas por
   entorno— sigue vigente sin cambios.
+  **Supersedido parcialmente por el
+  [ADR 0025](0025-un-solo-ejecutor-de-escrituras-en-produccion.md)**: el
+  `database-specialist` ya no ejecuta escrituras en producción; el único
+  ejecutor es el `infra-specialist`. La condición de confirmación en el
+  momento, y la prohibición de usar `allow`, siguen vigentes sin cambios.
 - **Fecha:** 2026-09-27
 - **Decide:** Luciano Melo Claps
 

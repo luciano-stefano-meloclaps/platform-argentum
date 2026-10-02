@@ -1,6 +1,11 @@
 # 0021 — El MCP de Neon, detrás de un hook
 
-- **Estado:** Aceptado
+- **Estado:** Aceptado. **Supersedido parcialmente** por el
+  [ADR 0022](0022-infra-specialist-y-guarda-del-mcp-de-vercel.md) (un solo
+  escritor en Neon, el `infra-specialist`) y por el
+  [ADR 0025](0025-un-solo-ejecutor-de-escrituras-en-produccion.md): donde este
+  ADR dice «un agente puede escribir en producción», léase «el
+  `infra-specialist`». La guarda y su criterio siguen vigentes.
 - **Fecha:** 2026-09-25
 - **Decide:** Luciano Melo Claps
 

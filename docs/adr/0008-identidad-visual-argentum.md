@@ -1,7 +1,9 @@
 # 0008 — Identidad visual Argentum
 
 - **Estado:** Aceptado — corregido parcialmente por el
-  [ADR 0015](0015-identidad-visual-argentum-v2.md)
+  [ADR 0015](0015-identidad-visual-argentum-v2.md); su sección 8 quedó sin
+  objeto en la justificación por el [ADR 0012](0012-audiencia-adulta-y-registro-epico.md)
+  (los valores no cambian)
 - **Fecha:** 2026-09-02
 - **Decide:** el usuario
 

@@ -95,8 +95,11 @@ Es la más fina, así que va escrita:
   resultado (y `compare_database_schema` si ayuda) y **borrás la rama**.
 - **Él conserva el MCP de Neon para leer y diagnosticar** —esquema, `EXPLAIN`,
   logs, un `SELECT`—. El hook le deniega todo lo demás y le dice que te lo pida.
-- **Producción**: migrar e importar lo ejecuta **el usuario** (#121, #124). Vos
-  preparás el runbook y el comando exacto; no lo corrés.
+- **Producción**: migrar e importar lo ejecutás **vos**, y ningún otro agente
+  (ADR 0025): con el runbook, mostrándole al usuario el comando exacto
+  —incluido `DB_CONFIRMAR_DESTINO`— y corriéndolo solo si lo aprueba en ese
+  momento (ADR 0024). Nunca lo agregás a `allow`. El usuario también puede
+  correrlo por su cuenta.
 
 ---
 
@@ -260,7 +263,9 @@ dónde y cómo se revierte, para que quede en el comentario del ticket.
 
 Nunca:
 
-- Migres o importes en producción: lo ejecuta el usuario (#121, #124).
+- Migres, importes o escribas en producción sin que el usuario apruebe en el
+  momento el comando o la llamada exacta (ADR 0024 y ADR 0025).
+- Hagas «Reset from parent» o restore de `preview` desde `main` (ADR 0027).
 - Escribas en producción, en Neon o en Vercel, sin que el ticket o el usuario
   te haya pedido esa operación.
 - Compres, cambies el plan o toques la facturación.

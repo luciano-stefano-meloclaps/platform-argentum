@@ -16,7 +16,8 @@
 #   - escritura de issues (create, edit, comment, close, reopen): SOLO para
 #     delivery-specialist, que es el dueño del tracker;
 #   - `pr create` y `pr merge`: SOLO para delivery-specialist, y solo contra
-#     `development` — `pr create` sin `--base development` explícito se
+#     `development` — `pr merge` le pregunta al PR su base y deniega si no es
+#     `development`; `pr create` sin `--base development` explícito se
 #     deniega, porque sin esa bandera `gh pr create` apunta al branch por
 #     defecto del repositorio, que es `main`, y el push que lo hizo posible ya
 #     viene acotado a no tocar `main` (bloquear-git-push.sh);
@@ -138,9 +139,40 @@ while IFS= read -r FRAG; do
   if [ "$AGENTE" = "delivery-specialist" ]; then
     case "$SUB $VERBO" in
       "issue create"|"issue edit"|"issue comment"|"issue close"|"issue reopen") continue ;;
-      "pr merge") continue ;;
+      "pr merge")
+        # El merge no lleva la base en el comando: es la del PR. Se le pregunta
+        # al PR mismo, con el mismo selector (número, URL o rama) y el mismo
+        # `--repo`, y se deniega si no es `development` o si no se puede
+        # averiguar (falla cerrada). Antes `pr merge` pasaba sin mirar, y un PR
+        # contra `main` se podía mergear (auditoría del 2026-10-01).
+        SELECTOR=""
+        REPO_GH=""
+        ESPERA=""
+        DESPUES_MERGE=$(printf '%s' "$FRAG" | tr -d "\"'" | sed -E 's/.*[[:space:]]merge([[:space:]]|$)//')
+        for T in $DESPUES_MERGE; do
+          if [ -n "$ESPERA" ]; then
+            [ "$ESPERA" = repo ] && REPO_GH="$T"
+            ESPERA=""; continue
+          fi
+          case "$T" in
+            -R|--repo) ESPERA=repo; continue ;;
+            --repo=*) REPO_GH="${T#--repo=}"; continue ;;
+            -t|--subject|-b|--body|-F|--body-file|-A|--author-email|--match-head-commit) ESPERA=valor; continue ;;
+            -*) continue ;;
+          esac
+          [ -z "$SELECTOR" ] && SELECTOR="$T"
+        done
+        BASE=$(gh pr view $SELECTOR ${REPO_GH:+--repo "$REPO_GH"} --json baseRefName --jq .baseRefName 2>/dev/null)
+        if [ "$BASE" = "development" ]; then
+          continue
+        fi
+        denegar "pr merge de un PR cuya base es '${BASE:-desconocida}', no development"
+        ;;
       "pr create")
-        if printf '%s' "$FRAG" | grep -Eq '(^|[[:space:]])(--base|-B)[[:space:]=]+development([[:space:]]|$)'; then
+        # Exactamente una base, y que sea development: `--base development
+        # --base main` también se deniega.
+        if printf '%s' "$FRAG" | tr -d "\"'" | grep -Eq '(^|[[:space:]])(--base|-B)[[:space:]=]+development([[:space:]]|$)' \
+          && ! printf '%s' "$FRAG" | tr -d "\"'" | grep -Eo '(^|[[:space:]])(--base|-B)[[:space:]=]+[^[:space:]]+' | grep -Evq '[[:space:]=]development$'; then
           continue
         fi
         denegar "pr create sin --base development explícito"

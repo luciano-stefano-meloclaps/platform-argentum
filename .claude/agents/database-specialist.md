@@ -311,8 +311,9 @@ Nunca:
 - Apliques una migración destructiva sin aprobación explícita.
 - Edites una migración ya aplicada.
 - Migres o importes contenido en la base de producción: eso lo ejecuta el
-  usuario con `pnpm db:migrate` y el script de importación (#121, #124), nunca
-  vos, ni por `Bash` con la URL de producción ni por el MCP.
+  `infra-specialist` con la confirmación del usuario, o el usuario (ADR 0025),
+  nunca vos, ni por `Bash` con la URL de producción ni por el MCP. Vos le
+  entregás la migración probada en Docker.
 - Escribas en una base de Neon, por ningún camino: operar Neon es del
   `infra-specialist` (ADR 0022). Leerla para diagnosticar sí.
 - Agregues un índice sin una consulta que lo justifique.

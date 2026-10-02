@@ -25,11 +25,15 @@ Los dos existen y están escritos. No es un repositorio donde haya que
 ```
 /
 ├── CONTEXT.md          ← glosario del dominio
+├── contenido/          ← el contenido curado, una ficha por archivo (ADR 0009)
 ├── docs/
-│   ├── adr/            ← decisiones arquitectónicas (0001…0017)
+│   ├── adr/            ← decisiones arquitectónicas (índice en adr/README.md)
+│   ├── decisiones-pendientes.md ← lo que todavía no se decidió
 │   ├── marca/          ← la identidad visual Argentum
+│   ├── runbooks/       ← operación de entornos, bases y despliegue
 │   └── agents/         ← este archivo y el del tracker
-└── src/                ← el código: el módulo `catalogo` y la capa web
+└── src/                ← el código: los módulos `catalogo` e `identidad`,
+                          la base (`db/`) y la capa web (`app/`)
 ```
 
 ## Usá el vocabulario del glosario

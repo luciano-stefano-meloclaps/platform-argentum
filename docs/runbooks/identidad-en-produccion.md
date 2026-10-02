@@ -2,9 +2,11 @@
 
 Tickets #123, #124 y #121; ADR 0019 (Better Auth), ADR 0023 (guarda del
 destino), runbook hermano `entornos-y-bases.md`. Ningún valor secreto vive en
-este archivo. **Migrar e importar en producción lo ejecuta el usuario**; el
-`infra-specialist` prepara, verifica y, con autorización expresa, opera solo la
-rama `preview`.
+este archivo. **Migrar e importar en producción lo ejecuta el
+`infra-specialist`, con la confirmación del usuario sobre el comando exacto en
+cada ejecución, o el usuario por su cuenta** (ADR 0024 y ADR 0025). Ningún otro
+agente lo ejecuta. Sobre `preview` rige el ADR 0027: nada de «Reset from
+parent» ni de restore desde `main`.
 
 Estado leído el 2026-09-26 (solo lectura): proyecto Neon `long-night-55353572`,
 PostgreSQL 18, plan Free (`free_v3`, límite de 10 ramas). Ramas: `main`
@@ -95,7 +97,7 @@ pasos 1 a 4.
    de historia del proyecto es de 6 horas (`history_retention_seconds` 21600),
    así que un restore a un punto anterior solo sirve dentro de ese margen. El
    `infra-specialist` puede crear la rama con autorización expresa.
-6. **Migrar producción (#124), lo ejecuta el usuario:**
+6. **Migrar producción (#124)**, el `infra-specialist` con confirmación del usuario, o el usuario (ADR 0025):
    ```bash
    DB_CONFIRMAR_DESTINO=<host de main, del panel de Neon> \
    DATABASE_URL_UNPOOLED='<cadena SIN pooler de main>' \
@@ -106,7 +108,7 @@ pasos 1 a 4.
    `.env` local **no** apunte a producción por error: la guarda pide el host
    exacto, pero verificá el host antes de dar Enter.
 7. **Cargar las cuatro variables en Production** (#123).
-8. **Poblar el catálogo (#121), lo ejecuta el usuario**, después de migrar:
+8. **Poblar el catálogo (#121)**, el `infra-specialist` con confirmación del usuario, o el usuario (ADR 0025), después de migrar:
    ```bash
    DB_CONFIRMAR_DESTINO=<host de main> \
    DATABASE_URL='<cadena de main>' \

@@ -2,12 +2,12 @@
 
 Ticket #121; ADR 0004 (contenido curado importado a la base), ADR 0005
 (migraciones con drizzle-kit), ADR 0022 (quién opera qué), ADR 0023 (guarda del
-destino), ADR 0024 (agentes pueden ejecutar esto, con confirmación en el
+destino), ADR 0024 y ADR 0025 (lo ejecuta el `infra-specialist`, con confirmación en el
 momento); runbooks hermanos `entornos-y-bases.md` e
 `identidad-en-produccion.md`. Ningún valor secreto vive en este archivo.
 
-**Esto puede ejecutarlo el `infra-specialist` (o el `database-specialist`
-dentro de su área), contra producción, siempre que el usuario apruebe en el
+**Esto puede ejecutarlo el `infra-specialist` —y ningún otro agente, ADR
+0025—, contra producción, siempre que el usuario apruebe en el
 momento el comando exacto que va a correr** (ADR 0024). No es una autorización
 general para "correr esto cuando haga falta": es una confirmación por cada
 ejecución, viendo la línea completa —incluida la variable
@@ -109,9 +109,10 @@ pnpm desplegar:datos
 ## Por qué no está automatizado (todavía)
 
 Sigue siendo un paso con supervisión a propósito, aunque desde el ADR 0024 lo
-pueda disparar un agente: cada corrida exige que alguien —el usuario, siempre;
-un agente, con confirmación en el momento— vea el host que confirma antes de
-que el comando arranque (ADR 0022, ADR 0023, ADR 0024). Es un solo comando.
+pueda disparar el `infra-specialist`: cada corrida exige que alguien —el
+usuario, siempre; el `infra-specialist`, con confirmación en el momento— vea el
+host que confirma antes de que el comando arranque (ADR 0023, ADR 0024, ADR
+0025). Es un solo comando.
 
 **Disparador para automatizarlo:** la **segunda vez** que alguien olvide el
 paso (un despliegue que llegó a producción sin importar, o sin redesplegar

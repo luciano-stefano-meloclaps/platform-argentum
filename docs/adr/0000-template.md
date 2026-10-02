@@ -1,6 +1,6 @@
 # NNNN — <Título corto de la decisión>
 
-- **Estado:** Propuesto | Aceptado | Rechazado | Superseded by NNNN
+- **Estado:** Propuesto | Aceptado | Aceptado — supersedido parcialmente por NNNN (en qué punto) | Rechazado | Superseded by NNNN
 - **Fecha:** YYYY-MM-DD
 - **Decide:** <quién aprueba>
 

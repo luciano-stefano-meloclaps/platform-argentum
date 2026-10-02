@@ -1,6 +1,14 @@
 # 0022 — Un especialista de infraestructura dueño de Vercel y Neon, y la guarda del MCP de Vercel
 
-- **Estado:** Aceptado
+- **Estado:** Aceptado. **Supersedido parcialmente** por el
+  [ADR 0024](0024-agentes-pueden-escribir-en-produccion-con-confirmacion-en-el-momento.md)
+  y el [ADR 0025](0025-un-solo-ejecutor-de-escrituras-en-produccion.md) en un
+  punto: «migrar e importar en producción lo sigue ejecutando el usuario» pasa
+  a «lo ejecuta el `infra-specialist`, con confirmación del usuario en cada
+  ejecución». La deuda «Production, Preview y Development comparten la base de
+  producción» quedó resuelta por el
+  [ADR 0023](0023-bases-separadas-por-entorno-y-guarda-del-destino.md). El
+  resto sigue vigente.
 - **Fecha:** 2026-09-25
 - **Decide:** Luciano Melo Claps (el rol); diseño del `super-architect`
 
