@@ -1,6 +1,10 @@
 # 0010 — Los agentes pueden escribir en Vercel, siempre bajo confirmación
 
-- **Estado:** Aceptado
+- **Estado:** Aceptado. **Supersedido parcialmente por el
+  [ADR 0025](0025-un-solo-ejecutor-de-escrituras-en-produccion.md)**: la
+  confirmación sigue igual, pero las escrituras en Vercel ya no las ejecuta
+  cualquier agente, sino el `infra-specialist` (o `vercel:deployment-expert`
+  convocado por él).
 - **Fecha:** 2026-09-07
 - **Decide:** Luciano Melo Claps
 

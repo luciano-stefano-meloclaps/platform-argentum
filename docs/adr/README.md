@@ -13,27 +13,37 @@ pregunta por qué las cosas están así.
 | --- | -------- | ------ |
 | [0001](0001-modelo-de-entidad-unica-con-jsonb.md) | Modelo de entidad única con JSONB y descriptores en código | Aceptado |
 | [0002](0002-monolito-modular-un-solo-deploy.md) | Aplicación fullstack modular, un solo deploy | Aceptado |
-| [0003](0003-stack-nextjs-postgresql.md) | Stack: Next.js 16, React 19, TypeScript y PostgreSQL | Aceptado |
+| [0003](0003-stack-nextjs-postgresql.md) | Stack: Next.js 16, React 19, TypeScript y PostgreSQL | Aceptado — supersedido parcialmente por 0019 |
 | [0004](0004-contenido-en-archivos-versionados.md) | Contenido curado en archivos versionados, importado a la base | Aceptado |
 | [0005](0005-acceso-a-datos-drizzle.md) | Acceso a datos con Drizzle ORM | Aceptado |
-| [0006](0006-infraestructura-vercel-neon.md) | Infraestructura: Vercel y Neon, con PostgreSQL local en Docker | Aceptado (parcialmente supersedido por el 0023) |
+| [0006](0006-infraestructura-vercel-neon.md) | Infraestructura: Vercel y Neon, con PostgreSQL local en Docker | Aceptado — supersedido parcialmente por 0010 y 0023 |
 | [0007](0007-severidad-del-compilador-de-typescript.md) | Severidad del compilador de TypeScript | Aceptado |
-| [0008](0008-identidad-visual-argentum.md) | Identidad visual Argentum | Aceptado — corregido parcialmente por 0015 |
+| [0008](0008-identidad-visual-argentum.md) | Identidad visual Argentum | Aceptado — supersedido parcialmente por 0012 y 0015 |
 | [0009](0009-formato-del-contenido-curado.md) | Formato, ubicación e imágenes del contenido curado | Aceptado |
-| [0010](0010-agentes-pueden-escribir-en-vercel-con-confirmacion.md) | Los agentes pueden escribir en Vercel, con confirmación del usuario | Aceptado |
+| [0010](0010-agentes-pueden-escribir-en-vercel-con-confirmacion.md) | Los agentes pueden escribir en Vercel, siempre bajo confirmación | Aceptado — supersedido parcialmente por 0025 |
 | [0011](0011-extension-explicita-en-imports-relativos-de-valor.md) | Extensión explícita en los imports relativos de valor | Aceptado |
 | [0012](0012-audiencia-adulta-y-registro-epico.md) | Audiencia de chicos grandes y adultos, con registro épico | Aceptado |
 | [0013](0013-el-registro-de-lectura-no-es-una-entidad.md) | El registro de lectura no es una entidad: dos prosas, una fila | Aceptado |
 | [0014](0014-historiador-especialista-y-neutralidad-en-disputas-politicas.md) | Historiador especialista y neutralidad en disputas políticas | Aceptado |
 | [0015](0015-identidad-visual-argentum-v2.md) | Identidad visual Argentum v2: giro museístico e institucional | Aceptado |
-| [0016](0016-arquitectura-de-la-capa-web.md) | Arquitectura de la capa web: hexagonal con MVVM | Aceptado — corregido parcialmente por 0017 |
+| [0016](0016-arquitectura-de-la-capa-web.md) | Arquitectura de la capa web (hexagonal con MVVM) | Aceptado — supersedido parcialmente por 0017, 0018 y 0019 |
 | [0017](0017-nombre-del-punto-de-entrada-de-un-modulo.md) | El punto de entrada de un módulo se llama como el módulo | Aceptado |
 | [0018](0018-puerto-de-salida-del-modulo-catalogo-pospuesto.md) | El puerto de salida del módulo `catalogo` queda pospuesto | Aceptado |
-| [0019](0019-modulo-identidad-con-better-auth.md) | El módulo `identidad` se construye sobre Better Auth | Aceptado |
-| [0021](0021-mcp-de-neon-detras-de-un-hook.md) | El MCP de Neon, detrás de un hook | Aceptado |
-| [0022](0022-infra-specialist-y-guarda-del-mcp-de-vercel.md) | Un `infra-specialist` dueño de Vercel y Neon, y la guarda del MCP de Vercel | Aceptado — corregido parcialmente por 0024 |
-| [0023](0023-bases-separadas-por-entorno-y-guarda-del-destino.md) | Bases separadas por entorno en Neon y una guarda del destino para los comandos de base | Aceptado — corregido parcialmente por 0024 |
-| [0024](0024-agentes-pueden-escribir-en-produccion-con-confirmacion-en-el-momento.md) | Agentes pueden escribir en producción, con confirmación del usuario en el momento | Aceptado |
+| [0019](0019-modulo-identidad-con-better-auth.md) | El módulo `identidad` se construye sobre Better Auth, con email y contraseña más Google | Aceptado — supersedido parcialmente por 0020 |
+| [0020](0020-sesion-en-la-nav-leida-desde-el-cliente.md) | La sesión de la barra de navegación se lee desde el cliente | Aceptado |
+| [0021](0021-mcp-de-neon-detras-de-un-hook.md) | El MCP de Neon, detrás de un hook | Aceptado — supersedido parcialmente por 0022 y 0025 |
+| [0022](0022-infra-specialist-y-guarda-del-mcp-de-vercel.md) | Un especialista de infraestructura dueño de Vercel y Neon, y la guarda del MCP de Vercel | Aceptado — supersedido parcialmente por 0024 y 0025 |
+| [0023](0023-bases-separadas-por-entorno-y-guarda-del-destino.md) | Bases separadas por entorno en Neon y una guarda del destino para los comandos de base | Aceptado — supersedido parcialmente por 0024, 0025 y 0027 |
+| [0024](0024-agentes-pueden-escribir-en-produccion-con-confirmacion-en-el-momento.md) | Agentes pueden escribir en producción, con confirmación del usuario en el momento | Aceptado — supersedido parcialmente por 0025 |
+| [0025](0025-un-solo-ejecutor-de-escrituras-en-produccion.md) | Un solo agente ejecuta escrituras en producción: el `infra-specialist` | Aceptado |
+| [0026](0026-politica-de-errores-de-los-modulos.md) | Política de errores de los módulos: ausencia, resultado y excepción | Aceptado |
+| [0027](0027-preview-sin-datos-de-produccion.md) | `preview` nunca recibe datos de producción: rama sin padre, poblada desde el repositorio | Aceptado |
+
+**Vocabulario de estado.** Un ADR vigente dice «Aceptado». Si otro ADR lo
+reemplaza en parte, dice «Aceptado — supersedido parcialmente por NNNN», y el
+encabezado del propio ADR explica en qué punto. Si lo reemplaza entero, dice
+«Superseded by NNNN». Las dos puntas de una supersesión se declaran: la del
+ADR nuevo y la del viejo.
 
 **El 0016 recupera un ADR que había perdido su número.** El 2026-09-09 se
 escribió, en una rama que nunca se mergeó completa, un ADR de arquitectura de la
@@ -61,12 +71,14 @@ ejemplo, no llevan ADR.
 2. Completalo **cuando la decisión se aprueba**, no cuando se propone.
 3. Un ADR aprobado **no se edita para cambiar la decisión**. Si la decisión
    cambia, se escribe uno nuevo que la supersede y se marca el anterior como
-   `Superseded by NNNN`.
+   `Superseded by NNNN` (o «supersedido parcialmente por NNNN» en su
+   encabezado, diciendo en qué punto). Marcar el estado del anterior no es
+   editarlo: es dejar constancia.
 4. Agregá la fila correspondiente al índice de arriba.
 
 ## Estados
 
-`Propuesto` · `Aceptado` · `Rechazado` · `Superseded by NNNN`
+`Propuesto` · `Aceptado` · `Aceptado — supersedido parcialmente por NNNN` · `Rechazado` · `Superseded by NNNN`
 
 ## Precedencia
 

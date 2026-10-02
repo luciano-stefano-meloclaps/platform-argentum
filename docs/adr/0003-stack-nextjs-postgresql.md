@@ -1,6 +1,9 @@
 # 0003 — Stack: Next.js 16, React 19, TypeScript y PostgreSQL
 
-- **Estado:** Aceptado
+- **Estado:** Aceptado. **Supersedido parcialmente por el
+  [ADR 0019](0019-modulo-identidad-con-better-auth.md)** en un solo punto: «el
+  MVP no tiene cuentas». Las cuentas llegaron con el módulo `identidad`, sobre
+  Better Auth como preveía este ADR. El resto sigue vigente.
 - **Fecha:** 2026-08-30
 - **Decide:** Luciano Melo Claps
 
