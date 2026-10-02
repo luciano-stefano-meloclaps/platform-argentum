@@ -127,7 +127,7 @@ if [ "$PRODUCCION" = 1 ]; then
 Agente: $AGENTE
 Operación: \`$NOMBRE\`
 Entrada: $DETALLE
-Afecta lo que ve el público (deploy, dominio, alias, firewall o variables de Production). Recordá que hoy Production, Preview y Development comparten la MISMA base de Neon de producción. Aprobá solo si pediste esta operación exacta (ADR 0010, ADR 0022)."
+Afecta lo que ve el público (deploy, dominio, alias, firewall o variables de Production). Production usa la rama main de Neon, que es la base de producción con datos reales; Preview usa la rama preview, que es copia de main (ADR 0023). Aprobá solo si pediste esta operación exacta (ADR 0010, ADR 0022)."
 fi
 
 # 5. Todo lo demás pregunta.
