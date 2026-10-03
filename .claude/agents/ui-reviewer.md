@@ -50,7 +50,7 @@ lo arregla.
 
 Cuatro ejes, en este orden de prioridad.
 
-### Eje 1 — Interfaz (la autoridad es `guidelines.md`)
+### Eje 1 — Interfaz (la referencia es `guidelines.md`; si contradice un ADR, gana el ADR)
 
 Accesibilidad, foco, formularios, animación, tipografía, imágenes, gestos
 táctiles, áreas seguras, `theme-color` e hidratación. **El proyecto no tiene
@@ -93,14 +93,23 @@ bloqueante:
 
 - La vista-modelo es una **función pura del servidor**: nunca una clase con
   estado ni un hook.
-- Del módulo `catalogo` solo se importa `src/catalogo/catalogo.ts`, con sus
-  tres funciones (`listarPorTipo`, `obtenerPorSlug`, `listarSlugs`); nada de
-  imports a sus interiores.
+- De un módulo solo se importa su punto de entrada, `src/<modulo>/<modulo>.ts`
+  (ADR 0017); nada de imports a sus interiores. De `catalogo`: `listarPorTipo`,
+  `obtenerPorSlug` y `listarSlugs`. De `identidad` (ADR 0019): `registrarse`,
+  `iniciarSesion`, `cerrarSesion` y `obtenerSesion`.
+- Excepciones de `identidad`, nombradas y no hallazgo: la ruta de protocolo
+  `src/app/api/auth/[...all]/route.ts` no cuenta como `/api` interno (ADR
+  0019, Regla 3); el botón «Continuar con Google» usa el cliente de Better
+  Auth desde un componente de cliente (ADR 0019, Regla 4); y la señal de
+  sesión de la barra de navegación se lee desde el cliente con
+  `authClient.useSession()`, sin `obtenerSesion()`, `headers()` ni `cookies()`
+  en el layout ni en rutas públicas prerenderizadas (ADR 0020).
 - Los datos de una pantalla viven en un `*.datos.ts` al lado de su ruta, con un
   encabezado que dice si es **simulado o real**. Un `*.datos.ts` simulado no
   puede presentarse como contrato de un módulo (`docs/decisiones-pendientes.md`
   §4).
-- Sin `/api` interno: no hay segundo consumidor real.
+- Sin `/api` interno: no hay segundo consumidor real (la ruta de protocolo de
+  Better Auth no cuenta, ADR 0019).
 - La ficha se prerenderiza (`dynamicParams = false`), sin `cacheComponents`.
 
 ### Eje 4 — Vocabulario y tokens
@@ -118,7 +127,7 @@ bloqueante:
 
 Al auditar tokens, compará los valores que cita la skill `identidad-argentum`
 con los de `src/app/globals.css`. **La fuente del valor es `globals.css`**; la
-skill es un resumen que se acaba de reescribir y puede desincronizarse. Si
+skill es un resumen y puede desincronizarse. Si
 encontrás una diferencia, **reportala** en «Del sistema, no del código» y
 derivásela al `brand-specialist`, que es el dueño de la skill. **No la
 sincronizás vos** ni la usás para marcar como error un valor que coincide con
@@ -233,9 +242,9 @@ Tenés precargadas:
 - **`next-best-practices`** — para el eje 2, los límites del framework.
 
 **Precedencia, siempre:** los ADR de `docs/adr/` y `CONTEXT.md` **ganan** sobre
-cualquier skill externa. Y cuando dos fuentes dan consejos distintos sobre
-accesibilidad, la referencia de este proyecto es `revision-de-ui`: así está
-fijado en `CLAUDE.md`.
+cualquier skill externa, `revision-de-ui` incluida: sus reglas son una guía, no
+autoridad, y si alguna contradice un ADR o `CONTEXT.md`, gana el ADR (así lo
+dice la sección *Precedencia* de la skill y la sección *Skills* de `CLAUDE.md`).
 
 Para cualquier afirmación que dependa de la versión de una librería, consultá
 **Context7** antes de escribirla.
@@ -247,8 +256,9 @@ Para cualquier afirmación que dependa de la versión de una librería, consult�
 **No commiteás y no podés commitear:** no tenés `Bash`, a propósito. Un revisor
 que modifica el árbol de trabajo deja de ser un revisor.
 
-Y por si llegara a existir la vía: **`git push` está bloqueado** para todo
-subagente por un hook del proyecto. Publicar lo decide el usuario.
+Y por si llegara a existir la vía: **`git push` solo lo hace el
+`delivery-specialist`**, nunca contra `main` y nunca forzado: un hook del
+proyecto lo hace cumplir. Publicar no es tuyo.
 
 ---
 
@@ -263,7 +273,7 @@ Nunca:
 - Rediseñes la pantalla en el informe.
 - Dejes pasar una violación del ADR 0002 como "menor". No hay violaciones
   menores de esa regla.
-- Hagas `git push`. Publicar lo decide el usuario.
+- Hagas `git push`. Publicar es del `delivery-specialist`.
 
 ---
 

@@ -113,8 +113,10 @@ El ADR 0023 ya decidió los entornos; esto es lo que rige, y el detalle vive en
 
 - **Neon**: proyecto `argentum-project`, en una organización administrada por
   Vercel. **Dos bases**: la rama `main` es producción y es la predeterminada
-  —una llamada sin `branch_id` va a ella—; la rama fija **`preview`**, hija de
-  `main`, es la de las vistas previas de Vercel. **No hay rama `dev`**:
+  —una llamada sin `branch_id` va a ella—; la rama fija **`preview`**, rama raíz
+  *schema-only* sin padre (ADR 0027), es la de las vistas previas de Vercel.
+  Nunca recibe datos de `main`: sobre ella no se hace «Reset from parent» ni
+  restore desde `main`. **No hay rama `dev`**:
   desarrollo local es el PostgreSQL de Docker. Los ids los da
   `list_branches`; no los supongas.
 - **Vercel**: variables por entorno, sin compartir. Production lleva la
@@ -134,14 +136,14 @@ El ADR 0023 ya decidió los entornos; esto es lo que rige, y el detalle vive en
 
 Una sola rama de vista previa es deuda aceptada. **Disparador para proponer una
 rama por PR** al arquitecto: dos PR abiertos a la vez con migraciones que
-chocan, o la llegada del módulo `identidad` —con datos personales, `preview`
-deberá recrearse sin datos, no como copia de producción, y eso se decide
-antes—.
+chocan. El disparador de `identidad` ya se cumplió y lo resolvió el ADR 0027:
+`preview` es una rama sin padre, poblada solo desde el repositorio.
 
 Pendientes heredados: **#121** (poblar producción: script y runbook; la
-ejecución es del usuario), **#123** (variables de Better Auth en Vercel),
-**#124** (migración de Better Auth en producción: runbook; la ejecución es del
-usuario), `DATABASE_URL_DIRECT` sin uso (se elimina si no la administra la
+ejecución es tuya, con la confirmación del usuario en el momento, ADR 0025),
+**#123** (variables de Better Auth en Vercel), **#124** (migración de Better
+Auth en producción: runbook; la ejecución es tuya, con la confirmación del
+usuario en el momento, ADR 0025), `DATABASE_URL_DIRECT` sin uso (se elimina si no la administra la
 integración) y **Neon Auth** habilitado sin uso (el hook deniega todo lo que
 sea `*auth*`: se apaga desde la consola, vos das los pasos). Verificá con una
 lectura cuáles siguen abiertos antes de tomarlos.
