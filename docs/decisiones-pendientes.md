@@ -357,3 +357,31 @@ también van a regir para el agente cuando llegue:
 3. **Las pruebas de la guarda del destino y de las migraciones siguen siendo
    del `database-specialist`**, porque verifican una invariante de la base
    (ADR 0023), no un comportamiento de producto.
+
+---
+
+## 9. Estrechar el parámetro de `listarPorTipo` al tipo del registro
+
+**Qué está pendiente.** ¿`listarPorTipo` acepta solo los tipos del registro de
+descriptores (`T extends Tipo`), de modo que `listarPorTipo("proser")` no
+compile, o conserva la forma con `tipo: string` que devuelve `[]` sin consultar
+la base?
+
+**Por qué no se decide hoy.** La forma con `string` existe por una razón
+concreta: la portada enumera seis salas (`SALA_TIPOS`) y solo `procer` tiene
+descriptor; la capa web no puede importar el registro para saber cuáles existen
+(ADR 0016). Estrecharlo hoy rompería la portada o forzaría una abstracción
+nueva solo para ella. Lo que sí está decidido es la relación: una sala nombra un
+tipo previsto, y el tipo existe cuando tiene descriptor (`CONTEXT.md`, **Sala**).
+La forma estrecha es el estado final deseado; el costo de la ancha es que un
+error de tipeo en un literal compila y devuelve `[]` en silencio.
+
+**Disparador.** Cada una de las seis salas tiene su descriptor, o la portada
+deja de enumerar tipos sin descriptor. Con cualquiera de los dos, el segundo
+overload ya no tiene quién lo use.
+
+**Regla interina.** Se mantiene el segundo overload, documentado en
+`catalogo.ts`. Ningún código nuevo lo usa fuera de la portada. Al dispararse:
+ticket aparte que quita el overload `string` y agrega a `catalogo.test-d.ts` una
+aserción de que `listarPorTipo("proser")` no compila (`@ts-expect-error`),
+propuesta del `typescript-specialist`.
