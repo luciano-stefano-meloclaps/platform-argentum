@@ -36,6 +36,17 @@ estas categorías van primero:
 3. **Movimiento** — respetar `prefers-reduced-motion`.
 4. **Foco visible** — nunca eliminar el indicador de foco sin reemplazarlo.
 
+## Reglas de `guidelines.md` que no aplican
+
+`guidelines.md` es una copia versionada y no se edita a mano, así que las
+excepciones se anotan acá. Estas reglas no se reportan:
+
+- **[no aplica]** *Curly quotes* en *Typography*: la prosa del catálogo usa
+  comillas latinas «» o rectas (`voz-narrativa`, sección 3).
+- **[no aplica]** *Title Case* en *Content & Copy*: es una convención del
+  inglés; el español se escribe en mayúscula de oración.
+- **[no aplica]** Las dos reglas de modo oscuro, ya marcadas en la copia.
+
 ## Precedencia
 
 Estas reglas son una **guía**, no autoridad. Si alguna contradice un ADR de
