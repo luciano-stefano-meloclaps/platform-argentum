@@ -56,8 +56,12 @@ _Evitar_: detalle, página de detalle, perfil, vista
 **Sala**:
 Cada uno de los agrupamientos fijos del catálogo, uno por tipo de entidad. Es la
 unidad de navegación de la portada: el lector entra a una sala y encuentra las
-entidades de ese tipo. No hay entidad fuera de una sala, y no se agrega una sala
-sin agregar un tipo.
+entidades de ese tipo. No hay entidad fuera de una sala, y no hay sala sin un
+tipo que la nombre. La relación es de una vía: una sala puede existir antes de
+que su tipo tenga **descriptor** (tipo previsto, sala vacía, con conteo cero),
+pero un tipo sin descriptor no existe todavía para el sistema —lo define el
+**registro de descriptores**— y no puede tener entidades. La sala no agrega un
+tipo: lo anuncia.
 _Evitar_: categoría, sección, colección
 
 **Lámina**:
