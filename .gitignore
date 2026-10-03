@@ -4,9 +4,7 @@
 
 # Secretos y entorno local. `.env.example` SÍ se commitea (es la plantilla).
 # CONTEXT7_API_KEY va en el entorno de la shell, no acá: ver CLAUDE.md.
-.env
-.env.local
-.env.*.local
+.env*
 !.env.example
 
 # Sistema operativo
@@ -26,8 +24,3 @@ next-env.d.ts
 # Tests y herramientas
 coverage/
 *.tsbuildinfo
-
-# Entorno y plataforma
-.vercel
-.env*
-!.env.example

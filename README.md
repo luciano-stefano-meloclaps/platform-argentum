@@ -114,7 +114,7 @@ se descartaron y por qué, está en
 
 ## Puesta en marcha
 
-**Requisitos:** Node LTS, [pnpm](https://pnpm.io) y Docker.
+**Requisitos:** Node 22 (fijado en `.nvmrc`), [pnpm](https://pnpm.io) y Docker.
 
 ```bash
 git clone https://github.com/luciano-stefano-meloclaps/platform-argentum.git
@@ -131,6 +131,12 @@ pnpm dev                          # http://localhost:3000
 
 Los valores de la base local salen de `docker-compose.yml`. El archivo es `.env`
 —no `.env.local`—: es el que leen `pnpm db:ping` y `drizzle.config.ts`.
+
+**Ojo:** en Next.js, `.env.local` pisa a `.env`. Si existe un `.env.local`, la
+aplicación (`pnpm dev`, `pnpm build`) usa sus valores y no los de `.env`, aunque
+`pnpm db:migrate` y `drizzle.config.ts` sigan leyendo `.env`. Si la aplicación y
+las migraciones parecen apuntar a bases distintas, mirá primero si hay un
+`.env.local` olvidado.
 
 ### Variables de identidad y entornos de Vercel
 
