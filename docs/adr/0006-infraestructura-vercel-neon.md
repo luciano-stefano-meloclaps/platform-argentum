@@ -1,6 +1,6 @@
 # 0006 — Infraestructura: Vercel y Neon, con PostgreSQL local en Docker
 
-- **Estado:** Aceptado. **Supersedido parcialmente por el [ADR 0023](0023-bases-separadas-por-entorno-y-guarda-del-destino.md)**: «una rama de base por pull request» pasa a ser una rama fija `preview`. El resto sigue vigente.
+- **Estado:** Aceptado. **Supersedido parcialmente por el [ADR 0023](0023-bases-separadas-por-entorno-y-guarda-del-destino.md)**: «una rama de base por pull request» pasa a ser una rama fija `preview`. **Y por el [ADR 0010](0010-agentes-pueden-escribir-en-vercel-con-confirmacion.md)** en la política operativa sobre agentes y Vercel (que hoy fija el [ADR 0025](0025-un-solo-ejecutor-de-escrituras-en-produccion.md)). El resto sigue vigente.
 - **Fecha:** 2026-08-30
 - **Decide:** Luciano Melo Claps
 

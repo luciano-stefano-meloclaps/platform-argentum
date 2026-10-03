@@ -209,33 +209,13 @@ con la fórmula WCAG** (luminancia relativa, canales linealizados) y **escribí 
 número** en tu informe, con los dos hex al lado. Un par de color sin número
 medido no está aprobado.
 
-Ocho pares del documento de marca original no llegaban. El ADR 0008 fijó los
-reemplazos, y **estos son los valores vigentes de v1** (siguen rigiendo salvo
-donde v2 los reemplaza, ver tabla siguiente):
-
-| Token | Dice la marca | **Vigente** | Sobre | Queda en |
-| --- | --- | --- | --- | ---: |
-| `--celeste-700` *(nuevo)* | — | **`#0978D0`** | blanco | 4.56:1 |
-| `--dorado-text` | `#C98A00` | **`#9A6900`** | `--dorado-bg` | 4.52:1 |
-| `--texto-terciario` | `#8A7B66` | **`#7E705D`** | `--crema` | 4.51:1 |
-| `--ok` | `#2E7D5B` | **`#2E7C5A`** | `--ok-bg` | 4.53:1 |
-| `--error` | `#C94A4A` | **`#C23A3A`** | `--error-bg` | 4.53:1 |
-| `--alerta` | `#B26A00` | **`#9F5F00`** | `--alerta-bg` | 4.52:1 |
-
-**El ADR 0015 agregó estas correcciones sobre v2**, con el mismo método
-(bajar luminosidad en HSL conservando tono y saturación):
-
-| Token | Dice v2 | **Vigente** | Sobre | Queda en |
-| --- | --- | --- | --- | ---: |
-| `--color-bg` | Sin hex | **`#FBF7F0`** (alias de `--crema`) | — | — |
-| `--color-accent-700` | Sin hex | **`#94691A`** | `--color-bg` | 4.58:1 |
-| `--color-accent-800` | Sin hex | **`#604411`** | `--color-bg` | 8.43:1 |
-| Gradiente `.au`, stop 50% | `#C79331` | **`#8B6722`** | `--color-bg` | 4.85:1 |
-| `--error-invertido` *(nuevo)* | No existía | **`#DE9191`** | `--celeste-900` | 4.58:1 |
-
-El centro del gradiente `.au` ya no es `#8B6722`: lo reemplazó el dorado
-brillante que pidió el usuario, y su valor vigente vive en
-`--dorado-brillante-stops` de `globals.css` (ver `identidad-argentum`).
+Los valores vigentes de cada token y los contrastes medidos viven en un solo
+lugar: la skill `identidad-argentum`, sección 3 (y `globals.css`, que es el
+código). Los pares que el documento de marca original no cumplía y sus
+reemplazos están en el **ADR 0008** (v1) y el **ADR 0015** (v2); no se copian
+acá. El centro del gradiente `.au` ya no es el `#8B6722` que fijó el ADR 0015:
+lo reemplazó el dorado brillante, cuyo valor vive en `--dorado-brillante-stops`
+de `globals.css`.
 
 **`--ok` no se usa en panel invertido:** da 2.21:1 contra `--celeste-900`.
 `--ok-invertido` se derivó y se retiró en el ticket #138 junto con su único

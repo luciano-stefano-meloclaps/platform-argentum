@@ -1,5 +1,9 @@
 # El arranque: diez cimientos publicados
 
+> **Documento histórico, no normativo.** Registra el razonamiento del corte del
+> arranque tal como fue en su momento. Donde difiere del estado actual, manda
+> el tracker, el código y los ADR; nada de acá se actualiza.
+
 **Estado: publicado.** Los diez cimientos del arranque viven como issues de
 GitHub, **[#5 a #14](../../issues)**, y el tracker es la fuente de verdad: el
 cuerpo completo de cada ticket —alcance, decisiones cerradas, advertencias y
@@ -147,9 +151,12 @@ gh label create "cuando-se-pueda" --color 0e8a16 \
 
 # Lo que quedó sin publicar
 
-Dos cosas que salieron del corte y **no** son issues todavía. Cuando se
-publiquen van a recibir números nuevos, así que ningún cuerpo las referencia por
-número.
+Dos cosas que salieron del corte y no fueron issues del arranque. **Ambas están
+resueltas hoy:** los tokens visuales viven en el bloque `@theme` de
+`src/app/globals.css` (ADR 0008 y 0015), y la ubicación de las imágenes quedó
+decidida por el ADR 0009 (`public/contenido/<tipo>/<slug>.webp`, no
+`public/imagenes/` como se anticipa abajo). El texto de abajo se conserva como
+memoria del corte.
 
 ## Tokens visuales de Tailwind v4
 
@@ -282,4 +289,4 @@ A partir de acá el `backend-specialist` toma el [#5](../../issues/5) y lo termi
   en el panel de Vercel.
 - **[#13](../../issues/13):** crear el proyecto en Neon (confirmar PostgreSQL 18)
   y cargar las dos cadenas como variables de entorno en Vercel.
-- **Opcional:** los tres `gh label create` de la sección de prioridad.
+- **Opcional (histórico):** crear las tres etiquetas de la sección de prioridad; no se crearon, y las etiquetas vigentes son las de `gh label list`.

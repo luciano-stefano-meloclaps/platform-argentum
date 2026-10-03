@@ -11,8 +11,12 @@ usuario en los paneles. Ningún valor secreto vive en este archivo.
 | `preview` | `br-bitter-resonance-aw8b55is` | `ep-silent-glitter-awaz5wyh` (pooler: `…-pooler.c-12.us-east-1.aws.neon.tech`) | Vistas previas de Vercel |
 | (Docker) | no es Neon | `localhost` | Desarrollo local |
 
-`preview` nació como copia de `main` el 2026-09-26. Hoy no hay datos sensibles;
-con `identidad` deberá crearse sin datos (ver el disparador, abajo).
+`preview` nació como copia de `main` el 2026-09-26. **El ADR 0027 decidió que
+se reemplace por una rama *schema-only*, sin padre**, poblada desde el
+repositorio, antes de cerrar el #123. Al 2026-10-02 no tiene datos personales
+(tampoco `main`: 0 usuarios), pero está desfasada: le falta la migración 0001 y
+tiene 0 entidades. Cuando exista la rama nueva, cambian su id y su endpoint en
+esta tabla.
 
 ## Mapa de variables
 
@@ -70,8 +74,18 @@ tabla de arriba (`ep-silent-glitter-awaz5wyh`), sin copiar la contraseña.
   producción pero apuntando a la cadena de `preview` en la línea de comando de
   un solo proceso (`DATABASE_URL_UNPOOLED=… pnpm db:migrate`), nunca en un
   archivo del árbol.
-- **Renovar** (dejarla igual a `main`): en Neon, "Reset from parent" sobre
-  `preview`. Borra lo escrito en la vista previa; la cadena no cambia.
+- **Prohibido desde el ADR 0027, exista ya la rama nueva o no:** «Reset from
+  parent» y «restore» sobre `preview`, desde `main` o desde un snapshot de
+  `main`. Copian datos de producción, que desde el módulo `identidad` pueden ser
+  datos personales de menores. `preview` nunca recibe datos de `main`; se pone
+  al día solo desde el repositorio (`db:migrate` y `contenido:importar`).
+- **Abierto (ADR 0027):** el procedimiento exacto para poner al día `preview`
+  sin copiar. Una rama *schema-only* trae `drizzle.__drizzle_migrations` vacía,
+  y `db:migrate` podría intentar reaplicar la 0000 sobre tablas que ya existen.
+  Lo definen el `database-specialist` y el `infra-specialist` antes de crear la
+  rama; este runbook no lo fija hasta entonces.
+- **Escribe en `preview` solo el `infra-specialist`** (ADR 0025), con la
+  confirmación del usuario.
 - **Nada de esto toca producción.**
 - **Guarda del destino (ADR 0023):** `pnpm contenido:importar` y `pnpm db:migrate`
   se niegan a escribir en un host que no sea local salvo que se anteponga
@@ -83,5 +97,5 @@ tabla de arriba (`ep-silent-glitter-awaz5wyh`), sin copiar la contraseña.
 Cualquiera de los dos, y se decide con ADR antes:
 
 - Dos PR abiertos a la vez con migraciones que chocan en `preview`.
-- Llega el módulo `identidad` (datos personales): `preview` deja de ser copia de
-  `main` y se crea sin datos.
+- ~~Llega el módulo `identidad`~~: cumplido y decidido en el ADR 0027 (`preview`
+  sin padre, sin datos de producción).

@@ -30,10 +30,9 @@
 #      despliega el directorio actual. Es exactamente el caso que más fácil se
 #      escapa, así que nunca se ejecuta sin que el usuario vea que eso es lo
 #      que va a pasar.
-#   2. El super-architect NO está exento. En limitar-gh.sh lo está porque
-#      coordina el repositorio; acá no hay nada que coordinar, porque
-#      desplegar sigue siendo una decisión del usuario, solo que ahora puede
-#      delegar la ejecución con su aprobación explícita. Solo pasa la sesión
+#   2. El super-architect NO está exento, igual que en limitar-gh.sh:
+#      desplegar sigue siendo una decisión del usuario, que puede delegar la
+#      ejecución con su aprobación explícita. Solo pasa la sesión
 #      principal, que es donde está el usuario y donde no hace falta
 #      preguntarle a través de un hook.
 #
@@ -72,15 +71,23 @@ FRAGMENTOS=$(printf '%s' "$COMANDO" | tr ';|&' '\n')
 while IFS= read -r FRAG; do
   FRAG=$(printf '%s' "$FRAG" | sed -E 's/^[[:space:]]+//; s/^([A-Za-z_][A-Za-z0-9_]*=[^[:space:]]*[[:space:]]+)*//')
   FRAG=$(printf '%s' "$FRAG" | sed -E 's/^rtk([[:space:]]+proxy)?[[:space:]]+//')
-  FRAG=$(printf '%s' "$FRAG" | sed -E 's/^(npx([[:space:]]+-y)?|bunx|pnpm[[:space:]]+(dlx|exec))[[:space:]]+//')
+  # Lanzadores, con sus banderas: `npx --yes`, `npx -y -p vercel`, `npm exec --`,
+  # `pnpm vercel` (pnpm ejecuta un binario local si no hay script con ese
+  # nombre), `yarn dlx`, `bun x`. Antes solo se desenvolvía `npx -y`, y
+  # `npx --yes vercel deploy --prod` caía en "no es vercel" y pasaba sin
+  # preguntar (auditoría del 2026-10-01).
+  FRAG=$(printf '%s' "$FRAG" | sed -E 's/^(npx|npm[[:space:]]+(exec|x)|pnpm([[:space:]]+(dlx|exec))?|yarn([[:space:]]+dlx)?|bunx|bun[[:space:]]+x)(([[:space:]]+(-y|--yes|--no-install|-q|--quiet|-s|--silent|--))|([[:space:]]+(-p|--package)(=|[[:space:]]+)[^[:space:]]+))*[[:space:]]+//')
+  # El binario por ruta (`./node_modules/.bin/vercel`, `/usr/local/bin/vc`), con
+  # versión (`vercel@latest`) o por su alias corto `vc` es el mismo comando.
+  FRAG=$(printf '%s' "$FRAG" | sed -E 's#^[^[:space:]]*/(vercel|vc)([[:space:]]|$)#\1\2#; s/^(vercel|vc)@[^[:space:]]*/\1/; s/^vc([[:space:]]|$)/vercel\1/')
 
   case "$FRAG" in
     vercel|vercel[[:space:]]*) ;;
     *)
       # Formas de EJECUCIÓN, no la palabra en cualquier lado: si no, un
       # `git commit -m 'apaga el plugin de vercel'` se denegaría. Mismo criterio
-      # y mismo patrón que limitar-gh.sh.
-      if printf '%s' "$FRAG" | grep -Eq '(\$\(|`|[[:space:]]-c[[:space:]]+.?|xargs[[:space:]]+|eval[[:space:]]+|env[[:space:]]+)[[:space:]"'"'"']*vercel([[:space:]]|$)'; then
+      # y mismo patrón que limitar-gh.sh, más el binario por ruta.
+      if printf '%s' "$FRAG" | grep -Eq '(\$\(|`|[[:space:]]-c[[:space:]]+.?|xargs[[:space:]]+|eval[[:space:]]+|env[[:space:]]+)[[:space:]"'"'"']*([^[:space:]"'"'"']*/)?(vercel|vc)([[:space:]@]|$)'; then
         preguntar "vercel envuelto en otro comando"
       fi
       continue

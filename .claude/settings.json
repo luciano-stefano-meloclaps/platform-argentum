@@ -3,9 +3,7 @@
   "enabledPlugins": {
     "vercel@claude-plugins-official": true
   },
-  "enabledMcpjsonServers": [
-    "context7"
-  ],
+  "enabledMcpjsonServers": ["context7"],
   "permissions": {
     "allow": [
       "mcp__context7",

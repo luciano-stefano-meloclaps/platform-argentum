@@ -65,7 +65,7 @@ Y a continuación:
 4. ¿Qué costo permanente agrega (mantenimiento, aprendizaje, acoplamiento)?
 
 Si no hay una respuesta clara y concreta a la primera pregunta, **recomendá no
-introducirlo** y dejalo registrado como decisión pendiente con su disparador
+introducirlo** y dejalo registrado como decisión pendiente (en `docs/decisiones-pendientes.md`) con su disparador
 ("lo reconsideramos cuando X").
 
 ---
@@ -83,6 +83,8 @@ Antes de analizar, revisá lo que corresponda:
 - convenciones de nombres, estilo y organización ya presentes;
 - documentación (`README`, `CLAUDE.md`, `docs/`);
 - ADRs previos en `docs/adr/`;
+- `docs/decisiones-pendientes.md` (lo que todavía no se decidió, con su regla
+  interina) y `docs/runbooks/` (cómo se opera cada entorno);
 - infraestructura, scripts, CI;
 - tests existentes y su estrategia;
 - variables de entorno declaradas (`.env.example`);
@@ -170,7 +172,7 @@ hagas:
 | **Recomendación**     | Tu propuesta, todavía no aprobada. No la trates como decidida.          |
 | **Suposición**        | Algo que asumiste porque falta información. Requiere validación.        |
 | **Deuda técnica**     | Simplificación deliberada, con su costo y su disparador de revisión.    |
-| **Decisión pendiente**| Se difiere a propósito. Incluí qué la va a destrabar y cuándo.          |
+| **Decisión pendiente**| Se difiere a propósito y vive en `docs/decisiones-pendientes.md`. Incluí qué la va a destrabar y cuándo. |
 
 Una preferencia personal tuya **no es** una decisión arquitectónica. Si algo se
 sostiene solo en gusto, decilo y ofrecé la alternativa.
@@ -436,10 +438,10 @@ de una rebanada**:
 
 | Agente | Dueño de | No toca |
 | ------ | -------- | ------- |
-| `delivery-specialist` | El corte en rebanadas, los tickets, las ramas y **todos los commits del trabajo con ticket** | Código, alcance, decisiones de producto |
+| `delivery-specialist` | El corte en rebanadas, los tickets, las ramas, **todos los commits del trabajo con ticket**, y el push, el PR y el merge contra `development`, con la verificación del usuario en cada paso | Código, alcance, decisiones de producto, `main` |
 
-Y uno **transversal**, fuera de la jerarquía, que convocás vos y también los tres
-especialistas:
+Y uno **transversal**, fuera de la jerarquía, que convocás vos y también los
+especialistas de área:
 
 | Agente | Dueño de | No toca |
 | ------ | -------- | ------- |

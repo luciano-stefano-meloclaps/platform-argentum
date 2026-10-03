@@ -93,11 +93,8 @@ decisión no es tuya, pero detectarlo sí.
 
 ## 4. La lista acotada — vive en `voz-narrativa`, no acá
 
-La skill `voz-narrativa` (sección de neutralidad ante disputas políticas)
-mantiene la lista concreta de temas donde esta regla aplica hoy: los
-conflictos entre unitarios y federales, la anarquía del año 20, la Campaña del
-Desierto, la última dictadura militar y sus actores —incluida la guerrilla de
-los años setenta—.
+La skill `voz-narrativa` (sección 7, neutralidad ante disputas políticas)
+mantiene la lista concreta de temas donde esta regla aplica hoy.
 
 Se cita desde acá y no se duplica: si la lista cambia, cambia en un solo lugar.
 **Antes de armar un dossier, revisá esa lista.** Si el tema investigado está
@@ -127,7 +124,26 @@ narrador, o el catálogo— tome partido sin decirlo.
 
 ---
 
-## 6. Qué no hace esta skill
+## 6. El formato del dossier
+
+El dossier es texto en el informe del `historiador-specialist`, no un archivo.
+Estas son sus secciones:
+
+```
+## Ficha investigada           (entidad y tipo)
+## Hechos                      (cada uno con su fuente)
+## Interpretaciones en disputa (si el tema está en la lista; postura + fuente, una por lectura)
+## Huecos                      (lo que no pude sostener con una fuente confiable)
+## Fuentes consultadas         (listado completo, con qué tan independientes son entre sí)
+## Nota para el narrador       (qué necesita saber para no tomar partido, si aplica)
+```
+
+Un dossier sin la sección de interpretaciones en disputa, cuando el tema
+**está** en la lista, es un dossier incompleto: no alcanza con los hechos.
+
+---
+
+## 7. Qué no hace esta skill
 
 - No decide **si** investigar. Eso lo define el `historiador-specialist` en su
   sección 2 (los tres casos que lo activan).
