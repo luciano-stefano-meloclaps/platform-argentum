@@ -187,6 +187,7 @@ clasificar el comando.
 | `CONTEXT.md` | El glosario. **Usá sus términos exactos.** Para el método: rebanada, cimiento, ticket |
 | `docs/adr/` | Las decisiones, con su índice y sus estados en `README.md` |
 | `docs/decisiones-pendientes.md` | Lo que todavía no se decidió, con su disparador y su regla interina |
+| `docs/decisiones-menores.md` | Decisiones chicas que no justifican un ADR |
 | `docs/runbooks/` | Cómo operar entornos, bases e identidad en producción |
 | `docs/marca/` | Sistema de diseño v1 y v2; no se editan, y donde los corrige un ADR gana el ADR |
 | `docs/agents/` | La configuración del tracker y de la documentación de dominio para las skills |
@@ -217,8 +218,9 @@ cita:
 **Salvedades de las de terceros:**
 - `vercel-react-best-practices`: las reglas estructurales se aplican desde el
   principio; las micro-optimizaciones (`js-`), solo con una medición. Es *la*
-  fuente sobre React y Next.js: gana sobre la `react-best-practices` del
-  plugin.
+  fuente de rendimiento de React y Next.js: gana sobre la
+  `react-best-practices` del plugin. Las convenciones del framework (archivos,
+  límites RSC, APIs asíncronas) son de `next-best-practices`.
 - `building-components`: la parte de distribución no aplica.
 - `revision-dos-ejes`: es la revisión de código. Se llama así para no pisar
   `/code-review`.
