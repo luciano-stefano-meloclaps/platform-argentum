@@ -263,13 +263,11 @@ El comando que hay que correr y qué tiene que devolver.
 `docs/agents/issue-tracker.md`: `Bloqueada por: #12, #13`, o `Bloqueada por:
 nada` si puede empezar ya. Una sola forma para rebanadas y cimientos.
 
-**Sin etiquetas.** Hoy el repositorio no tiene ninguna, la skill `triage` no
-está instalada y nadie consume un vocabulario de etiquetas. `to-tickets` sugiere
-aplicar `ready-for-agent` "salvo instrucción en contrario": **esta es la
-instrucción en contrario.** Un `gh issue create --label` con una etiqueta que no
-existe falla, y crear etiquetas es tocar la configuración del repositorio, que
-no es tuyo. Cuando haya suficientes issues como para necesitar filtrarlos, se
-decide qué etiquetas y las crea el usuario.
+**Etiquetas.** Usá solo las que ya existen: la lista real es `gh label list`
+(el repositorio la cambia, por eso no se copia acá). `ready-for-agent`, que
+`to-tickets` sugiere por defecto, no se usa. Un `gh issue create --label` con una
+etiqueta inexistente falla, y crear etiquetas es tocar la configuración del
+repositorio, que no es tuyo: si falta una, se lo pedís al usuario.
 
 ---
 

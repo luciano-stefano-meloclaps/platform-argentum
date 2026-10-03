@@ -203,7 +203,7 @@ Fórmula WCAG (luminancia relativa, canales linealizados). Piso: 4.5:1 texto,
 | `--dorado-filete` / `--celeste-900` | 7.77 |
 | `--color-accent` / `--crema` | **1.93 — falla, nunca texto** |
 | `--color-accent-700` / `--crema` | 4.58 |
-| `--color-accent-700` / `--blanco` | 4.89 |
+| `--color-accent-700` (= `--color-foco`) / `--blanco` | 4.89 |
 | `--color-accent-700` / `--celeste-900` | **2.29 — falla, no usar ahí** (incluye `--color-foco`) |
 | `--color-accent-800` / `--crema` | 8.43 |
 | `--color-accent-800` / `--color-accent-300` | 6.81 |
@@ -220,7 +220,6 @@ Fórmula WCAG (luminancia relativa, canales linealizados). Piso: 4.5:1 texto,
 | Blanco / `--error` (botón, 14px) | 5.30 |
 | `--error-invertido` / `--celeste-900` | 4.58 |
 | `--alerta` / `--alerta-bg` | 4.52 |
-| `--celeste-700` (foco) / `--blanco` · `--celeste-50` | 4.56 · 4.34 (no-texto) |
 | `--color-acento-repaso-700` / `-100` | 5.98 |
 | `--color-acento-repaso-700` / `--blanco` | 7.38 |
 | Categorías, texto / fondo (las 6) | 4.62 a 6.38 |
