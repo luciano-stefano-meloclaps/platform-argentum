@@ -390,3 +390,43 @@ overload ya no tiene quién lo use.
 ticket aparte que quita el overload `string` y agrega a `catalogo.test-d.ts` una
 aserción de que `listarPorTipo("proser")` no compila (`@ts-expect-error`),
 propuesta del `typescript-specialist`.
+
+---
+
+## 10. Dónde vive `Resultado` cuando llegue `moderacion`
+
+**Qué está pendiente.** El tipo `Resultado` (`{ ok: true } | { ok: false } &
+InfoError`, ADR 0026) hoy se declara y exporta desde `src/identidad/identidad.ts`
+(línea 74). ¿Dónde debe vivir cuando un segundo módulo lo necesite: se queda en
+`identidad` y el otro lo importa, o sube a un lugar compartido?
+
+**Por qué no se decide hoy.** Un solo módulo lo usa. Moverlo ahora sería crear
+un módulo compartido para un consumidor, sin saber qué forma pide el segundo.
+
+**Disparador.** Cuando `moderacion` (u otro módulo) necesite devolver un
+`Resultado`: el hecho es el primer `import` de ese tipo desde otro módulo o su
+primera redeclaración.
+
+**Regla interina.** `Resultado` se queda en `identidad.ts`. Ningún módulo lo
+redeclara por su cuenta ni lo copia: si hace falta antes, se frena y se decide
+acá.
+
+---
+
+## 11. `FichaCurada` ata `tipo` y `datos` solo cuando entre el segundo tipo
+
+**Qué está pendiente.** `FichaCurada` (`src/catalogo/importacion/contenido.mts`,
+líneas 50-56) declara `tipo: Tipo` y `datos: Datos` por separado, sin que el
+tipo de uno determine el del otro. ¿Debe volverse una unión discriminada que
+ate cada `tipo` con los `datos` de su descriptor?
+
+**Por qué no se decide hoy.** Existe un solo tipo de entidad (`procer`): la
+unión tendría una sola rama y el atado no previene ningún error real.
+
+**Disparador.** Entra el segundo tipo de entidad al catálogo (un segundo
+descriptor registrado).
+
+**Regla interina.** Se mantiene la forma actual. La validación contra el
+descriptor de su tipo, en la importación, es lo que hoy garantiza la
+consistencia (ADR 0009). El diseño del tipo, si se ata, lo convoca al
+`typescript-specialist`.

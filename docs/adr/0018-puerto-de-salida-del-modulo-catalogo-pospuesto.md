@@ -1,6 +1,9 @@
 # 0018 — El puerto de salida del módulo `catalogo` queda pospuesto
 
-- **Estado:** Aceptado
+- **Estado:** Aceptado — **supersede parcialmente** al
+  [ADR 0016](0016-arquitectura-de-la-capa-web.md), solo en el puerto de
+  salida del hexágono: queda pospuesto, no descartado. El resto del 0016
+  sigue vigente.
 - **Fecha:** 2026-09-19
 - **Decide:** el `super-architect`, con el criterio técnico del
   `backend-specialist` y el `database-specialist` (ticket #60)

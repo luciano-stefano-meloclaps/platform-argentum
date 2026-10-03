@@ -209,7 +209,9 @@ _Evitar_: tarea, historia, card, issue (en español), requerimiento
 Cada una de las cinco piezas lógicas del sistema: `catalogo`, `moderacion`,
 `aprendizaje`, `progreso` e `identidad`. La capa web no consulta la base de
 datos: le pide al módulo. Respecto del módulo, la capa web es un **adaptador de
-entrada** y la base es un **adaptador de salida** (ADR 0016).
+entrada** (ADR 0016). El puerto de salida hacia la base está **pospuesto**
+(ADR 0018): hoy el módulo consulta la base directo, sin interfaz de
+persistencia ni adaptador de salida declarado.
 _Evitar_: servicio, componente, capa, dominio
 
 **Vista-modelo**:
