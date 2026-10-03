@@ -12,20 +12,18 @@ import { Header } from "./header.tsx";
  *
  * Cada una expone su variable CSS, que el bloque `@theme` de `globals.css`
  * referencia como `--font-titulo` y `--font-cuerpo`. Los pesos pedidos son
- * los que la escala tipográfica realmente usa: 400, 600 y 700 para
- * Cormorant Garamond (400 para logotipo/H1–H3 grandes/cifras destacadas
+ * los que la escala tipográfica realmente usa: 400 y 600 para
+ * Cormorant Garamond (400 para logotipo, display/h1/h2 y cifras destacadas
  * por el ADR 0015 — `.au`, `.shiny` y el `<h1>` del hero en `font-normal`
  * no llevan ninguna otra clase de peso, así que dependen de que el 400 esté
- * realmente cargado como variante propia; sin él, el navegador sustituía
- * por el 600 más cercano o generaba negrita sintética, que es el bug que
- * corrige este cambio—, 600 para h3, 700 para display/h1/h2, este último ya
- * corregido a 700 por el ADR 0008), 400/500/600 para Lora (cuerpo, label,
- * botón, meta). Cormorant Garamond carga además la itálica: el único peso con
+ * realmente cargado como variante propia; 600 para h3 y kickers; el 700 ya
+ * no se carga porque ningún título lo usa), 400/500/600 para Lora (cuerpo,
+ * label, botón, meta). Cormorant Garamond carga además la itálica: el único peso con
  * el que se usa `italic` en la interfaz es el 400 (epíteto y pie de
  * imagen de la ficha, hint y nota de cierre de `/tarjetas`, pista del quiz,
  * meta de las láminas, resumen del resultado; todos `font-titulo` sin clase
  * de peso). `next/font` no permite pedir un solo peso por estilo: emite las
- * declaraciones 400/600/700 de la itálica, pero Google sirve la itálica
+ * declaraciones 400/600 de la itálica, pero Google sirve la itálica
  * como un único archivo variable, así que los pesos de más no agregan
  * ningún archivo que descargar. Sin la itálica el navegador fabricaba una oblicua sintética, que
  * deforma el trazo fino/grueso de la fuente. Lora no se usa en itálica en
@@ -44,7 +42,7 @@ import { Header } from "./header.tsx";
  */
 const cormorantGaramond = Cormorant_Garamond({
   subsets: ["latin"],
-  weight: ["400", "600", "700"],
+  weight: ["400", "600"],
   style: ["normal", "italic"],
   display: "swap",
   variable: "--font-cormorant-garamond",

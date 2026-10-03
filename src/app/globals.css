@@ -383,21 +383,21 @@
    * cuatro de una sola vez. OJO: no incluye font-family — un título
    * necesita además la clase `font-titulo`.
    *
-   * ⚠️ ADR 0008: --text-display, --text-h1 y --text-h2 van en peso 700,
-   * no 900. Cormorant Garamond no tiene peso 900: pedirlo produce negrita
-   * sintética y arruina el contraste fino/grueso de la tipografía.
+   * ADR 0015 (v2 §4): --text-display, --text-h1 y --text-h2 van en peso
+   * 400. Cormorant Garamond nunca en 900 (no existe: negrita sintética) y
+   * ya no en 700: el contraste fino/grueso de la fuente se conserva en 400.
    */
   --text-display: 36px;
   --text-display--line-height: 1.1;
-  --text-display--font-weight: 700; /* ⚠️ ADR 0008: la marca decía 900 */
+  --text-display--font-weight: 400; /* ADR 0015, v2 §4 */
 
   --text-h1: 30px;
   --text-h1--line-height: 1.15;
-  --text-h1--font-weight: 700; /* ⚠️ ADR 0008: la marca decía 900 */
+  --text-h1--font-weight: 400; /* ADR 0015, v2 §4 */
 
   --text-h2: 24px;
   --text-h2--line-height: 1.2;
-  --text-h2--font-weight: 700; /* ⚠️ ADR 0008: la marca decía 900 */
+  --text-h2--font-weight: 400; /* ADR 0015, v2 §4 */
 
   --text-h3: 18px;
   --text-h3--line-height: 1.3;
