@@ -74,10 +74,16 @@ tabla de arriba (`ep-silent-glitter-awaz5wyh`), sin copiar la contraseña.
   producción pero apuntando a la cadena de `preview` en la línea de comando de
   un solo proceso (`DATABASE_URL_UNPOOLED=… pnpm db:migrate`), nunca en un
   archivo del árbol.
-- **Prohibido desde el ADR 0027:** «Reset from parent» y «restore» sobre
-  `preview` a partir de `main`. Copian datos de producción, que desde el módulo
-  `identidad` pueden ser datos personales de menores. `preview` se pone al día
-  migrando e importando, nunca copiando.
+- **Prohibido desde el ADR 0027, exista ya la rama nueva o no:** «Reset from
+  parent» y «restore» sobre `preview`, desde `main` o desde un snapshot de
+  `main`. Copian datos de producción, que desde el módulo `identidad` pueden ser
+  datos personales de menores. `preview` nunca recibe datos de `main`; se pone
+  al día solo desde el repositorio (`db:migrate` y `contenido:importar`).
+- **Abierto (ADR 0027):** el procedimiento exacto para poner al día `preview`
+  sin copiar. Una rama *schema-only* trae `drizzle.__drizzle_migrations` vacía,
+  y `db:migrate` podría intentar reaplicar la 0000 sobre tablas que ya existen.
+  Lo definen el `database-specialist` y el `infra-specialist` antes de crear la
+  rama; este runbook no lo fija hasta entonces.
 - **Escribe en `preview` solo el `infra-specialist`** (ADR 0025), con la
   confirmación del usuario.
 - **Nada de esto toca producción.**
