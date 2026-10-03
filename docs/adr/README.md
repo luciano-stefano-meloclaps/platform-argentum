@@ -39,6 +39,20 @@ pregunta por qué las cosas están así.
 | [0026](0026-politica-de-errores-de-los-modulos.md) | Política de errores de los módulos: ausencia, resultado y excepción | Aceptado |
 | [0027](0027-preview-sin-datos-de-produccion.md) | `preview` nunca recibe datos de producción: rama sin padre, poblada desde el repositorio | Aceptado |
 
+## Lectura vigente por tema
+
+Varios temas se decidieron en capas: un ADR posterior corrige o reemplaza una
+parte de uno anterior. Para cada tema, **leé en este orden**; el primero manda
+donde dos se contradicen, y el resto sigue vigente en lo que el primero no toca.
+
+| Tema | Lectura vigente (en orden) | Qué reemplaza qué |
+| ---- | -------------------------- | ----------------- |
+| Producción | [0025](0025-un-solo-ejecutor-de-escrituras-en-produccion.md), luego [0024](0024-agentes-pueden-escribir-en-produccion-con-confirmacion-en-el-momento.md) | El 0025 fija quién ejecuta (el `infra-specialist`); el 0024 aporta la confirmación en el momento. Reemplazan en parte a 0010, 0021, 0022 y 0023 |
+| `preview` | [0027](0027-preview-sin-datos-de-produccion.md), luego [0023](0023-bases-separadas-por-entorno-y-guarda-del-destino.md) | El 0027 reemplaza en parte al 0023 (la rama de `preview`, sin padre) |
+| Marca | [0015](0015-identidad-visual-argentum-v2.md) sobre [0008](0008-identidad-visual-argentum.md) | El 0015 reemplaza concepto, logotipo, paleta y tipografía del 0008; el 0012 retira la justificación de su sección 8 |
+| Capa web | [0016](0016-arquitectura-de-la-capa-web.md), [0017](0017-nombre-del-punto-de-entrada-de-un-modulo.md) y [0018](0018-puerto-de-salida-del-modulo-catalogo-pospuesto.md) | El 0017 renombra el punto de entrada; el 0018 pospone el puerto de salida; el 0019 acota tres reglas para `identidad` |
+| Identidad | [0019](0019-modulo-identidad-con-better-auth.md), luego [0020](0020-sesion-en-la-nav-leida-desde-el-cliente.md) | El 0020 enmienda solo la Regla 4 del 0019 (la sesión de la barra de navegación) |
+
 **Vocabulario de estado.** Un ADR vigente dice «Aceptado». Si otro ADR lo
 reemplaza en parte, dice «Aceptado — supersedido parcialmente por NNNN», y el
 encabezado del propio ADR explica en qué punto. Si lo reemplaza entero, dice

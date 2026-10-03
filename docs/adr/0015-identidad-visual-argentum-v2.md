@@ -1,6 +1,9 @@
 # 0015 — Identidad visual Argentum v2: giro museístico e institucional
 
-- **Estado:** Aceptado
+- **Estado:** Aceptado — **supersede parcialmente** al
+  [ADR 0008](0008-identidad-visual-argentum.md): concepto/encuadre, logotipo,
+  paleta de celeste/dorado/error y tipografía. El sistema de ligas, los
+  íconos y la carga de fuentes del 0008 siguen vigentes.
 - **Fecha:** 2026-09-10
 - **Decide:** el usuario
 

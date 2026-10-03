@@ -58,16 +58,13 @@ No se agrega un segundo prefijo. Que un ticket sea un **cimiento** y no una
 - **Comentar**: `gh issue comment <n> --body "..."`
 - **Cerrar**: `gh issue close <n> --comment "..."`
 
-## Sin etiquetas, por ahora
+## Etiquetas
 
-El repositorio tiene **solo las diez etiquetas que GitHub crea por defecto**:
-`bug`, `documentation`, `duplicate`, `enhancement`, `good first issue`,
-`help wanted`, `invalid`, `question`, `wontfix` y `accessibility`.
-
-**Verificá con `gh label list` antes de usar `--label`**: con una etiqueta
-inexistente, `gh issue create` **falla**, y crear etiquetas está denegado para
-los subagentes —`gh label create` lo bloquea el hook—. Si hace falta una
-etiqueta nueva, pedila: la crea la sesión principal o el usuario.
+La lista vigente es la del repositorio: **`gh label list`**. Este documento no
+la copia, porque se desactualiza. Verificala antes de usar `--label`: con una
+etiqueta inexistente, `gh issue create` **falla**, y crear etiquetas está
+denegado para los subagentes (lo bloquea el hook). Si hace falta una etiqueta
+nueva, pedila: la crea la sesión principal o el usuario.
 
 La skill `triage` **no está instalada**, así que no apliques `ready-for-agent`
 ni ninguna del vocabulario canónico de triage: acá no existen y nadie las
