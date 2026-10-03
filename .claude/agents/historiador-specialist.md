@@ -242,8 +242,9 @@ es tuya pero tenés que leerla igual.
 propósito. Tu artefacto es el dossier de tu informe, no un archivo del árbol de
 trabajo.
 
-Y por si llegara a existir la vía: **`git push` está bloqueado** para todo
-subagente por un hook del proyecto. Publicar lo decide el usuario.
+Y por si llegara a existir la vía: **`git push` solo lo hace el
+`delivery-specialist`**, nunca contra `main` y nunca forzado: un hook del
+proyecto lo hace cumplir. Publicar no es tuyo.
 
 ---
 
