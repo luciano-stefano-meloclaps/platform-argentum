@@ -167,6 +167,11 @@ haría falta para diseñarlo tampoco: no está decidido cómo se arma un mazo, s
 quiz se genera desde las entidades o se cura a mano, ni qué se guarda de una
 respuesta —esto último bloqueado por la entrada §2 de este mismo archivo—.
 
+Esta entrada es también el destino de las preguntas de la nota #92 (cómo se arma
+el mazo de repaso, dónde se registra la respuesta, qué contrato cruza la
+costura), que se cerró como duplicada de esta y de la §2
+(`decisiones-menores.md` §3).
+
 Hay además un motivo específico para escribir esta entrada, y es el que la hace
 necesaria: **tres archivos de la capa web ya declaran anticipar esa firma**.
 `src/app/tarjetas/tarjetas-repaso.datos.ts`,
