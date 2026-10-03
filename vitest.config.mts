@@ -1,15 +1,6 @@
-import { fileURLToPath } from "node:url";
 import { defineConfig } from "vitest/config";
 
 export default defineConfig({
-  resolve: {
-    alias: {
-      // Mismo alias que `paths` en tsconfig.json: el arnés tiene que resolver
-      // los imports igual que el compilador y que Next, o una prueba falla por
-      // una razón que no es la que se está probando.
-      "@": fileURLToPath(new URL("./src", import.meta.url)),
-    },
-  },
   test: {
     // Las pruebas viven junto al código que verifican, dentro de `src/`.
     // Acotar el patrón también evita que el runner entre en `.next/`, que no
