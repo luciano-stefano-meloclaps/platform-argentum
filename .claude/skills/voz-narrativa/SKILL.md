@@ -251,9 +251,12 @@ Lista de arranque —abierta, no cerrada—:
 
 - Los conflictos entre unitarios y federales.
 - La anarquía del año 20.
-- La Campaña del Desierto.
+- La Campaña del Desierto de Roca.
 - La última dictadura militar y sus actores, incluida la guerrilla de los años
-  setenta.
+  setenta, con Montoneros nombrado explícitamente.
+
+Esta es **la única fuente de la lista**: la `investigacion-historica` y el
+`historiador-specialist` la citan, no la copian (ADR 0014).
 
 La mayoría del catálogo —los próceres de baja polémica real— **no** cae bajo
 esta regla y se escribe como siempre. Si aparece un tema nuevo que te parece
