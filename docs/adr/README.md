@@ -26,7 +26,7 @@ pregunta por qué las cosas están así.
 | [0013](0013-el-registro-de-lectura-no-es-una-entidad.md) | El registro de lectura no es una entidad: dos prosas, una fila | Aceptado |
 | [0014](0014-historiador-especialista-y-neutralidad-en-disputas-politicas.md) | Historiador especialista y neutralidad en disputas políticas | Aceptado |
 | [0015](0015-identidad-visual-argentum-v2.md) | Identidad visual Argentum v2: giro museístico e institucional | Aceptado — supersedido parcialmente por 0028 |
-| [0016](0016-arquitectura-de-la-capa-web.md) | Arquitectura de la capa web (hexagonal con MVVM) | Aceptado — supersedido parcialmente por 0017, 0018 y 0019 |
+| [0016](0016-arquitectura-de-la-capa-web.md) | Arquitectura de la capa web (hexagonal con MVVM) | Aceptado — supersedido parcialmente por 0017, 0018, 0019 y 0029 |
 | [0017](0017-nombre-del-punto-de-entrada-de-un-modulo.md) | El punto de entrada de un módulo se llama como el módulo | Aceptado |
 | [0018](0018-puerto-de-salida-del-modulo-catalogo-pospuesto.md) | El puerto de salida del módulo `catalogo` queda pospuesto | Aceptado |
 | [0019](0019-modulo-identidad-con-better-auth.md) | El módulo `identidad` se construye sobre Better Auth, con email y contraseña más Google | Aceptado — supersedido parcialmente por 0020 |
@@ -39,6 +39,7 @@ pregunta por qué las cosas están así.
 | [0026](0026-politica-de-errores-de-los-modulos.md) | Política de errores de los módulos: ausencia, resultado y excepción | Aceptado |
 | [0027](0027-preview-sin-datos-de-produccion.md) | `preview` nunca recibe datos de producción: rama sin padre, poblada desde el repositorio | Aceptado |
 | [0028](0028-dorado-brillante-solo-como-ornamento.md) | El dorado brillante es ornamento, su brillo dura una sola pasada, y las cifras se leen en un dorado AA | Aceptado |
+| [0029](0029-los-datos-de-pantalla-son-la-vista-modelo.md) | Los `*.datos.ts` son la vista-modelo de la capa web | Aceptado |
 
 ## Lectura vigente por tema
 
@@ -51,7 +52,7 @@ donde dos se contradicen, y el resto sigue vigente en lo que el primero no toca.
 | Producción | [0025](0025-un-solo-ejecutor-de-escrituras-en-produccion.md), luego [0024](0024-agentes-pueden-escribir-en-produccion-con-confirmacion-en-el-momento.md) | El 0025 fija quién ejecuta (el `infra-specialist`); el 0024 aporta la confirmación en el momento. Reemplazan en parte a 0010, 0021, 0022 y 0023 |
 | `preview` | [0027](0027-preview-sin-datos-de-produccion.md), luego [0023](0023-bases-separadas-por-entorno-y-guarda-del-destino.md) | El 0027 reemplaza en parte al 0023 (la rama de `preview`, sin padre) |
 | Marca | [0028](0028-dorado-brillante-solo-como-ornamento.md), luego [0015](0015-identidad-visual-argentum-v2.md), luego [0008](0008-identidad-visual-argentum.md) | El 0028 reemplaza en parte al 0015: el stop 50% de `.au` y el alcance y la duración del brillo animado, que queda solo para ornamento y en una sola pasada. El 0015 reemplaza concepto, logotipo, paleta y tipografía del 0008. El 0012 retira la justificación de la sección 8 del 0008. `docs/marca/` no se edita: donde choca con un ADR, gana el ADR (`decisiones-menores.md` §5) |
-| Capa web | [0016](0016-arquitectura-de-la-capa-web.md), [0017](0017-nombre-del-punto-de-entrada-de-un-modulo.md) y [0018](0018-puerto-de-salida-del-modulo-catalogo-pospuesto.md) | El 0017 renombra el punto de entrada; el 0018 pospone el puerto de salida; el 0019 acota tres reglas para `identidad` |
+| Capa web | [0029](0029-los-datos-de-pantalla-son-la-vista-modelo.md), [0017](0017-nombre-del-punto-de-entrada-de-un-modulo.md), [0018](0018-puerto-de-salida-del-modulo-catalogo-pospuesto.md) y [0019](0019-modulo-identidad-con-better-auth.md), luego [0016](0016-arquitectura-de-la-capa-web.md) | El 0029 reemplaza la primera mitad de la Regla 6: la vista-modelo es el `*.datos.ts`. El 0017 renombra el punto de entrada, el 0018 pospone el puerto de salida y el 0019 acota tres reglas para `identidad`. La Regla 7 del 0016 se lee con el 0015: el retrato va en plate/medallón, no en marco circular |
 | Identidad | [0019](0019-modulo-identidad-con-better-auth.md), luego [0020](0020-sesion-en-la-nav-leida-desde-el-cliente.md) | El 0020 enmienda solo la Regla 4 del 0019 (la sesión de la barra de navegación) |
 
 **Vocabulario de estado.** Un ADR vigente dice «Aceptado». Si otro ADR lo
