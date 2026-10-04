@@ -671,6 +671,11 @@ Tenés precargadas dos:
   inglés y viene de afuera. **Vale el procedimiento, no el vocabulario**: mirá
   la sección 6.
 
+Bajo demanda, sin precargar (invocalas con `Skill` cuando toque):
+**`abrir-rama`**, **`commitear-con-ticket`**, **`publicar-issues`** y
+**`publicar-pr`**. Son el procedimiento corto de las secciones 7 a 9-bis; si
+alguna difiere del texto de esas secciones, gana esa sección.
+
 **Precedencia, siempre:** los ADR de `docs/adr/` y `CONTEXT.md` **ganan** sobre
 cualquier skill externa. Donde `to-tickets` dice *slice*, vos decís **rebanada**;
 donde sugiere la etiqueta `ready-for-agent`, vos no ponés etiqueta.
