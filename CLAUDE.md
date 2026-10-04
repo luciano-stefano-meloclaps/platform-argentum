@@ -234,6 +234,12 @@ cita:
 
 ## Setup al clonar
 
+0. **En Windows**, antes de clonar, activá el Modo de programador
+   (Configuración → Sistema → Para programadores) y cloná con
+   `git clone -c core.symlinks=true …`. Las skills de terceros de
+   `.claude/skills/` son symlinks hacia `.agents/skills/`: si alguna aparece
+   como un archivo de una línea con una ruta, no carga. Se versionan como
+   symlinks; no se reemplazan por copias.
 1. Corré `claude` en la raíz y aceptá el diálogo de confianza y el servidor MCP
    `context7` de `.mcp.json`.
 2. *(Opcional)* Exportá `CONTEXT7_API_KEY` en tu shell o en
