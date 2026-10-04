@@ -18,6 +18,10 @@
 >
 > Si la identidad cambia, se escribe un ADR nuevo y una **v2** de este archivo;
 > no se edita la v1.
+>
+> **Hoy rige la v1 más la v2.** Donde la
+> [v2](sistema-de-diseno-v2.md) cubre un área, gana sobre este documento (ADR
+> 0015).
 
 ---
 
