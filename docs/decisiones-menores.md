@@ -104,3 +104,47 @@ Las decisiones que se **posponen** viven en `decisiones-pendientes.md`, no acá.
 - **Pendiente:** recortar esas secciones del agente y dejar un puntero a la
   skill. Es un cambio aparte, porque toca el archivo de un agente.
 - **Ejecuta:** sesión principal.
+
+## 5. Qué entra en `docs/marca/`
+
+- **Decisión (2026-10-04, auditoría de marca y UI):** los documentos de
+  `docs/marca/` (sistema de diseño v1 y v2) son el insumo histórico que
+  adoptaron los ADR 0008 y 0015, y no se reescriben. Solo reciben dos cosas:
+  - **remisiones**: un aviso que apunta al ADR que corrige un punto, como la
+    del #165 en v1;
+  - **las extensiones ya escritas y marcadas con su ticket**, como la de foco
+    y objetivo táctil del #58 en v2 §6, que se quedan donde están.
+- **Las extensiones nuevas no van ahí.** Un token, un componente o una regla de
+  uso que la marca no traía se escribe en la skill `identidad-argentum`, que es
+  la fuente citable de lo vigente.
+- **Contexto.** Hoy conviven tres capas: el documento de v1, el de v2 y los ADR
+  que los corrigen (0008, 0015, 0028). Si además las extensiones nuevas se
+  escriben dentro de los documentos, ya no se distingue qué trajo la marca, qué
+  corrigió un ADR y qué agregó el equipo.
+- **Motivo.** Cada cosa tiene un solo lugar: lo decidido está en el ADR, lo
+  vigente y aplicable en la skill, y el origen en `docs/marca/`.
+- **Costo de revertir:** nulo; es una regla de dónde se escribe.
+- **Ejecuta:** el `brand-specialist`, al registrar cualquier extensión.
+
+## 6. El prefijo `cat` de los tokens significa *tipo*, y el `provisorio` se va con su condición
+
+- **Decisión (2026-10-04, auditoría de marca y UI):**
+  - Los tokens `--color-cat-*` conservan el nombre. `cat` es un nombre heredado
+    de v1, que hablaba de «categorías de contenido», y en este proyecto
+    significa **tipo** de entidad, el término de `CONTEXT.md`. Ese glosario
+    pide evitar «categoría» en el dominio, pero un prefijo de token no es
+    vocabulario del dominio.
+  - `--color-tarjetas-carta-provisorio` y su par
+    `--color-tarjetas-dorado-provisorio` se renombran **cuando cada uno deje
+    de ser provisorio**: el sufijo se cae junto con la condición que lo
+    justificaba. No se renombran antes.
+- **Contexto.** La auditoría marcó los dos nombres como posibles
+  inconsistencias.
+- **Motivo.** Renombrar `cat` toca clases en varias pantallas sin cambiar nada
+  visible ni corregir ningún error. Alcanza con dejar escrito qué significa.
+  El sufijo `provisorio` sí dice algo verdadero hoy, y mantenerlo mientras lo
+  sea es lo correcto.
+- **Costo de revertir:** un buscar y reemplazar.
+- **Ejecuta:** el `brand-specialist` registra el significado de `cat` en
+  `identidad-argentum`. El renombre de cada token `tarjetas-*-provisorio`
+  entra en el ticket que lo saque de provisorio.
