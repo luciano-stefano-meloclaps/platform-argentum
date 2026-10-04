@@ -25,6 +25,8 @@ en inglés): citala, no la copies.
    rtk git switch -c <tipo>/<n>-<descripcion>
    ```
 3. Si el árbol no está limpio, no ramifiques: reportá qué hay y de quién es.
+   Excepción: si el trabajo sin commitear es el de esta rebanada (lo dejó la
+   sesión principal), `git switch -c` lo lleva a la rama nueva; no hagas stash.
 
 4. Mové las tarjetas de los tickets de la rebanada a **`En curso`**
    (`publicar-issues`, sección «Mover la tarjeta»).

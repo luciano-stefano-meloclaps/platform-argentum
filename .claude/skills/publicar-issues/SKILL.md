@@ -16,7 +16,8 @@ cimiento, ticket).
   no se publica nada.
 - Etiquetas: todo ticket lleva `tipo:`, `area:` y `prioridad:` (esquema en
   `docs/agents/issue-tracker.md`); `tamano:`, `espera:` y `bloqueada` cuando
-  corresponda. Verificá con `rtk gh label list`. Una inexistente hace fallar el `create`, y
+  corresponda. Verificá con `rtk gh label list --limit 100`: sin el límite, `gh` muestra solo
+  30 y parece que faltan etiquetas que sí existen. Una inexistente hace fallar el `create`, y
   crear etiquetas está denegado. No uses `ready-for-agent`.
 - Publicá en **orden de dependencia**: los bloqueantes primero, para que el
   número de `Bloqueada por:` ya exista.
@@ -82,6 +83,13 @@ mayúscula (`Crítica`, `Alta`, `Media`, `Baja`) y `Tamaño` en `S`, `M` o `L`.
 Un campo vacío no aparece en la tarjeta.
 
 `Hecho` no se mueve a mano: al cerrar el issue lo pone el tablero.
+
+## Lo que la guarda no deja pasar
+
+`limitar-gh.sh` deniega un `gh` que aparece dentro de otro comando. Para evitarlo:
+un comando `gh` por llamada, sin `cd … && gh`, y sin escribir `gh` ni
+`gh project` como texto dentro del cuerpo de un heredoc. Escribí el cuerpo en
+un archivo fuera del repo y pasalo con `--body-file`.
 
 ## Reglas duras
 
