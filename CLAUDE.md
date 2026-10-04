@@ -61,8 +61,9 @@ que no se puede olvidar:
 - **Monolito modular, cinco módulos** (ADR 0002). La capa web no consulta la
   base: le pide al módulo. La autorización se verifica dentro del módulo.
 - **La interfaz de un módulo es `src/<modulo>/<modulo>.ts`** (ADR 0017).
-- **Capa web hexagonal con MVVM** (ADR 0016): la vista-modelo es una función
-  pura del servidor. No hay `/api` interno; la ruta de protocolo de Better Auth
+- **Capa web hexagonal con MVVM** (ADR 0016 y 0029): la vista-modelo es el
+  `*.datos.ts`, del servidor y sin React; su transformación es síncrona y se
+  prueba sin base. No hay `/api` interno; la ruta de protocolo de Better Auth
   no cuenta como tal (ADR 0019). El puerto de salida está pospuesto (ADR 0018).
 - **Errores de los módulos** (ADR 0026):
   - Ausencia esperada: `undefined`.
@@ -71,9 +72,9 @@ que no se puede olvidar:
 - **Una tabla `entidad`**, con discriminador `tipo` y `datos` JSONB tipados por
   descriptores en código (ADR 0001). Una entidad tiene un solo slug, y el
   registro de lectura nunca es columna, fila ni ruta (ADR 0013).
-- **Los datos de una pantalla viven en un `*.datos.ts` al lado de su ruta.** Su
-  encabezado dice si son simulados o reales. Un mock no es contrato
-  (`decisiones-pendientes.md` §4).
+- **Los datos de una pantalla viven en un `*.datos.ts` al lado de su
+  componente** (ADR 0029). Su encabezado dice si son simulados o reales. Un
+  mock no es contrato (`decisiones-pendientes.md` §4).
 - **Contenido curado** en `contenido/<tipo>/<slug>.ts`, tipado por su
   descriptor e importado a la base (ADR 0004 y 0009).
 - **Compilador estricto** (ADR 0007 y 0011). Las banderas no se aflojan para

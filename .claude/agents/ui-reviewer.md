@@ -79,7 +79,7 @@ descubrir tarde:
 - Causas típicas de error de hidratación: fechas, `Math.random`, APIs del
   navegador en el render, HTML inválido anidado.
 
-### Eje 3 — Límites de la capa web: ADR 0002 y ADR 0016
+### Eje 3 — Límites de la capa web: ADR 0002, 0016 y 0029
 
 > **La capa web no consulta la base de datos: le pide al módulo.**
 
@@ -88,11 +88,12 @@ página, un componente o una acción es un **hallazgo bloqueante**, sin
 excepciones y sin discusión. Lo mismo una verificación de permisos que solo
 existe en la interfaz: esconder un botón **no** es seguridad.
 
-Del **ADR 0016** (capa web hexagonal, organizada con MVVM), cada uno es
-bloqueante:
+Del **ADR 0016** (capa web hexagonal, organizada con MVVM) y del **ADR 0029**,
+cada uno es bloqueante:
 
-- La vista-modelo es una **función pura del servidor**: nunca una clase con
-  estado ni un hook.
+- La vista-modelo es el `*.datos.ts`: del servidor, sin React ni `next/*`,
+  nunca una clase con estado ni un hook. Su transformación es síncrona y la
+  función `async` que consulta al módulo solo compone (ADR 0029).
 - De un módulo solo se importa su punto de entrada, `src/<modulo>/<modulo>.ts`
   (ADR 0017); nada de imports a sus interiores. De `catalogo`: `listarPorTipo`,
   `obtenerPorSlug` y `listarSlugs`. De `identidad` (ADR 0019): `registrarse`,
@@ -104,7 +105,7 @@ bloqueante:
   sesión de la barra de navegación se lee desde el cliente con
   `authClient.useSession()`, sin `obtenerSesion()`, `headers()` ni `cookies()`
   en el layout ni en rutas públicas prerenderizadas (ADR 0020).
-- Los datos de una pantalla viven en un `*.datos.ts` al lado de su ruta, con un
+- Los datos de una pantalla viven en un `*.datos.ts` al lado de su componente, con un
   encabezado que dice si es **simulado o real**. Un `*.datos.ts` simulado no
   puede presentarse como contrato de un módulo (`docs/decisiones-pendientes.md`
   §4).

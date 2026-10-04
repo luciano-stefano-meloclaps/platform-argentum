@@ -45,7 +45,10 @@ excepciones se anotan acá. Estas reglas no se reportan:
   comillas latinas «» o rectas (`voz-narrativa`, sección 3).
 - **[no aplica]** *Title Case* en *Content & Copy*: es una convención del
   inglés; el español se escribe en mayúscula de oración.
-- **[no aplica]** Las dos reglas de modo oscuro, ya marcadas en la copia.
+- **[no aplica]** `color-scheme: dark` y el `background-color` explícito del
+  `<select>` nativo, en *Dark Mode & Theming*: este proyecto no tiene modo
+  oscuro (`identidad-argentum`, regla 12; se decide con un ADR nuevo).
+  `<meta name="theme-color">` sí aplica, contra el fondo claro de la página.
 
 ## Precedencia
 
