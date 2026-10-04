@@ -15,6 +15,12 @@
 #     permitida para todos;
 #   - escritura de issues (create, edit, comment, close, reopen): SOLO para
 #     delivery-specialist, que es el dueño del tracker;
+#   - tablero de proyecto: lectura (`project view|list|field-list|item-list`)
+#     para todos; mover y cargar tarjetas (`project item-add|item-edit`) SOLO
+#     para delivery-specialist, que es quien conoce el estado de cada ticket.
+#     Crear, editar, ligar, borrar o archivar el proyecto, sus campos o sus
+#     tarjetas queda denegado: eso es estructura del tablero y lo decide el
+#     usuario;
 #   - `pr create` y `pr merge`: SOLO para delivery-specialist, y solo contra
 #     `development` — `pr merge` le pregunta al PR su base y deniega si no es
 #     `development`; `pr create` sin `--base development` explícito se
@@ -129,6 +135,7 @@ while IFS= read -r FRAG; do
     "pr view"|"pr list"|"pr diff"|"pr checks"|"pr status") continue ;;
     "repo view"|"label list"|"release view"|"release list") continue ;;
     "run view"|"run list"|"workflow view"|"workflow list") continue ;;
+    "project view"|"project list"|"project field-list"|"project item-list") continue ;;
     "auth status"|"status ") continue ;;
   esac
   case "$SUB" in
@@ -139,6 +146,7 @@ while IFS= read -r FRAG; do
   if [ "$AGENTE" = "delivery-specialist" ]; then
     case "$SUB $VERBO" in
       "issue create"|"issue edit"|"issue comment"|"issue close"|"issue reopen") continue ;;
+      "project item-add"|"project item-edit") continue ;;
       "pr merge")
         # El merge no lleva la base en el comando: es la del PR. Se le pregunta
         # al PR mismo, con el mismo selector (número, URL o rama) y el mismo
