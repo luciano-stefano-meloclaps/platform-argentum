@@ -220,6 +220,12 @@ Cada rebanada se corta en **tickets**, que son issues de este repositorio, y
 agentes de Claude Code con roles y límites definidos en
 [`CLAUDE.md`](CLAUDE.md).
 
+El estado de cada ticket se sigue en el
+[tablero del proyecto](https://github.com/users/luciano-stefano-meloclaps/projects/2)
+(`Backlog`, `Listo`, `En curso`, `En revisión` y `Hecho`). Los tickets se
+clasifican con etiquetas de tipo, área y prioridad; el esquema está en
+[`docs/agents/issue-tracker.md`](docs/agents/issue-tracker.md).
+
 El trabajo con ticket llega a la rama **`development`**: el
 `delivery-specialist` pushea la rama de la rebanada y abre el *pull request*
 contra `development` —nunca contra `main`—, y lo mergea. Cada uno de esos dos

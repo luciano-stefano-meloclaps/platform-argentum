@@ -15,6 +15,7 @@ Lo impone el hook `.claude/hooks/limitar-gh.sh`, no la buena voluntad:
 | ----- | ----- |
 | Sesión principal | Todo, sin restricción: es donde está el usuario |
 | `delivery-specialist` | Leer, `issue create/edit/comment/close/reopen`, y `pr create`/`pr merge` contra `development` (con verificación del usuario en cada paso, ver `.claude/agents/delivery-specialist.md`) |
+| `delivery-specialist`, sobre el tablero | `project item-add` e `item-edit`: cargar y mover tarjetas entre columnas. Nada de crear, editar, ligar ni borrar el proyecto o sus campos |
 | Cualquier otro subagente, **el arquitecto incluido** | Solo lectura (`issue view`, `issue list`, `pr view`…) |
 
 Denegado para **todo** subagente: `gh repo`, `gh release`, `gh label create`,
@@ -66,9 +67,39 @@ etiqueta inexistente, `gh issue create` **falla**, y crear etiquetas está
 denegado para los subagentes (lo bloquea el hook). Si hace falta una etiqueta
 nueva, pedila: la crea la sesión principal o el usuario.
 
+**Esquema vigente (2026-10-03).** Todo ticket nuevo lleva, como mínimo:
+
+- una `tipo: <tipo>` que coincide con el tipo del título,
+- una `area: <área>` (`backend`, `frontend`, `db`, `infra`, `contenido`,
+  `marca`, `arquitectura`, `a11y`; puede haber dos),
+- una `prioridad: <critica|alta|media|baja>`.
+
+Y, cuando corresponde: `tamano: s|m|l`, `espera: usuario|arquitecto`
+(el ticket espera una decisión humana, no código) y `bloqueada` (mientras algún bloqueante de "Bloqueada por:" siga abierto; se
+quita al cerrarse). Las etiquetas viejas `bug`, `enhancement`, `documentation`,
+`accessibility` y `urgente` ya no se usan.
+
 La skill `triage` **no está instalada**, así que no apliques `ready-for-agent`
 ni ninguna del vocabulario canónico de triage: acá no existen y nadie las
 consumiría.
+
+## Tablero
+
+Proyecto de GitHub, privado, ligado al repo:
+`https://github.com/users/luciano-stefano-meloclaps/projects/2`. Columnas:
+`Backlog`, `Listo`, `En curso`, `En revisión`, `Hecho`.
+
+Los PR llevan `Ticket: #n` y no `Closes`, así que GitHub no los vincula al
+issue y los workflows de PR del tablero no se disparan. Por eso el
+`delivery-specialist` mueve las tarjetas: `Listo` cuando no quedan
+bloqueantes abiertos, `En curso` al abrir la rama, `En revisión` al abrir el PR.
+`Hecho` lo pone el workflow `Item closed` al cerrar el issue.
+
+Cada ticket pertenece a un **hito** (milestone): «Catálogo curado (#30)»,
+«Identidad en producción» u «Orden de la casa». El hito da la barra de progreso.
+En el tablero, `Prioridad`, `Tipo`, `Área`, `Tamaño` y `Espera` son campos con
+su desplegable y se ven en la tarjeta de la vista **Kanban**; el delivery los
+carga además de las etiquetas.
 
 ## Dependencias entre tickets: como texto
 

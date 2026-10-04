@@ -88,3 +88,19 @@ Las decisiones que se **posponen** viven en `decisiones-pendientes.md`, no acá.
 - **Señal para retomar #92:** el arranque de la rebanada de `aprendizaje`
   (disparador de §4); ahí nace el ticket real, con el contrato diseñado.
 - **Ejecuta:** `delivery-specialist`, sobre el tracker (ver el informe del #158).
+
+## 4. Cuatro skills de flujo git/GitHub para el `delivery-specialist`
+
+- **Decisión (2026-10-03):** se crean `abrir-rama`, `commitear-con-ticket`,
+  `publicar-issues` y `publicar-pr` en `.claude/skills/`. Son procedimientos
+  cortos que remiten a `convenciones-git` y a `docs/agents/issue-tracker.md`;
+  no repiten sus reglas.
+- **Excepción a la regla de proceso vigente** (no crear skills de proceso hasta
+  #30): la pidió el usuario. No sienta precedente.
+- **Motivo.** El `delivery-specialist` pesa unas 35 KB y las secciones 7, 8, 9 y
+  9-bis de ese archivo son procedimiento. En una skill se carga solo cuando se
+  usa, y no se precarga en el frontmatter del agente.
+- **Costo de revertir:** borrar cuatro carpetas.
+- **Pendiente:** recortar esas secciones del agente y dejar un puntero a la
+  skill. Es un cambio aparte, porque toca el archivo de un agente.
+- **Ejecuta:** sesión principal.
