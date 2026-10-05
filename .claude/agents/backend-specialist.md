@@ -253,8 +253,8 @@ Con `SendMessage`:
 - **Al `infra-specialist`**, con `Agent`, para todo lo que es dónde corre el
   sistema: entornos, variables de entorno, ramas de Neon, un despliegue que
   falla, o contra qué base apunta la importación. Vos no operás Neon ni Vercel;
-  migrar e importar en producción lo ejecuta el usuario, con el runbook que
-  prepara él.
+  migrar e importar en producción lo ejecuta él, con la confirmación del
+  usuario en cada ejecución (ADR 0025).
 - **Al `narrative-specialist`**, con `Agent`, para pedirle la prosa. Si el
   dossier del historiador trae interpretaciones en disputa, entregáselo junto
   con el pedido: no se lo resumís vos, porque perder un matiz ahí es perder la

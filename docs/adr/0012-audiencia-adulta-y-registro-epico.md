@@ -1,6 +1,8 @@
 # 0012 — Audiencia de chicos grandes y adultos, con registro épico
 
-- **Estado:** Aceptado
+- **Estado:** Aceptado — **supersede parcialmente** al
+  [ADR 0008](0008-identidad-visual-argentum.md), solo en la justificación de
+  su sección 8 (el lector de ocho años); los valores del 0008 no cambian.
 - **Fecha:** 2026-09-09
 - **Decide:** el usuario
 
@@ -236,7 +238,8 @@ piden **dos productos**, y por eso la versión para chicos se pospone entera
 
 **Deuda técnica asumida:**
 
-- **El campo `contexto` sigue sin existir** en el descriptor de `procer`, y con
+- **El campo `contexto` no existía** en el descriptor de `procer` al decidir
+  (hoy ya existe, opcional, en `src/catalogo/descriptores/procer.ts`), y con
   esta voz pasó de conveniente a estructural: en las dos muestras el escenario
   ocupa tanto lugar como el retrato y es el que instala el tono. Mientras no
   exista, el contexto se escribe y se entrega aparte, **nunca fundido dentro de

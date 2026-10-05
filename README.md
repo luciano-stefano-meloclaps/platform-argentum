@@ -2,15 +2,16 @@
 
 Catálogo web sobre Argentina, con prosa épica de registro alto.
 
-> **Estado: la primera rebanada de producto está entregada.** La aplicación
-> compila, corre contra PostgreSQL y está desplegada. Existen la tabla
-> `entidad` con su migración, el registro de descriptores, el módulo
-> `catalogo`, seis rutas en `src/app/` y la primera ficha de contenido curado
-> (`contenido/procer/manuel-belgrano.ts`). `/catalogo` y `/catalogo/[slug]` se
-> sirven contra el módulo real. **Todavía no existen** los otros cuatro
-> módulos (`moderacion`, `aprendizaje`, `progreso`, `identidad`); las pantallas
-> de `/ficha`, `/tarjetas` y `/quiz` existen como presentación, con datos
-> simulados. La arquitectura y el stack están decididos y documentados en
+> **Estado.** La aplicación compila, corre contra PostgreSQL y está desplegada.
+> Existen dos módulos: `catalogo`, con la tabla `entidad`, el registro de
+> descriptores y la primera ficha curada (`contenido/procer/manuel-belgrano.ts`),
+> y `identidad`, con cuentas de email y contraseña o Google sobre Better Auth
+> (ADR 0019). `/catalogo` y `/catalogo/[slug]` se sirven contra el módulo real,
+> y `/ingresar` y `/registrarse` contra `identidad`; el inicio de sesión en
+> producción espera la configuración de sus variables (#123). **Todavía no
+> existen** `moderacion`, `aprendizaje` ni `progreso`: las pantallas de
+> `/ficha`, `/tarjetas`, `/quiz` y `/quiz/resultado` son presentación con datos
+> simulados. La arquitectura y el stack están decididos en
 > [`docs/adr/`](docs/adr/).
 
 ## Qué es
@@ -47,8 +48,10 @@ alrededor de ese hecho: agregar un tipo nuevo tiene que ser barato (ver
   Litio, los metales del suelo argentino. **No se sube ni se baja de liga, y no
   se compite con nadie.** Es un incentivo, no un ranking.
 
-No hay cuentas todavía. **Dónde se guarda el progreso de alguien sin cuenta es
-una decisión abierta a propósito**: la audiencia arranca a los doce años
+Las cuentas existen (ADR 0019), pero ninguna pantalla exige sesión y el
+progreso todavía no se guarda. **A quién se le atribuye el progreso de un
+visitante, y si se reconcilia con su cuenta cuando se registra, es una decisión
+abierta a propósito**: la audiencia arranca a los doce años
 (ADR 0012) y a esa edad se sigue siendo menor, así que persistir un
 identificador por navegador sigue siendo una decisión sobre datos de menores,
 no un detalle de implementación —la dimensión se aflojó con la nueva audiencia,
@@ -57,9 +60,6 @@ en [`docs/decisiones-pendientes.md`](docs/decisiones-pendientes.md).
 
 ### Después del MVP
 
-- **Cuentas de usuario.** Solo correo electrónico, sin contraseña. La audiencia
-  incluye menores de edad (doce años en adelante, ADR 0012), así que se piden
-  los datos mínimos indispensables y nada más.
 - **Propuestas de la comunidad.** Los usuarios proponen altas, modificaciones y
   bajas de contenido; **nada se publica sin que un administrador lo apruebe.**
 - **Roles.** `usuario`, `admin` y `superadmin`. Un visitante sin sesión no es un
@@ -105,7 +105,7 @@ contenido tiene historial, revisión y vuelta atrás, sin construir nada.
 | Tests | Vitest |
 | Hosting | Vercel |
 | Base gestionada | Neon |
-| Autenticación | Better Auth *(recién en la fase de cuentas)* |
+| Autenticación | Better Auth ([ADR 0019](docs/adr/0019-modulo-identidad-con-better-auth.md)) |
 
 El criterio de selección fue explícito: **lo mejor para el proyecto**, no lo más
 conocido ni lo más novedoso. El razonamiento completo, con las alternativas que
@@ -114,7 +114,7 @@ se descartaron y por qué, está en
 
 ## Puesta en marcha
 
-**Requisitos:** Node LTS, [pnpm](https://pnpm.io) y Docker.
+**Requisitos:** Node 22 (fijado en `.nvmrc`), [pnpm](https://pnpm.io) y Docker.
 
 ```bash
 git clone https://github.com/luciano-stefano-meloclaps/platform-argentum.git
@@ -125,11 +125,18 @@ cp .env.example .env              # completar DATABASE_URL y DATABASE_URL_UNPOOL
 docker compose up -d              # PostgreSQL 18 local
 
 pnpm db:migrate                   # aplica las migraciones
+pnpm contenido:importar           # carga el contenido curado en la base local
 pnpm dev                          # http://localhost:3000
 ```
 
 Los valores de la base local salen de `docker-compose.yml`. El archivo es `.env`
 —no `.env.local`—: es el que leen `pnpm db:ping` y `drizzle.config.ts`.
+
+**Ojo:** en Next.js, `.env.local` pisa a `.env`. Si existe un `.env.local`, la
+aplicación (`pnpm dev`, `pnpm build`) usa sus valores y no los de `.env`, aunque
+`pnpm db:migrate` y `drizzle.config.ts` sigan leyendo `.env`. Si la aplicación y
+las migraciones parecen apuntar a bases distintas, mirá primero si hay un
+`.env.local` olvidado.
 
 ### Variables de identidad y entornos de Vercel
 
@@ -156,8 +163,11 @@ Cloud Console por cada URL. El detalle, sin valores reales, está en
 | `pnpm db:generate` | Genera migraciones a partir del esquema |
 | `pnpm db:migrate` | Aplica las migraciones pendientes |
 | `pnpm contenido:importar` | Importa `contenido/` a la base, validando cada ficha contra el descriptor de su tipo ([ADR 0004](docs/adr/0004-contenido-en-archivos-versionados.md)) |
+| `pnpm desplegar:datos` | `db:migrate` y después `contenido:importar`. Contra una base que no sea local exige `DB_CONFIRMAR_DESTINO=<host>` ([ADR 0023](docs/adr/0023-bases-separadas-por-entorno-y-guarda-del-destino.md)); el procedimiento está en [`docs/runbooks/desplegar-datos.md`](docs/runbooks/desplegar-datos.md) |
 
 Antes de dar por terminado un cambio: `pnpm typecheck && pnpm lint && pnpm test`.
+Las pruebas de `catalogo` corren contra el PostgreSQL de Docker: sin
+`docker compose up -d`, fallan con `ECONNREFUSED`.
 
 ## Cómo agregar contenido
 
@@ -226,6 +236,7 @@ usuario**, en su propio tiempo.
 | [`CONTEXT.md`](CONTEXT.md) | Glosario del dominio: el vocabulario del proyecto |
 | [`docs/adr/`](docs/adr/) | Decisiones arquitectónicas, con su contexto y sus alternativas |
 | [`docs/decisiones-pendientes.md`](docs/decisiones-pendientes.md) | Lo que **todavía no** se decidió, con su disparador y su regla interina |
+| [`docs/runbooks/`](docs/runbooks/) | Operación: entornos y bases, identidad en producción, migrar e importar en producción |
 | [`docs/marca/sistema-de-diseno.md`](docs/marca/sistema-de-diseno.md) | La identidad **Argentum** v1.0: paleta, tipografía y reglas de aplicación |
 | [`docs/marca/sistema-de-diseno-v2.md`](docs/marca/sistema-de-diseno-v2.md) | El giro museístico de Argentum ([ADR 0015](docs/adr/0015-identidad-visual-argentum-v2.md)): logotipo, concepto y tipografía nuevos |
 | [`docs/tickets-del-arranque.md`](docs/tickets-del-arranque.md) | El corte del arranque en diez cimientos, y su razonamiento |

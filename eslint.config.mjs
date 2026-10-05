@@ -30,16 +30,15 @@ import tseslint from "typescript-eslint";
  *   (no existe un `catalogo/index.ts`: ese es el nombre real del punto de
  *   entrada del módulo, ver ADR 0002).
  *
- *   El código real de `src/app` importa con rutas **relativas**, no con el
- *   alias `@/` (aunque `tsconfig.json` lo declara), así que los patrones no
- *   pueden ser literales tipo `@/db/*`: una ficha a un nivel de profundidad
+ *   El código real de `src/app` importa con rutas **relativas** (el proyecto
+ *   no declara el alias `@/`), así que los patrones no pueden ser literales
+ *   de un alias: una ficha a un nivel de profundidad
  *   escribe `../db/cliente.ts`, otra a tres niveles escribe
- *   `../../../db/cliente.ts`, y ninguna de las dos empieza con `@/`. Se usa
+ *   `../../../db/cliente.ts`, y ninguna de las dos empieza con un alias. Se usa
  *   `patterns` (no `paths`) con glob estilo `.gitignore` (`**`), que es lo
  *   que exporta la propia regla core de ESLint vía el paquete `ignore`: `**`
  *   absorbe cualquier cantidad de segmentos `..` iniciales, así que
- *   `**\/db/**` combina en un solo patrón el alias y cualquier profundidad
- *   relativa (verificado ejecutando el matcher a mano: `../db/x`,
+ *   `**\/db/**` cubre cualquier profundidad relativa (verificado ejecutando el matcher a mano: `../db/x`,
  *   `../../../db/x` y `@/db/x` dan los tres `true`). Para `catalogo` se
  *   agrega la excepción `!**\/catalogo/catalogo.ts`, que por el mismo
  *   mecanismo excluye el punto de entrada sin importar cuántos `../` lo

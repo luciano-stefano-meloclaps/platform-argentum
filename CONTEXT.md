@@ -29,15 +29,14 @@ esperada.
 _Evitar_: categoría, clase, modelo, colección
 
 **Descriptor**:
-La definición en código —un esquema Zod— de los campos que tiene un tipo. Es la
-fuente única que tipa la columna, valida la importación, valida las propuestas y
+La definición en código de los campos que tiene un tipo. Es la fuente única que tipa la columna, valida la importación, valida las propuestas y
 renderiza tanto el formulario como la ficha.
 _Evitar_: esquema, schema, metadata, definición
 
 **Registro de descriptores**:
 La estructura en código que reúne los descriptores de todos los tipos. Es la que
-define **qué tipos existen** —la base no lo sabe: la columna `tipo` es `text` y
-no un enum— y de la que se deriva el tipo **Datos** como unión discriminada.
+define **qué tipos existen** —la base no lo sabe— y de la que se deriva la
+forma de los **Datos** de cada tipo.
 Agregar un tipo es agregarle un descriptor: no hay migración.
 La locución va completa. La palabra _registro_ sola sigue prohibida, porque
 significa otra cosa (ver **Entidad**).
@@ -45,13 +44,39 @@ _Evitar_: catálogo de descriptores (catálogo es otra cosa), mapa, índice,
 diccionario, tabla de tipos
 
 **Datos**:
-El objeto JSONB de una entidad, con los campos propios de su tipo. Su forma la
-dicta el descriptor, no la base.
+Los campos propios del tipo de una entidad. Su forma la dicta el descriptor, no
+la base.
 _Evitar_: atributos, propiedades, payload, campos extra
 
 **Ficha**:
-La página que muestra una entidad completa a un lector.
+La página que muestra una entidad completa a un lector. Es el destino: a ella
+llevan la lámina y el listado de una sala.
 _Evitar_: detalle, página de detalle, perfil, vista
+
+**Sala**:
+Cada uno de los agrupamientos fijos del catálogo, uno por tipo de entidad. Es la
+unidad de navegación de la portada: el lector entra a una sala y encuentra las
+entidades de ese tipo. No hay entidad fuera de una sala, y no hay sala sin un
+tipo que la nombre. La relación es de una vía: una sala puede existir antes de
+que su tipo tenga **descriptor** (tipo previsto, sala vacía, con conteo cero),
+pero un tipo sin descriptor no existe todavía para el sistema —lo define el
+**registro de descriptores**— y no puede tener entidades. La sala no agrega un
+tipo: lo anuncia.
+_Evitar_: categoría, sección, colección
+
+**Lámina**:
+La presentación destacada de una entidad en la vidriera de la portada: una pieza
+visual grande, elegida, que invita a entrar y lleva a la ficha. No es una ficha
+(la página completa) ni una tarjeta (la unidad de repaso). Una entidad puede
+tener las tres presentaciones y sigue siendo una sola entidad.
+_Evitar_: destacado, card, banner, portada
+
+**Registro de lectura**:
+La voz en que se lee la prosa de una entidad: épica, la vigente (ADR 0012), o
+para chicos, pospuesta. Es una manera de leer la entidad, no parte de ella: una
+entidad tiene un solo slug sea cual sea el registro de lectura (ADR 0013). La
+locución va completa, igual que **registro de descriptores**.
+_Evitar_: versión, nivel, modo, edición
 
 **Contenido curado**:
 El que escribe el equipo en archivos versionados del repositorio, por oposición
@@ -75,12 +100,21 @@ _Evitar_: aceptar, denegar, descartar
 
 **Tarjeta**:
 Unidad de repaso con una pregunta de un lado y la respuesta del otro.
-_Evitar_: flashcard, card, ficha (que es otra cosa)
+_Evitar_: flashcard, card, carta, ficha y lámina (que son otra cosa)
+
+**Mazo**:
+El conjunto de tarjetas que se repasan de una vez. Cómo se arma un mazo todavía
+no está decidido (`docs/decisiones-pendientes.md` §4).
+_Evitar_: baraja, set, lista de tarjetas
 
 **Quiz**:
-La partida de preguntas con opciones, individual y sin competencia contra otros
-usuarios.
+La serie de preguntas con opciones, individual y sin competencia contra otros
+usuarios. Se juega por partidas.
 _Evitar_: juego, kahoot, trivia, test, examen
+
+**Partida**:
+Una ronda completa de quiz, de la primera pregunta al resultado.
+_Evitar_: sesión (que es de identidad), ronda, intento
 
 **Distractor**:
 Cada opción incorrecta de una pregunta del quiz. Se toma de otras entidades del
@@ -117,12 +151,24 @@ _Evitar_: debilidad, punto débil, materia pendiente
 ## Identidad
 
 **Usuario**:
-Quien tiene sesión iniciada. Los roles son `usuario`, `admin` y `superadmin`.
-_Evitar_: cuenta, miembro, jugador
+Quien tiene sesión iniciada. Los roles previstos son `usuario`, `admin` y
+`superadmin`.
+_Evitar_: miembro, jugador, y cuenta para nombrar a la persona
+
+**Cuenta**:
+El alta de una persona en la aplicación, con email y contraseña o con Google.
+Tener cuenta no es lo mismo que ser usuario: se es usuario mientras la sesión
+está iniciada.
+_Evitar_: perfil, registro (que es otra cosa)
+
+**Sesión**:
+El período en que una persona con cuenta está identificada en la aplicación,
+entre el inicio y el cierre de sesión.
+_Evitar_: login (como sustantivo), partida (que es del quiz)
 
 **Visitante**:
 Quien usa la aplicación sin sesión. **No es un rol: es la ausencia de sesión.**
-En el MVP todo el mundo es visitante, porque todavía no hay cuentas.
+Hoy ninguna pantalla exige sesión.
 _Evitar_: invitado, anónimo, guest, usuario no registrado
 
 ## Datos y despliegue
@@ -133,8 +179,8 @@ de datos. Valida cada ficha contra el descriptor de su tipo y falla si no cumple
 _Evitar_: migración (reservado para el esquema), carga, seed, sincronización
 
 **Migración**:
-Un cambio de esquema de la base, generado por drizzle-kit y versionado como SQL.
-Nunca se usa esta palabra para el contenido.
+Un cambio de esquema de la base, versionado en el repositorio. Nunca se usa
+esta palabra para el contenido.
 _Evitar_: usarla para la importación
 
 ## Trabajo
@@ -162,5 +208,14 @@ _Evitar_: tarea, historia, card, issue (en español), requerimiento
 **Módulo**:
 Cada una de las cinco piezas lógicas del sistema: `catalogo`, `moderacion`,
 `aprendizaje`, `progreso` e `identidad`. La capa web no consulta la base de
-datos: le pide al módulo.
+datos: le pide al módulo. Respecto del módulo, la capa web es un **adaptador de
+entrada** (ADR 0016). El puerto de salida hacia la base está **pospuesto**
+(ADR 0018): hoy el módulo consulta la base directo, sin interfaz de
+persistencia ni adaptador de salida declarado.
 _Evitar_: servicio, componente, capa, dominio
+
+**Vista-modelo**:
+La pieza de la capa web que traduce lo que devuelve un módulo a exactamente lo
+que una pantalla muestra: formato, orden, qué se omite. Nunca consulta la base;
+eso es del módulo.
+_Evitar_: controlador, presentador, view model, hook de datos

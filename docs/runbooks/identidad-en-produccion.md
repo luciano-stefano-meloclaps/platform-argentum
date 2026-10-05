@@ -2,31 +2,39 @@
 
 Tickets #123, #124 y #121; ADR 0019 (Better Auth), ADR 0023 (guarda del
 destino), runbook hermano `entornos-y-bases.md`. Ningún valor secreto vive en
-este archivo. **Migrar e importar en producción lo ejecuta el usuario**; el
-`infra-specialist` prepara, verifica y, con autorización expresa, opera solo la
-rama `preview`.
+este archivo. **Migrar e importar en producción lo ejecuta el
+`infra-specialist`, con la confirmación del usuario sobre el comando exacto en
+cada ejecución, o el usuario por su cuenta** (ADR 0024 y ADR 0025). Ningún otro
+agente lo ejecuta. Sobre `preview` rige el ADR 0027: nada de «Reset from
+parent» ni de restore desde `main`.
 
-Estado leído el 2026-09-26 (solo lectura, **HISTÓRICO: anterior a la migración
-0001 en `main`; ver la actualización de abajo**): proyecto Neon
-`long-night-55353572`, PostgreSQL 18, plan Free (`free_v3`, límite de 10
-ramas). Ramas: `main` `br-super-leaf-awq2l79n` (producción, no protegida) y
-`preview` `br-bitter-resonance-aw8b55is`. En Vercel no existe ninguna de las
-cuatro variables de Better Auth, en ningún entorno (sigue siendo cierto).
-Producción sirve `main` sin identidad (sigue siendo cierto: no se desplegó).
+Estado leído el 2026-09-26 (solo lectura; **HISTÓRICO: anterior a la migración
+`0001` en `main`, ver la actualización de abajo**; verificalo con una lectura
+antes de actuar): proyecto Neon `long-night-55353572`, PostgreSQL 18, plan Free
+(`free_v3`, límite de 10 ramas). Ramas: `main` `br-super-leaf-awq2l79n`
+(producción, no protegida) y `preview` `br-bitter-resonance-aw8b55is`. En
+Vercel no existía ninguna de las cuatro variables de Better Auth, en ningún
+entorno. Producción servía `main` sin identidad.
 
-**Actualización 2026-09-26:** la migración `0001` ya está aplicada y verificada
-en `main` (#124). Verificado por lectura: `main` tiene las tablas `account`,
-`comments`, `entidad`, `session`, `user` y `verification`. `comments` es ajena a
-este trabajo y no se toca. `entidad` tenía **0 filas**: falta poblar el
-catálogo (#121, paso 8). Sigue sin cargarse ninguna variable de Better Auth en
-Production ni en Preview (#123).
+**Actualización 2026-09-26:** la migración `0001` quedó aplicada y verificada
+en `main` (#124). Por lectura, `main` tenía las tablas `account`, `comments`,
+`entidad`, `session`, `user` y `verification`. `comments` es ajena a este
+trabajo y no se toca. `entidad` tenía **0 filas**: falta poblar el catálogo
+(#121, paso 8). Seguía sin cargarse ninguna variable de Better Auth en
+Production ni en Preview (#123). El ADR 0027 (2026-10-02) y
+`entornos-y-bases.md` confirman la migración aplicada y `main` con 0 usuarios
+al 2026-10-02; **no está verificado en este runbook** si las variables ya se
+cargaron ni si el catálogo ya se pobló desde entonces: leerlo antes de actuar.
 
 **Constancia de la excepción:** la `0001` en `main` la ejecutó el
-`infra-specialist` **por excepción, con autorización expresa del usuario en esa
-sesión (2026-09-26)**. No sienta precedente: la regla del ADR 0022 (migrar e
-importar en producción lo ejecuta el usuario) sigue vigente. Además se **saltó
-el orden de este runbook**: el ensayo previo en `preview` (pasos 1 a 4) no se
-hizo, y tampoco se creó la rama de respaldo del paso 5.
+`infra-specialist` con autorización expresa del usuario en esa sesión
+(2026-09-26), cuando todavía regía el ADR 0022 (migrar e importar en
+producción lo ejecutaba el usuario). Hoy los ADR 0024 y 0025 permiten que lo
+ejecute el `infra-specialist` con la confirmación del usuario sobre el comando
+exacto en cada ejecución, así que la excepción dejó de serlo. Lo que sí se
+conserva como hecho: se **saltó el orden de este runbook**; el ensayo previo en
+`preview` (pasos 1 a 4) no se hizo, y tampoco se creó la rama de respaldo del
+paso 5.
 
 ## Qué requiere el código
 
@@ -88,8 +96,8 @@ No mergear `development` a `main` ni desplegar a producción hasta completar los
 pasos 1 a 4.
 
 1. **Migrar `0001` en la rama `preview`** de Neon. Lo puede hacer el
-   `infra-specialist` **solo con autorización expresa** (todavía no otorgada), o
-   el usuario:
+   `infra-specialist`, con la confirmación del usuario sobre el comando exacto
+   (ADR 0024 y ADR 0025), o el usuario por su cuenta:
    ```bash
    DB_CONFIRMAR_DESTINO=ep-silent-glitter-awaz5wyh.c-12.us-east-1.aws.neon.tech \
    DATABASE_URL_UNPOOLED='<cadena SIN pooler de la rama preview>' \
@@ -103,19 +111,20 @@ pasos 1 a 4.
 3. **Probar en un preview** (rama `feat/111-identity-better-auth`): registrarse
    con email, cerrar e iniciar sesión, y el botón de Google si aplica.
 4. Solo con eso en verde, seguir con producción.
-5. **Copia de respaldo de `main`** antes de migrar. Para la `0001` este paso
-   quedó superado: **NO se creó `main-respaldo-0001`, es decir, la migración
-   corrió sin respaldo**. Sigue siendo válido antes de cualquier migración
-   futura (hoy no hay política de copias, deuda del ADR 0006). Opción sin
-   costo: en Neon crear una rama de respaldo desde `main` (cuenta contra el
-   límite de 10 ramas y contra la cuota) y borrarla cuando la migración esté
-   verificada. La ventana de historia del proyecto es de 6 horas
+5. **Copia de respaldo de `main`** antes de migrar (hoy no hay política de
+   copias, deuda del ADR 0006). Para la `0001` este paso quedó superado: **no
+   se creó `main-respaldo-0001`, es decir, la migración corrió sin respaldo**.
+   Sigue siendo válido antes de cualquier migración futura. Opción sin costo:
+   en Neon crear una rama de respaldo desde `main` (cuenta contra el límite de
+   10 ramas y contra la cuota) y borrarla cuando la migración esté verificada.
+   La ventana de historia del proyecto es de 6 horas
    (`history_retention_seconds` 21600), así que un restore a un punto anterior
    solo sirve dentro de ese margen. El `infra-specialist` puede crear la rama
-   con autorización expresa.
-6. **Migrar producción (#124). HECHO el 2026-09-26** (la `0001` está aplicada y
-   verificada en `main`; no repetir). Referencia del comando, que lo ejecuta
-   el usuario:
+   con la confirmación del usuario sobre la llamada exacta (ADR 0024).
+6. **Migrar producción (#124)**, el `infra-specialist` con confirmación del
+   usuario, o el usuario (ADR 0025). **La `0001` ya está aplicada y verificada
+   en `main` desde el 2026-09-26; no repetir.** Referencia del comando para
+   migraciones futuras:
    ```bash
    DB_CONFIRMAR_DESTINO=<host de main, del panel de Neon> \
    DATABASE_URL_UNPOOLED='<cadena SIN pooler de main>' \
@@ -126,15 +135,15 @@ pasos 1 a 4.
    `.env` local **no** apunte a producción por error: la guarda pide el host
    exacto, pero verificá el host antes de dar Enter.
 7. **Cargar las cuatro variables en Production** (#123).
-8. **Poblar el catálogo (#121), lo ejecuta el usuario**, después de migrar:
+8. **Poblar el catálogo (#121)**, el `infra-specialist` con confirmación del usuario, o el usuario (ADR 0025), después de migrar:
    ```bash
    DB_CONFIRMAR_DESTINO=<host de main> \
    DATABASE_URL='<cadena de main>' \
    pnpm contenido:importar
    ```
-   Confirmar en `src/catalogo/importacion/importar.mts` qué variable lee (aquí
-   se asume `DATABASE_URL`) y que es idempotente; si no lo es, pedirle al
-   `backend-specialist` que lo aclare antes de correrlo dos veces.
+   Es idempotente y lee `DATABASE_URL`. También existe `pnpm desplegar:datos`
+   (migrar e importar en un solo comando): ver `desplegar-datos.md`, que además
+   explica el **redespliegue** obligatorio tras importar.
 9. **Recién ahora**: mergear `development` a `main` y desplegar (lo hace el
    usuario). Verificar (abajo).
 
@@ -156,7 +165,7 @@ pasos 1 a 4.
   `SELECT table_name FROM information_schema.tables WHERE table_schema='public';`
   debe listar `account`, `session`, `user`, `verification` y `entidad`. Y
   `SELECT count(*) FROM entidad;` distinto de cero tras #121.
-- Aplicación: `/registro` crea un usuario; `/ingreso` lo reconoce; la nav muestra
+- Aplicación: `/registrarse` crea un usuario; `/ingresar` lo reconoce; la nav muestra
   la sesión; `/catalogo` lista fichas. El botón de Google redirige a Google y
   vuelve sin `redirect_uri_mismatch`: **acá se confirma que la ruta real del
   callback es `/api/auth/callback/google`**.
@@ -181,9 +190,11 @@ pasos 1 a 4.
 
 - Mergear a `main` antes de los pasos 6 y 7 rompe las rutas de auth y la nav
   con sesión en producción.
-- `preview` es hoy copia de `main`. Con `identidad` (datos personales) el
-  runbook `entornos-y-bases.md` pide crearla sin datos: hacer Reset cuando
-  empiece a haber usuarios reales, y no copiar producción a Preview.
+- `preview` nunca recibe datos de producción (ADR 0027): sobre ella no se hace
+  «Reset from parent» ni restore desde `main` ni desde un snapshot de `main`, y
+  se puebla solo desde el repositorio (`db:migrate` y `contenido:importar`). Con
+  `identidad` (datos personales) esto rige desde ya, antes de cargar las
+  variables en Production.
 - La pantalla de consentimiento de Google en modo «testing» bloquea a cualquier
   usuario que no esté en la lista.
 - Neon Auth sigue habilitado y sin uso, con `NEON_AUTH_BASE_URL` y

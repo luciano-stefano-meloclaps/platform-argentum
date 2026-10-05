@@ -4,6 +4,14 @@
   en el arquitecto y el equipo. **Supersede parcialmente** al
   [ADR 0006](0006-infraestructura-vercel-neon.md) en un solo punto: reemplaza
   «una rama de base por pull request» por una rama fija `preview`.
+  **Supersedido parcialmente** por el
+  [ADR 0024](0024-agentes-pueden-escribir-en-produccion-con-confirmacion-en-el-momento.md)
+  y el [ADR 0025](0025-un-solo-ejecutor-de-escrituras-en-produccion.md): migrar
+  e importar en producción lo ejecuta el `infra-specialist`, con confirmación
+  del usuario en cada ejecución. La guarda del destino sigue vigente sin
+  cambios. **Y por el [ADR 0027](0027-preview-sin-datos-de-produccion.md)**:
+  `preview` deja de ser hija de `main` y pasa a ser una rama sin padre, poblada
+  desde el repositorio; sobre ella no se hace «Reset from parent».
 - **Fecha:** 2026-09-25
 - **Decide:** Luciano Melo Claps
 

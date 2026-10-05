@@ -1,10 +1,18 @@
 # 0016 — Arquitectura de la capa web
 
-- **Estado:** Aceptado — parcialmente superseded por
+- **Estado:** Aceptado — supersedido parcialmente por
   [0017](0017-nombre-del-punto-de-entrada-de-un-modulo.md), **solo** en el nombre del archivo del puerto de entrada: donde este documento dice
   `src/catalogo/index.ts`, léase `src/catalogo/catalogo.ts`. El resto —las
   once reglas y todo lo demás— sigue vigente sin cambios, y el texto de abajo
-  no se edita.
+  no se edita. **Supersedido parcialmente también** por el
+  [ADR 0018](0018-puerto-de-salida-del-modulo-catalogo-pospuesto.md), que
+  resolvió el puerto de salida (#60) posponiéndolo, y por el
+  [ADR 0019](0019-modulo-identidad-con-better-auth.md) en tres puntos acotados
+  al módulo `identidad`: la ruta de protocolo `/api/auth/[...all]` no es el
+  `/api` interno de la Regla 2; la primera Server Action llega con
+  `identidad`, no con moderación; y el núcleo de `identidad` depende de Next a
+  través de Better Auth (`next/headers`, `nextCookies()`). Para `catalogo` y
+  los módulos que vengan, «nada del núcleo importa Next» sigue rigiendo.
 - **Fecha de la decisión:** 2026-09-09
 - **Fecha de este documento:** 2026-09-16 (recuperado y renumerado; ver nota)
 - **Decide:** el usuario (el patrón); **redacta:** el `super-architect`

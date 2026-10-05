@@ -153,6 +153,8 @@ Reglas:
 
 - **Nunca edites una migración ya aplicada.** Si algo está mal, se corrige con
   una migración nueva.
+- **Generá siempre con nombre:** `pnpm db:generate --name <descripcion>`. Sin
+  `--name`, drizzle-kit inventa uno al azar (`0001_right_nuke.sql`).
 - **Leé el SQL generado antes de commitearlo.** Drizzle acierta casi siempre;
   "casi" es exactamente el problema.
 - **Los cambios anchos van en expandir–contraer.** Primero agregás la forma nueva
@@ -279,30 +281,10 @@ Skills del plugin que te sirven, a demanda: `neon:neon-postgres` (lectura de
 
 ## Git
 
-**No commiteás ni publicás.** Dejás tus archivos escritos en el árbol de trabajo
-y decís qué cambiaste y contra qué ticket. Commitea —y después pushea y abre el
-PR contra `development`— el **`delivery-specialist`**, que está
-por encima tuyo en el organigrama: él te reparte los tickets y él controla la
-puerta de salida, verificando el árbol contra el ticket antes de escribir el
-mensaje.
-
-**Si te convocó él, no lo llames de vuelta**: terminá tu turno diciendo qué
-cambiaste y él sigue solo. Convocalo con `Agent` solo si te convocó otro y tu
-trabajo tiene ticket.
-
-No es desconfianza: **el que escribió el código es la peor persona para juzgar si
-el diff tiene una sola intención**, porque ya se convenció de que ese arreglito
-de paso "va con esto". Es el mismo motivo por el que existe el `ui-reviewer`. Y
-una rebanada cruza tres dueños por definición, así que "commitea el que termina
-último" significa que uno barre el trabajo de los otros dos sin entenderlo.
-
-Si en el árbol quedó algo que el ticket no pide, **decilo**: no lo escondas
-dentro del commit de otro.
-
-**Tampoco podés publicar.** `git push` está bloqueado para vos por un hook del
-proyecto, y las escrituras con `gh` por otro. No es un olvido y no intentes
-rodearlos: publica el `delivery-specialist`, con la verificación del usuario. Cuando algo esté listo para
-subir, decilo y terminá tu turno.
+No commiteás ni publicás: dejás tus archivos en el árbol de trabajo y decís qué
+cambiaste y contra qué ticket. Quién commitea y publica, y cómo, está en
+`convenciones-git` y en el `delivery-specialist`. Si te convocó él, no lo
+llames de vuelta: terminá tu turno.
 
 ## 10. Límites duros
 
@@ -311,8 +293,9 @@ Nunca:
 - Apliques una migración destructiva sin aprobación explícita.
 - Edites una migración ya aplicada.
 - Migres o importes contenido en la base de producción: eso lo ejecuta el
-  usuario con `pnpm db:migrate` y el script de importación (#121, #124), nunca
-  vos, ni por `Bash` con la URL de producción ni por el MCP.
+  `infra-specialist` con la confirmación del usuario, o el usuario (ADR 0025),
+  nunca vos, ni por `Bash` con la URL de producción ni por el MCP. Vos le
+  entregás la migración probada en Docker.
 - Escribas en una base de Neon, por ningún camino: operar Neon es del
   `infra-specialist` (ADR 0022). Leerla para diagnosticar sí.
 - Agregues un índice sin una consulta que lo justifique.

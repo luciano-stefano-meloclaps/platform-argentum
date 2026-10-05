@@ -1,7 +1,13 @@
 # 0019 — El módulo `identidad` se construye sobre Better Auth, con email y contraseña más Google
 
-- **Estado:** Aceptado — su Regla 4 fue enmendada parcialmente por el
-  [ADR 0020](0020-sesion-en-la-nav-leida-desde-el-cliente.md)
+- **Estado:** Aceptado — supersedido parcialmente por el
+  [ADR 0020](0020-sesion-en-la-nav-leida-desde-el-cliente.md), solo en su Regla 4.
+  **Supersede parcialmente** al [ADR 0003](0003-stack-nextjs-postgresql.md) («el MVP no
+  tiene cuentas») y al [ADR 0016](0016-arquitectura-de-la-capa-web.md) en lo
+  que sus Reglas 3 y 5 deciden para `identidad`: la ruta de protocolo, la
+  primera Server Action y la dependencia del núcleo de `identidad` respecto de
+  Next. Su política de errores quedó formalizada para todos los módulos en el
+  [ADR 0026](0026-politica-de-errores-de-los-modulos.md).
 - **Fecha:** 2026-09-19
 - **Decide:** el usuario (alcance y método); **redacta:** el `super-architect`
 
