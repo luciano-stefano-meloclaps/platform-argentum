@@ -14,14 +14,15 @@ Lo impone el hook `.claude/hooks/limitar-gh.sh`, no la buena voluntad:
 | Quién | Puede |
 | ----- | ----- |
 | Sesión principal | Todo, sin restricción: es donde está el usuario |
-| `delivery-specialist` | Leer, `issue create/edit/comment/close/reopen`, y `pr create`/`pr merge` contra `development` (con verificación del usuario en cada paso, ver `.claude/agents/delivery-specialist.md`) |
+| `delivery-specialist` | Leer, `issue create/edit/comment/close/reopen`, `pr create`/`pr merge` contra `development` y `pr create --base main --head development` (con verificación del usuario en cada paso, ver `.claude/agents/delivery-specialist.md`). `pr merge` de un PR contra `main`, nunca |
 | `delivery-specialist`, sobre el tablero | `project item-add` e `item-edit`: cargar y mover tarjetas entre columnas. Nada de crear, editar, ligar ni borrar el proyecto o sus campos |
 | Cualquier otro subagente, **el arquitecto incluido** | Solo lectura (`issue view`, `issue list`, `pr view`…) |
 
 Denegado para **todo** subagente: `gh repo`, `gh release`, `gh label create`,
 `gh api` con método de escritura, y `gh` envuelto en otro comando. Para el
 `delivery-specialist`, `gh pr create` sin `--base development` explícito
-también se deniega —el default de `gh` es `main`—. `git push` está bloqueado
+también se deniega —el default de `gh` es `main`—, y `--base main` se admite
+solo con `--head development`. `git push` está bloqueado
 aparte, para todos salvo el `delivery-specialist` empujando una rama que no sea
 `main`.
 

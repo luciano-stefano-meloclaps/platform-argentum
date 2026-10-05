@@ -105,7 +105,8 @@ especialista   escribe el código, deja el árbol verde, termina
 entrega        verifica contra el ticket → commit
 usuario        verifica el commit → entrega: push + PR contra development
 usuario        verifica el PR    → entrega: merge a development y cierra el ticket
-usuario        mergea development a main y despliega, cuando quiere
+entrega        abre el PR development → main (si hay conflictos, antes reconcilia)
+usuario        mergea ese PR a main (merge commit, no squash) y despliega, cuando quiere
 ```
 
 - **Commits.**
@@ -113,8 +114,12 @@ usuario        mergea development a main y despliega, cuando quiere
   - La sesión principal y el arquitecto commitean lo suyo: documentación, ADR
     y configuración.
   - Convenciones: skill `convenciones-git`.
-- **Ramas.** `main` no recibe trabajo directo. Los PR van siempre contra
-  `development`.
+- **Ramas.** `main` no recibe trabajo directo: ningún agente pushea ni mergea a
+  `main`. Los PR de trabajo van contra `development`; el único PR contra `main`
+  es `development` → `main`, que abre el `delivery-specialist` y mergea el
+  usuario. Si tiene conflictos, el `delivery-specialist` los resuelve antes en
+  `chore/<n>-reconcile-main`, con PR contra `development`
+  (`docs/decisiones-menores.md` §7).
 - **Tracker.**
   - Solo el `delivery-specialist` escribe en él; el resto solo lee.
   - Se usan solo las etiquetas que ya existen (verificalas con `gh label list`).
@@ -173,7 +178,7 @@ guarda.
 | Hook | Qué hace |
 | ---- | -------- |
 | `bloquear-git-push.sh` | Solo el `delivery-specialist` pushea, nunca contra `main` y nunca forzado |
-| `limitar-gh.sh` | Lectura para todos; los issues y los PR contra `development`, solo para el `delivery-specialist`; todo lo demás, denegado |
+| `limitar-gh.sh` | Lectura para todos; los issues y los PR contra `development`, más `pr create --base main --head development`, solo para el `delivery-specialist`; todo lo demás, denegado |
 | `limitar-vercel.sh` | El comando `vercel`: lectura libre, y toda escritura pide confirmación (ADR 0010) |
 | `limitar-vercel-mcp.sh` | El MCP de Vercel: lo mismo, con aviso de PRODUCCIÓN; compras y facturación denegadas (ADR 0022) |
 | `limitar-neon.sh` | El MCP de Neon: lectura libre; solo el `infra-specialist` escribe; aviso de PRODUCCIÓN (ADR 0021 y 0022) |

@@ -148,3 +148,36 @@ Las decisiones que se **posponen** viven en `decisiones-pendientes.md`, no acá.
 - **Ejecuta:** el `brand-specialist` registra el significado de `cat` en
   `identidad-argentum`. El renombre de cada token `tarjetas-*-provisorio`
   entra en el ticket que lo saque de provisorio.
+
+## 7. Los conflictos de `development` → `main` los resuelven los agentes; el merge a `main` sigue siendo del usuario
+
+- **Decisión (2026-10-04, pedido del usuario):**
+  - Cuando `development` → `main` tiene conflictos, el `delivery-specialist`
+    abre `chore/<n>-reconcile-main` desde `development`, mergea `origin/main`
+    en ella y convoca al dueño de cada archivo en conflicto para resolverlo.
+    Árbol verde, commit con ticket y PR **contra `development`**, con los dos
+    portones de siempre. Se mergea con merge commit, no con squash.
+  - Con `development` limpio respecto de `main`, el `delivery-specialist` abre
+    el PR `development` → `main` (`gh pr create --base main --head development`,
+    con confirmación del usuario). Es lo único nuevo que puede hacer contra
+    `main`.
+  - Siguen siendo del usuario: mergear ese PR a `main` y desplegar. Ningún agente
+    pushea ni mergea a `main`.
+- **Contexto.** El PR #198 quedó en conflicto en diez archivos. Hay precedente
+  de reconciliación a mano (#128, #129, #148). La causa de fondo es que
+  `development` se mergeó a `main` con **squash** (`Development (#192)`): `main`
+  no quedó como ancestro de `development` y el historial diverge de nuevo cada
+  vez.
+- **Motivo.** Abrir un PR no cambia producción: no escribe en `main`, no
+  despliega y el usuario lo revisa antes de mergear. Por eso no roza los ADR
+  0024, 0025 ni 0027 (que gobiernan escrituras en Neon y Vercel de producción),
+  y alcanza con esta entrada, sin ADR de proceso (CLAUDE.md, «Regla de proceso
+  vigente»). La resolución es del dueño del archivo, no del `delivery-specialist`,
+  que no escribe código. Un conflicto entre dos decisiones incompatibles no se
+  resuelve: se pregunta.
+- **Regla de fondo.** El PR `development` → `main` se mergea con **merge commit,
+  no con squash**; el de reconciliación, igual. Es lo que evita que el conflicto
+  vuelva.
+- **Costo de revertir:** quitar el permiso de la guarda y un párrafo del agente.
+  Si el flujo crece (más ramas, más gente), se promueve a ADR.
+- **Ejecuta:** `delivery-specialist`; la sesión principal edita `limitar-gh.sh`.
