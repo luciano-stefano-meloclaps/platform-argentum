@@ -92,8 +92,9 @@ export function Hero() {
            * `text-display` de la escala) — Cormorant Garamond en su peso
            * normal, no el que la marca reserva para H1–H3. Color de texto
            * normal (`--color-texto-titulo`), no el gradiente `.au`: ese
-           * dorado es exclusivo de "ARGENTUM" y de las cifras destacadas,
-           * no de este título.
+           * dorado brillante es ornamento (ADR 0028 §1) —el logotipo, los
+           * numerales decorativos y los dos filetes— y no viste ningún
+           * texto que se lee, como este título.
            */}
           <h1 className="mt-lg text-[34px] leading-[1.08] font-titulo font-normal text-texto-titulo sm:text-[52px]">
             Todo lo que hace

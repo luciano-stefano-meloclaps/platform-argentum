@@ -642,6 +642,15 @@
  * compuesto) de los namespaces de arriba. Quedan como variables CSS de
  * :root, fuera del bloque de tokens de Tailwind.
  *
+ * **Vigente (ADR 0028): esta paleta es solo del ornamento.** El dorado
+ * brillante (`--dorado-brillante-stops`) y su banda (`--brillo-banda`) visten
+ * únicamente el logotipo y los numerales decorativos (`.au`) y los dos
+ * filetes vigentes (`.filete-dorado`). Lo que se lee no la usa: las cifras
+ * del hero van en `--color-accent-700` sólido, sin banda (4.89:1 sobre el
+ * `bg-blanco` de su `<dl>`). `.shiny`, la clase que vestía esas cifras, se
+ * retiró; donde los pasos de abajo la nombran, cuentan la historia, no la
+ * receta vigente.
+ *
  * `--dorado-brillante-stops` — **unificación completa**, pedido explícito
  * del usuario en esta tarea. Hasta acá, `--gradiente-filete` y
  * `--gradiente-au` tenían cada una su propia paleta de stops (más clara la
@@ -673,7 +682,8 @@
  * comparten `--dorado-brillante-stops`. Mismos stops (`20%/50%/80%`, banda
  * del 60% de ancho) y misma opacidad de pico (`0.75`) que tenía `.shiny`;
  * ver el historial completo de esos dos valores más abajo, antes de
- * `.shiny` — no se recalculan acá, solo se centralizan.
+ * `.shiny` — no se recalculan acá, solo se centralizan. Desde el ADR 0028
+ * la comparten solo `.au` y `.filete-dorado`.
  *
  * **Paso 10 — más saturación, no más luminosidad.** Pedido explícito del
  * usuario: quiere el dorado de base más "fuerte", pero como color (más
@@ -758,10 +768,13 @@
 }
 
 /*
- * `.au` — gradiente metálico de texto (dorado institucional). Los stops
- * de color fueron recalculados **seis** veces (pasos 1 a 6) y la variable
- * que los expone pasó, después, por **dos** reorganizaciones estructurales
- * sin cambiar valores (pasos 7 y 8: primero unificar `.au` con `.shiny`,
+ * `.au` — gradiente metálico de texto (dorado institucional). Rol vigente
+ * (ADR 0028 §1): ornamento. Viste el logotipo y los numerales que cumplen
+ * las dos condiciones del rol; ninguna cifra ni texto que se lee lo usa.
+ *
+ * Los stops de color fueron recalculados **seis** veces (pasos 1 a 6) y la
+ * variable que los expone pasó, después, por **dos** reorganizaciones
+ * estructurales sin cambiar valores (pasos 7 y 8: primero unificar `.au` con `.shiny`,
  * después unificar las tres — filete incluido — en una sola fuente):
  *
  * 1. ADR 0015 §3: el punto crítico del centro del handoff v2 original pasó
@@ -911,20 +924,23 @@
  * compartir ya `--dorado-brillante-stops`: la razón real era que solo
  * `.shiny` tenía la segunda capa de gradiente en movimiento
  * (`@keyframes shinySweep`); el filete y `.au` eran gradientes estáticos.
- * Ahora `.au` y `.shiny` quedan **exactamente idénticas** — ambas visten
- * texto, ambas usan la misma base y la misma banda animada — así que en vez
- * de mantener dos bloques de reglas copiados se las agrupa en un único
- * selector compuesto. `.filete-dorado` (ver más abajo) es el tercer
- * consumidor de la misma receta, pero sobre un fondo (`background`, no
+ * En ese paso `.au` y `.shiny` quedaron idénticas y se agruparon en un
+ * único selector compuesto, y `.filete-dorado` (ver más abajo) pasó a ser
+ * el tercer consumidor de la misma receta, sobre un fondo (`background`, no
  * `background-clip: text`): el filete de 3px del header es un `<div>`
  * decorativo, no texto (confirmado contra `header.tsx`), así que no lleva
  * el recorte a texto ni el color de fallback, que no tienen sentido ahí.
- * Los tres comparten `@keyframes shinySweep` y el mismo bloque de
- * `prefers-reduced-motion`, más abajo, así que quedan sincronizados por
- * construcción — no hay tres copias del keyframe para que se desincronicen.
+ *
+ * **Paso 12 — ADR 0028: ornamento de una sola pasada.** `.shiny` se
+ * retiró: su único consumidor, las cifras del hero, es texto que se lee y
+ * pasó a `--color-accent-700` sólido, sin banda. El selector vuelve a ser
+ * solo `.au`. La animación dejó de ser infinita: corre una sola pasada (ver
+ * `@keyframes shinySweep`, más abajo). `.au` y `.filete-dorado` comparten
+ * ese keyframe y el mismo bloque de `prefers-reduced-motion`, así que
+ * quedan sincronizados por construcción: no hay dos copias del keyframe
+ * para que se desincronicen.
  */
-.au,
-.shiny {
+.au {
   background-image: var(--gradiente-au), var(--brillo-banda);
   background-size: 100% 100%, 200% 100%;
   background-position: 0 0, -100% 0;
@@ -934,20 +950,22 @@
   -webkit-background-clip: text;
   color: var(--color-accent-700); /* fallback sólido si background-clip no aplica */
   -webkit-text-fill-color: transparent;
-  animation: shinySweep 3.4s ease-in-out infinite;
+  animation: shinySweep 3.4s ease-in-out 1;
 }
 
 /*
  * `.filete-dorado` — el filete de 3px bajo la cinta tricolor del header
- * (`header.tsx`), ahora con la misma receta de brillo animado que `.au` y
- * `.shiny` en vez de un gradiente estático. Reemplaza el `style={{
+ * (`header.tsx`) y el divisor del hero (`hero.tsx`), con la misma receta
+ * que `.au`: el gradiente base más la capa de la banda, animada en una sola
+ * pasada (ADR 0028 §1, rol 3: son los dos únicos filetes con el dorado
+ * brillante; uno nuevo no se justifica con ese ADR). Reemplaza el `style={{
  * background: "var(--gradiente-filete)" }}` que tenía el `<div>` en
  * `header.tsx` por esta clase: la variable `--gradiente-filete` (base
  * estática, `90deg`) se conserva sin cambios para quien la necesite sola,
  * pero el consumo real del header pasa a esta clase, que le suma la banda
  * de brillo y la animación. Es un fondo, no texto: **sin**
- * `background-clip: text` ni el color de fallback que sí llevan `.au` y
- * `.shiny` — esa mecánica es exclusiva de texto recortado.
+ * `background-clip: text` ni el color de fallback que sí lleva `.au` —
+ * esa mecánica es exclusiva de texto recortado.
  */
 .filete-dorado {
   background-image: var(--gradiente-filete), var(--brillo-banda);
@@ -955,50 +973,63 @@
   background-position: 0 0, -100% 0;
   background-repeat: no-repeat, no-repeat;
   background-blend-mode: normal, overlay;
-  animation: shinySweep 3.4s ease-in-out infinite;
+  animation: shinySweep 3.4s ease-in-out 1;
 }
 
 /*
- * Ancho de la banda (stops de transparencia) y opacidad de pico: valores
- * heredados sin cambio de `.shiny` antes de esta tarea — ver
- * `--brillo-banda` en `:root` más arriba para el historial completo (ancho
- * ensanchado a 20%/50%/80%, opacidad de pico 0.75, remedición de contraste
- * pendiente contra la base vigente).
+ * Ancho de la banda (stops de transparencia) y opacidad de pico: los de
+ * `--brillo-banda` en `:root`, más arriba (stops 20%/50%/80%, opacidad de
+ * pico 0.75, remedición de contraste pendiente contra la base vigente).
  *
- * `background-size: 200% 100%` en la capa de la banda (segundo valor de la
- * propiedad abreviada) le da recorrido: `background-position-x` arranca en
- * `-100%` (banda fuera del elemento, a la izquierda) y en `100%` cruza del
- * todo hacia la derecha. `mix-blend-mode: overlay` es lo que hace que la
- * banda ilumine el dorado en vez de taparlo con blanco liso — sin eso el
- * sweep se vería como una franja blanca opaca pasando por encima en vez de
- * un brillo. Esto vale igual para texto (`.au`/`.shiny`) y para fondo
- * (`.filete-dorado`): la técnica de la banda no depende del recorte a
- * texto, por eso es la misma receta en los tres.
+ * Recorrido. `background-size: 200% 100%` en la capa de la banda (segundo
+ * valor de cada lista) le da recorrido: con una imagen del doble de ancho
+ * que el elemento, `background-position-x: p` la corre `-ancho × p`. En
+ * `160%` la banda queda entera fuera del elemento, a la izquierda: su borde
+ * transparente del 80% cae en el borde izquierdo. En `-100%` queda entera
+ * fuera, a la derecha. El keyframe va de `160%` a `-100%`, así que la
+ * pasada cruza de izquierda a derecha, y arranca y termina sin la banda en
+ * cuadro (ADR 0028 §4, condición 5).
  *
- * Regla 9 de `identidad-argentum` / regla de uso de `revision-de-ui`:
- * ninguna animación continua sin respetar `prefers-reduced-motion`. Con
- * `reduce`, la animación se detiene (`animation: none`) y el
- * `background-position` de la banda queda fijo en el extremo final del
- * recorrido (100%, banda ya cruzada y fuera de vista a la derecha) en los
- * **tres** consumidores: así se pierde el movimiento pero no el gradiente
- * dorado de fondo, que sigue pintando — no se saca la segunda capa, solo se
- * la inmoviliza fuera de cuadro.
+ * El valor base de la banda, en `.au` y en `.filete-dorado`, también es
+ * `-100%`: el mismo del último cuadro. Como `animation-fill-mode` queda en
+ * `none`, al terminar la pasada el elemento vuelve a su valor base, que
+ * coincide con el último cuadro, y queda en su gradiente estático sin
+ * salto.
+ *
+ * La capa de la banda se mezcla con `background-blend-mode: overlay` (el
+ * segundo valor de la lista; la capa del gradiente va en `normal`). La
+ * receta es la misma para texto (`.au`) y para fondo (`.filete-dorado`):
+ * no depende del recorte a texto.
+ *
+ * Una sola pasada (ADR 0028 §4, regla 9 de `identidad-argentum`):
+ * `animation-iteration-count: 1`, 3.4 s sin retardo, por debajo de los
+ * cinco segundos de WCAG 2.2.2. Los consumidores arrancan juntos, al
+ * pintarse, y nada reinicia la pasada por script ni por temporizador. Un
+ * consumidor que se vuelve a montar (el numeral de esquina de `/tarjetas`,
+ * al pasar de tarjeta) repite su pasada por una interacción: eso es WCAG
+ * 2.3.3 y lo cubre el bloque de abajo. Que el brillo se repita (al pasar el
+ * cursor, cada cierto tiempo) se decide en un ADR nuevo.
+ *
+ * Con `prefers-reduced-motion: reduce`, `animation: none` y la banda
+ * inmovilizada en `-100%`, fuera de cuadro a la derecha, en los dos
+ * consumidores: se pierde el movimiento pero no el gradiente dorado de
+ * base, que sigue pintando. No se saca la segunda capa, solo se la
+ * inmoviliza fuera de cuadro.
  */
 @keyframes shinySweep {
   0% {
-    background-position: 0 0, -100% 0;
+    background-position: 0 0, 160% 0;
   }
   100% {
-    background-position: 0 0, 100% 0;
+    background-position: 0 0, -100% 0;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .au,
-  .shiny,
   .filete-dorado {
     animation: none;
-    background-position: 0 0, 100% 0;
+    background-position: 0 0, -100% 0;
   }
 }
 
@@ -1011,7 +1042,7 @@
  * la pantalla de resultado del quiz (ticket #106).
  *
  * Los stops son **los originales de v2, sin recalcular**, y eso es
- * deliberado: a diferencia de `.au`/`.shiny` —cuya base pasó por doce
+ * deliberado: a diferencia de `.au` —cuya base pasó por doce
  * iteraciones a pedido explícito del usuario, todas sobre fondo claro—,
  * este gradiente vive sobre `--color-celeste-900` y ahí el problema de
  * contraste se invierte: el dorado claro es el que pasa. El extremo
@@ -1019,7 +1050,7 @@
  * rango de stops —que solo se aclara desde ahí hacia el centro `#FFF3D0`—
  * pasa AA con margen. No se toca ninguno de los siete valores.
  *
- * **Sin banda de brillo ni animación**, a diferencia de las tres clases de
+ * **Sin banda de brillo ni animación**, a diferencia de las dos clases de
  * arriba. v2 la describe como un gradiente estático, y la regla de uso 8
  * de `identidad-argentum` prohíbe extender el efecto ornamental de v2 a un
  * componente que v2 no cubre explícitamente. No consume `--brillo-banda`,
@@ -1027,7 +1058,7 @@
  * `prefers-reduced-motion`: no se mueve.
  *
  * El fallback sólido **no puede ser `--color-accent-700`**, que es el que
- * usan `.au`/`.shiny`: sobre `--color-celeste-900` da 2.29:1 y no llega ni
+ * usa `.au`: sobre `--color-celeste-900` da 2.29:1 y no llega ni
  * al piso no-texto de 3:1. Va `--color-accent-300` (`#F7DE9B`), **8.48:1
  * sobre `#0A3D66`** (medido por el `brand-specialist` para el ticket #106,
  * es el mismo token del badge de liga de esa pantalla): un navegador sin

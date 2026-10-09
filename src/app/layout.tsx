@@ -14,7 +14,7 @@ import { Header } from "./header.tsx";
  * referencia como `--font-titulo` y `--font-cuerpo`. Los pesos pedidos son
  * los que la escala tipográfica realmente usa: 400 y 600 para
  * Cormorant Garamond (400 para logotipo, display/h1/h2 y cifras destacadas
- * por el ADR 0015 — `.au`, `.shiny` y el `<h1>` del hero en `font-normal`
+ * por el ADR 0015 — `.au`, las cifras del hero y su `<h1>` en `font-normal`
  * no llevan ninguna otra clase de peso, así que dependen de que el 400 esté
  * realmente cargado como variante propia; 600 para h3 y kickers; el 700 ya
  * no se carga porque ningún título lo usa), 400/500/600 para Lora (cuerpo,
