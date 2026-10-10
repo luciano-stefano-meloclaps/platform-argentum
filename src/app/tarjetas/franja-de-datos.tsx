@@ -49,7 +49,7 @@ function Dato({
 }) {
   return (
     <div className="flex flex-col-reverse justify-end border-l border-borde-default px-[10px] py-[18px] text-center nth-[n+3]:border-t sm:nth-[n+3]:border-t-0">
-      <dt className="mt-xs font-cuerpo text-[9px] tracking-[0.14em] text-texto-secundario uppercase">{etiqueta}</dt>
+      <dt className="mt-xs font-cuerpo text-chip font-normal leading-normal tracking-[0.14em] text-texto-secundario uppercase">{etiqueta}</dt>
       <dd className={`m-0 font-titulo text-[24px] leading-tight ${clasesValor}`}>{children}</dd>
     </div>
   );

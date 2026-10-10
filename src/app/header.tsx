@@ -104,10 +104,21 @@ export function Header() {
        * Visualmente oculto hasta que recibe foco por teclado (`sr-only` +
        * `focus:not-sr-only`), como cualquier skip link estándar: no debe
        * ocupar espacio ni verse para quien navega con mouse o táctil.
+       * Al recibir foco mide 44px de alto (`min-h-objetivo-tactil`) y usa el
+       * anillo de la marca (`outline-foco`), ticket #212. El alto mínimo va solo con `focus:`: oculto, no ocupa nada.
+       * `focus:top-12` (3rem, 48px con la letra base de 16px): debajo de la
+       * cinta (`h-10`, 2.5rem con su borde) y del filete (3px), más los 4px
+       * de anillo y separación, así el anillo cae entero sobre `--crema`
+       * (4.58:1). En rem y no en px, para que acompañe a la cinta si quien
+       * lee agranda la letra base del navegador. Encima de la cinta, contra
+       * `--celeste-cinta`, medía 1.86:1, bajo el 3:1 de WCAG 1.4.11.
+       * El relleno también va con `focus:`: `focus:not-sr-only` pone
+       * `padding: 0` con más especificidad que un `px-lg` sin variante, y
+       * el enlace aparecía sin relleno lateral.
        */}
       <a
         href="#contenido"
-        className="sr-only rounded-sm bg-celeste-700 px-lg py-sm font-cuerpo text-button text-texto-sobre-celeste focus:not-sr-only focus:absolute focus:left-lg focus:top-lg focus:z-10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-celeste-900"
+        className="sr-only rounded-sm bg-celeste-700 font-cuerpo text-button text-texto-sobre-celeste focus:not-sr-only focus:absolute focus:left-lg focus:top-12 focus:z-10 focus:inline-flex focus:min-h-objetivo-tactil focus:items-center focus:px-lg focus:py-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foco"
       >
         Saltar al contenido
       </a>

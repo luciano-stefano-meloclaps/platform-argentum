@@ -61,7 +61,7 @@ export async function EstadisticasCatalogo() {
           key={estadistica.id}
           className="flex min-w-0 flex-1 flex-col border-l border-celeste-150 px-[10px] py-[20px] text-center"
         >
-          <dt className="mt-sm font-cuerpo text-[10px] tracking-[0.16em] text-texto-terciario uppercase">
+          <dt className="mt-sm font-cuerpo text-chip font-normal leading-normal tracking-[0.16em] text-texto-terciario uppercase">
             {estadistica.etiqueta}
           </dt>
           <dd className="order-first font-titulo font-normal text-[38px] leading-none text-accent-700 tabular-nums lining-nums">
