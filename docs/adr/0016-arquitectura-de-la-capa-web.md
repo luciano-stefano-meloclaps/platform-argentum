@@ -13,6 +13,15 @@
   `identidad`, no con moderación; y el núcleo de `identidad` depende de Next a
   través de Better Auth (`next/headers`, `nextCookies()`). Para `catalogo` y
   los módulos que vengan, «nada del núcleo importa Next» sigue rigiendo.
+  **Supersedido parcialmente también por el
+  [ADR 0029](0029-los-datos-de-pantalla-son-la-vista-modelo.md)** en la
+  primera mitad de la Regla 6: la vista-modelo es el `<nombre>.datos.ts`
+  hermano del componente, y no existen `vista-modelo.ts` ni `_componentes/`;
+  donde este documento dice `vista-modelo.ts`, léase `*.datos.ts`. **Se lee
+  además con el [ADR 0015](0015-identidad-visual-argentum-v2.md)**: donde la
+  Regla 7 y la deuda técnica hablan del «marco circular» del retrato, rige el
+  plate/medallón de la identidad v2 (nota posterior del 0015), que lo
+  reemplaza para el mismo caso de uso.
 - **Fecha de la decisión:** 2026-09-09
 - **Fecha de este documento:** 2026-09-16 (recuperado y renumerado; ver nota)
 - **Decide:** el usuario (el patrón); **redacta:** el `super-architect`

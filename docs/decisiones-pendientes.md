@@ -430,3 +430,14 @@ descriptor registrado).
 descriptor de su tipo, en la importación, es lo que hoy garantiza la
 consistencia (ADR 0009). El diseño del tipo, si se ata, lo convoca al
 `typescript-specialist`.
+
+---
+
+## 12. La animación del dorado brillante frente a WCAG 2.2.2 — resuelta
+
+**Decidida en el [ADR 0028](adr/0028-dorado-brillante-solo-como-ornamento.md).**
+El usuario eligió la animación finita: una sola pasada que dura menos de cinco
+segundos, con todos sus consumidores arrancando a la vez, sin reinicio
+automático y con `prefers-reduced-motion` intacto. Las condiciones completas
+están en el §4 de ese ADR. La entrada queda solo como marcador, para no
+renumerar.

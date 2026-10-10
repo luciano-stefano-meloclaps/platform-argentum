@@ -38,7 +38,7 @@ type Props = {
 function Etiqueta({ categoria, children }: { categoria: string; children: React.ReactNode }) {
   return (
     <span
-      className={`inline-block border px-[10px] py-xs font-cuerpo text-[9px] tracking-[0.14em] uppercase ${tonoDeCategoria(categoria)}`}
+      className={`inline-block border px-[10px] py-xs font-cuerpo text-chip tracking-[0.14em] uppercase ${tonoDeCategoria(categoria)}`}
     >
       {children}
     </span>
@@ -149,17 +149,17 @@ export function TarjetasRepaso({ mazoNombre, tarjetas, onResponder, onAbrirFicha
     <main id="contenido" className="mx-auto w-full max-w-[1800px] px-lg py-2xl">
       {/* ── Encabezado ─────────────────────────────────────────────────── */}
       <header className="text-center">
-        <p className="font-cuerpo text-[10px] font-semibold tracking-[0.18em] text-celeste-text uppercase">
+        <p className="font-cuerpo text-chip leading-normal tracking-[0.18em] text-celeste-text uppercase">
           Repaso · mazo de {mazoNombre.toLowerCase()}
         </p>
 
         {/*
          * Único `<h1>` de la pantalla (recibe el foco al pasar de tarjeta).
          * Con el mazo terminado dice «Fin del mazo». La cifra en dorado oscuro PLANO, a
-         * propósito sin `.au` ni `.shiny`: es la única cifra destacada de la
-         * plataforma sin gradiente ni animación, para no competir con el
-         * wordmark. El total va en un `<span>` gris, mismo tamaño y sin
-         * negrita.
+         * propósito sin `.au`: es texto que se lee, y lo que se lee va en
+         * un dorado AA sólido, sin gradiente ni animación (ADR 0028 §2),
+         * igual que las cifras del hero. El total va en un `<span>` gris,
+         * mismo tamaño y sin negrita.
          */}
         <h1
           ref={tituloRef}
@@ -438,7 +438,7 @@ function Dorso({
         onClick={() => {
           onAbrirFicha?.(tarjeta.entidadId);
         }}
-        className="pointer-events-auto -my-[14px] inline-flex min-h-objetivo-tactil items-center text-center font-cuerpo text-[11px] tracking-[0.14em] text-celeste-150 uppercase underline underline-offset-4 hover:text-blanco focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foco-invertido"
+        className="pointer-events-auto -my-[14px] inline-flex min-h-objetivo-tactil items-center text-center font-cuerpo text-chip font-normal leading-normal tracking-[0.14em] text-celeste-150 uppercase underline underline-offset-4 hover:text-blanco focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foco-invertido"
       >
         Abrir la ficha de {tarjeta.entidadNombre}
       </Link>

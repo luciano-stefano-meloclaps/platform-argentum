@@ -42,7 +42,7 @@ export default async function PaginaCatalogo() {
             <li key={procer.slug}>
               <Link
                 href={`/catalogo/${procer.slug}`}
-                className="group block overflow-hidden rounded-xl border border-borde-default bg-blanco shadow-sombra-sm motion-safe:transition-shadow hover:shadow-sombra-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-celeste-700"
+                className="group block overflow-hidden rounded-xl border border-borde-default bg-blanco shadow-sombra-sm motion-safe:transition-shadow hover:shadow-sombra-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foco"
               >
                 <div className="relative h-[92px] border-b-[3px] border-dorado-filete bg-celeste-400">
                   <span className="absolute -top-[15px] left-xl inline-flex items-center rounded-sm bg-cat-proceres-bg px-sm py-xs text-chip uppercase text-cat-proceres-text">

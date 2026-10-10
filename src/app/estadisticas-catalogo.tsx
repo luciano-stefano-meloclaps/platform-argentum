@@ -21,18 +21,20 @@ import { ContadorEstadistica } from "./contador-estadistica.tsx";
  * primera) — sin `radius`, sin sombra ni fondo propio, para no volver a la
  * apariencia de tarjeta que se quería sacar.
  *
- * `<dl>` semántico: cada columna es un par valor/etiqueta. Achica la
- * distancia con la spec del usuario (número arriba, etiqueta abajo)
- * ordenando `dd` antes que `dt` en el marcado — sigue siendo un `<dl>`
- * válido, `dt`/`dd` no exigen ese orden.
+ * `<dl>` semántico: cada columna es un par etiqueta/valor, con el `<dt>`
+ * antes que su `<dd>` en el marcado, que es el orden en que un lector de
+ * pantalla lo anuncia: primero la etiqueta, después su cifra. La spec del
+ * usuario pide el número arriba y la etiqueta abajo: eso lo resuelve solo
+ * la presentación, con la columna en `flex-col` y `order-first` en el
+ * `<dd>`. Cambió el orden del marcado, no lo que se ve.
  *
- * El número usa `.shiny` (dorado institucional v2, ADR 0015 + extensión):
- * el mismo gradiente metálico de texto que `.au`, con un brillo animado que
- * lo cruza cada 3.4s — pensado explícitamente para "cifras destacadas" según
- * la tabla de tipografía de `identidad-argentum`. `.shiny` respeta
- * `prefers-reduced-motion: reduce` (congela el brillo, conserva el
- * gradiente dorado) — verificado en `globals.css`, regla 9 de
- * `identidad-argentum`.
+ * El número es texto que se lee, así que va en dorado AA **sólido y sin
+ * brillo** (ADR 0028 §2): `text-accent-700` (`--color-accent-700`,
+ * `#94691A`), 4.89:1 sobre el `bg-blanco` del `<dl>`, que es su fondo real.
+ * El umbral es 4.5:1 aunque la cifra mida 38px: Cormorant Garamond a peso
+ * 400 tiene trazos finos, y el producto se usa en pantallas de bajo brillo
+ * (ADR 0008). El dorado brillante con banda (`.au`) es ornamento y no va
+ * acá.
  *
  * `tabular-nums lining-nums` en el número: cifras comparables en una fila
  * que cambian de dígito en cada cuadro de la animación — sin figuras
@@ -55,13 +57,16 @@ export async function EstadisticasCatalogo() {
   return (
     <dl className="mx-auto mt-[44px] flex max-w-[760px] justify-center border-y border-celeste-150 bg-blanco">
       {estadisticas.map((estadistica) => (
-        <div key={estadistica.id} className="min-w-0 flex-1 border-l border-celeste-150 px-[10px] py-[20px] text-center">
-          <dd className="shiny font-titulo font-normal text-[38px] leading-none tabular-nums lining-nums">
-            <ContadorEstadistica valor={estadistica.valor} />
-          </dd>
-          <dt className="mt-sm font-cuerpo text-[10px] tracking-[0.16em] text-texto-terciario uppercase">
+        <div
+          key={estadistica.id}
+          className="flex min-w-0 flex-1 flex-col border-l border-celeste-150 px-[10px] py-[20px] text-center"
+        >
+          <dt className="mt-sm font-cuerpo text-chip font-normal leading-normal tracking-[0.16em] text-texto-terciario uppercase">
             {estadistica.etiqueta}
           </dt>
+          <dd className="order-first font-titulo font-normal text-[38px] leading-none text-accent-700 tabular-nums lining-nums">
+            <ContadorEstadistica valor={estadistica.valor} />
+          </dd>
         </div>
       ))}
     </dl>

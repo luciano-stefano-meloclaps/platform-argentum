@@ -43,6 +43,11 @@ export function LaminasDestacadas({ totalFichas }: Props) {
        * textos — no hay un token literal `--color-text`; confirmado con el
        * `brand-specialist`). Es deliberadamente distinto del celeste/dorado
        * que usan los demás encabezados de sección de esta pantalla.
+       *
+       * El link mide 44px de alto (`min-h-objetivo-tactil`, ticket #212) y
+       * `-my-[13px]` le devuelve al renglón el alto de antes: el objetivo
+       * táctil crece sin mover el borde inferior ni el espaciado de la
+       * sección.
        */}
       <div className="mt-2xl mb-[26px] flex items-baseline justify-between gap-lg border-b border-texto-cuerpo pb-md">
         <h2 className="m-0 font-titulo text-[15px] font-semibold tracking-[0.2em] text-texto-titulo uppercase">
@@ -50,7 +55,7 @@ export function LaminasDestacadas({ totalFichas }: Props) {
         </h2>
         <Link
           href="/catalogo"
-          className="shrink-0 font-cuerpo text-[12px] font-semibold tracking-[0.1em] text-texto-cuerpo uppercase underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-celeste-700"
+          className="-my-[13px] inline-flex min-h-objetivo-tactil shrink-0 items-center font-cuerpo text-[12px] font-semibold tracking-[0.1em] text-texto-cuerpo uppercase underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foco"
         >
           Ver las {totalFichas} fichas
         </Link>
