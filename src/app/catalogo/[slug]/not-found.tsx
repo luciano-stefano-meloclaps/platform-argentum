@@ -32,7 +32,7 @@ export default function NoEncontrado() {
       </p>
       <Link
         href="/catalogo"
-        className="mt-xl inline-flex items-center rounded-sm bg-celeste-700 px-lg py-sm font-cuerpo text-button text-texto-sobre-celeste motion-safe:transition-opacity hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-celeste-700"
+        className="mt-xl inline-flex min-h-objetivo-tactil items-center rounded-sm bg-celeste-700 px-lg py-sm font-cuerpo text-button text-texto-sobre-celeste motion-safe:transition-opacity hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foco"
       >
         Volver al catálogo
       </Link>

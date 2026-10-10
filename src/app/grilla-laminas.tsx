@@ -66,7 +66,7 @@ export function GrillaLaminas({ laminas, onAbrirFicha }: Props) {
           onClick={() => {
             manejarClick(lamina);
           }}
-          className="group flex cursor-pointer touch-manipulation flex-col items-center border-0 bg-transparent p-0 text-center [-webkit-tap-highlight-color:transparent] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-celeste-700"
+          className="group flex cursor-pointer touch-manipulation flex-col items-center border-0 bg-transparent p-0 text-center [-webkit-tap-highlight-color:transparent] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-foco"
         >
           {/*
            * Placeholder rayado, mismo patrón visual que la "lámina" de
@@ -79,7 +79,7 @@ export function GrillaLaminas({ laminas, onAbrirFicha }: Props) {
             aria-hidden="true"
             className="flex h-[230px] w-full items-end justify-center bg-[repeating-linear-gradient(135deg,var(--color-arena-borde)_0_7px,var(--color-arena-borde-suave)_7px_14px)] p-md outline outline-celeste-150"
           >
-            <span className="border border-arena-borde-suave bg-crema px-sm py-xs font-mono text-[10px] leading-[1.6] text-texto-secundario">
+            <span className="border border-arena-borde-suave bg-crema px-sm py-xs font-mono text-chip font-normal tracking-normal leading-[1.6] text-texto-secundario">
               {lamina.slot}
             </span>
           </span>
@@ -91,7 +91,7 @@ export function GrillaLaminas({ laminas, onAbrirFicha }: Props) {
            * de texto de más abajo: cambiarlo a `--color-accent-800` en hover
            * borraría la excepción que lo hace reconocible.
            */}
-          <span className="mt-lg font-cuerpo text-[11px] font-semibold tracking-[0.16em] text-accent-700 uppercase">
+          <span className="mt-lg font-cuerpo text-chip leading-normal tracking-[0.16em] text-accent-700 uppercase">
             {lamina.tipo}
           </span>
 
