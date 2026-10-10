@@ -180,8 +180,8 @@ export function FichaEntidad({ entidad, onRepasar, onProponerCambio, onVerHistor
            * `hyphens-auto` para que la justificación no abra ríos de espacio.
            * La letra capital va solo en el primer párrafo, en dorado oscuro
            * (`text-accent-700`, el único dorado que la marca habilita como
-           * texto): el gradiente `.au` se reserva para el logotipo y las
-           * cifras, no para lectura larga.
+           * texto): el gradiente `.au` es ornamento (ADR 0028 §1), del
+           * logotipo y de los numerales decorativos, no de lectura larga.
            */}
           {primerParrafo !== undefined && (
             <p className="m-0 font-cuerpo text-[16px] leading-[1.85] text-justify text-texto-cuerpo hyphens-auto">

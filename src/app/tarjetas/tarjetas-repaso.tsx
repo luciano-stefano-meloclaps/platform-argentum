@@ -156,10 +156,10 @@ export function TarjetasRepaso({ mazoNombre, tarjetas, onResponder, onAbrirFicha
         {/*
          * Único `<h1>` de la pantalla (recibe el foco al pasar de tarjeta).
          * Con el mazo terminado dice «Fin del mazo». La cifra en dorado oscuro PLANO, a
-         * propósito sin `.au` ni `.shiny`: es la única cifra destacada de la
-         * plataforma sin gradiente ni animación, para no competir con el
-         * wordmark. El total va en un `<span>` gris, mismo tamaño y sin
-         * negrita.
+         * propósito sin `.au`: es texto que se lee, y lo que se lee va en
+         * un dorado AA sólido, sin gradiente ni animación (ADR 0028 §2),
+         * igual que las cifras del hero. El total va en un `<span>` gris,
+         * mismo tamaño y sin negrita.
          */}
         <h1
           ref={tituloRef}

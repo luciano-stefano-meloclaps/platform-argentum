@@ -21,17 +21,19 @@ import { NavPrincipal } from "./nav-principal.tsx";
  *   medido. Borde inferior 1px con `--color-accent`, igual que documenta la
  *   marca.
  * - Filete dorado de 3px debajo: clase `.filete-dorado` (`globals.css`),
- *   con la misma receta de brillo animado que `.au` y `.shiny` —
- *   `@keyframes shinySweep`, sincronizada entre los tres. Antes era un
- *   gradiente estático con `--gradiente-filete`; se unificó a pedido
- *   explícito del usuario porque el filete y `.au` compartían color con
- *   `.shiny` pero no su animación, y por eso se percibían "distintos".
- * - Logotipo "ARGENTUM": clase `.au` (gradiente metálico de texto, ahora con
- *   la misma banda de brillo animada que `.shiny` — antes era estático).
- *   Sus stops de base son, desde un pedido explícito del usuario en esta
- *   conversación, los mismos 5 del filete dorado de arriba (no ya los 7 que
- *   había fijado el ADR 0015) — ver `globals.css` e `identidad-argentum`
- *   §1/§3 para el detalle y la deuda de contraste que acepta. El tamaño
+ *   con la misma receta de brillo que `.au`: `@keyframes shinySweep`, una
+ *   sola pasada de 3.4s al cargar, sincronizada entre los dos (ADR 0028
+ *   §4). Antes era un gradiente estático con `--gradiente-filete`; se
+ *   unificó a pedido explícito del usuario para que el filete y el
+ *   logotipo se percibieran iguales.
+ * - Logotipo "ARGENTUM": clase `.au`, gradiente metálico de texto con la
+ *   misma banda de brillo de una sola pasada. Es ornamento (ADR 0028 §1):
+ *   un logotipo está exento del contraste de WCAG 1.4.3, por eso puede
+ *   llevar el dorado brillante que ningún texto que se lee lleva. Sus
+ *   stops de base son los mismos 5 del filete dorado de arriba
+ *   (`--dorado-brillante-stops`, no ya los 7 que había fijado el ADR
+ *   0015) — ver `globals.css` e `identidad-argentum` §1/§3 para el detalle
+ *   y la deuda de contraste que acepta. El tamaño
  *   (56px, subido de 38px → 50px → 56px en pedidos sucesivos del usuario),
  *   el tracking (0.34em) y el
  *   `text-indent` que lo compensa son valores puntuales de este único
@@ -120,12 +122,12 @@ export function Header() {
       />
 
       {/*
-       * Filete dorado, 3px, con la misma receta de brillo animado que
-       * `.au` (logotipo, abajo) y `.shiny` (cifras del hero) —
-       * `.filete-dorado`, definida en `globals.css` junto a `@keyframes
-       * shinySweep`. Antes era un gradiente estático (`style` inline con
+       * Filete dorado, 3px, con la misma receta de brillo que `.au`
+       * (logotipo, abajo): `.filete-dorado`, definida en `globals.css`
+       * junto a `@keyframes shinySweep`, una sola pasada (ADR 0028 §4).
+       * Antes era un gradiente estático (`style` inline con
        * `var(--gradiente-filete)`); ahora usa la clase para heredar la
-       * banda de brillo animada y el mismo `prefers-reduced-motion`.
+       * banda de brillo y el mismo `prefers-reduced-motion`.
        */}
       <div aria-hidden="true" className="h-[3px] filete-dorado" />
 
