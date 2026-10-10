@@ -481,6 +481,10 @@ Llegás hasta **abrir** el PR. Mergearlo a `main` y desplegar es del usuario
    - La regla del que resuelve: conservar **ambos** lados. Si dos lados dicen
      cosas incompatibles —sobre todo en un ADR o en una guarda—, es una
      decisión, no un conflicto: **frená y preguntá**, no elijas un lado.
+   - Antes de convocar a nadie, leé `docs/decisiones-menores.md` §7, «Cómo se
+     resuelve»: los hooks van primero, y si `main` es el squash de un ancestro
+     de `development`, gana `development` entero y el atajo reemplaza a la
+     regla de ambos lados.
    - Árbol verde (`pnpm typecheck`, `pnpm lint`, `pnpm test`), commit con
      ticket, y los dos portones de la 9-bis. El PR va **contra `development`**.
    - Se mergea con `rtk gh pr merge <n> --merge`, **no `--squash`**: el merge
