@@ -178,6 +178,16 @@ Las decisiones que se **posponen** viven en `decisiones-pendientes.md`, no acá.
 - **Regla de fondo.** El PR `development` → `main` se mergea con **merge commit,
   no con squash**; el de reconciliación, igual. Es lo que evita que el conflicto
   vuelva.
+- **Cómo se resuelve (agregado 2026-10-09, lo que dejó #218).**
+  - Los conflictos de `.claude/hooks/` se resuelven **primero**, con Edit o
+    Write, y cada hook se verifica con `bash -n` antes de seguir. Un hook con
+    marcadores de conflicto no parsea y bloquea todo Bash del clon, incluida la
+    sesión principal: pasó en #218 con `limitar-gh.sh`.
+  - El atajo verificable: si el árbol del commit de `main` es idéntico al de un
+    ancestro de `development` (lo que deja un squash), todos los conflictos se
+    resuelven con el lado de `development`, y el árbol resultante tiene que ser
+    igual a `origin/development^{tree}`. Si no es igual, el atajo no aplica y se
+    resuelve archivo por archivo.
 - **Costo de revertir:** quitar el permiso de la guarda y un párrafo del agente.
   Si el flujo crece (más ramas, más gente), se promueve a ADR.
 - **Ejecuta:** `delivery-specialist`; la sesión principal edita `limitar-gh.sh`.
