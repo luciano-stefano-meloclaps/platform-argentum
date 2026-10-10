@@ -15,8 +15,15 @@
 #     permitida para todos;
 #   - escritura de issues (create, edit, comment, close, reopen): SOLO para
 #     delivery-specialist, que es el dueño del tracker;
+#   - tablero de proyecto: lectura (`project view|list|field-list|item-list`)
+#     para todos; mover y cargar tarjetas (`project item-add|item-edit`) SOLO
+#     para delivery-specialist, que es quien conoce el estado de cada ticket.
+#     Crear, editar, ligar, borrar o archivar el proyecto, sus campos o sus
+#     tarjetas queda denegado: eso es estructura del tablero y lo decide el
+#     usuario;
 #   - `pr create` y `pr merge`: SOLO para delivery-specialist, y solo contra
-#     `development` — `pr merge` le pregunta al PR su base y deniega si no es
+#     `development` (única excepción: `pr create --base main --head
+#     development`, el PR de release; abrirlo no escribe en `main`) — `pr merge` le pregunta al PR su base y deniega si no es
 #     `development`; `pr create` sin `--base development` explícito se
 #     deniega, porque sin esa bandera `gh pr create` apunta al branch por
 #     defecto del repositorio, que es `main`, y el push que lo hizo posible ya
@@ -129,6 +136,7 @@ while IFS= read -r FRAG; do
     "pr view"|"pr list"|"pr diff"|"pr checks"|"pr status") continue ;;
     "repo view"|"label list"|"release view"|"release list") continue ;;
     "run view"|"run list"|"workflow view"|"workflow list") continue ;;
+    "project view"|"project list"|"project field-list"|"project item-list") continue ;;
     "auth status"|"status ") continue ;;
   esac
   case "$SUB" in
@@ -139,6 +147,7 @@ while IFS= read -r FRAG; do
   if [ "$AGENTE" = "delivery-specialist" ]; then
     case "$SUB $VERBO" in
       "issue create"|"issue edit"|"issue comment"|"issue close"|"issue reopen") continue ;;
+      "project item-add"|"project item-edit") continue ;;
       "pr merge")
         # El merge no lleva la base en el comando: es la del PR. Se le pregunta
         # al PR mismo, con el mismo selector (número, URL o rama) y el mismo
@@ -175,7 +184,18 @@ while IFS= read -r FRAG; do
           && ! printf '%s' "$FRAG" | tr -d "\"'" | grep -Eo '(^|[[:space:]])(--base|-B)[[:space:]=]+[^[:space:]]+' | grep -Evq '[[:space:]=]development$'; then
           continue
         fi
-        denegar "pr create sin --base development explícito"
+        # La única excepción es el PR de release: `--base main` con
+        # `--head development`, uno solo de cada. Abrirlo no escribe en `main`
+        # (el merge sigue siendo del usuario, y `pr merge` falla cerrado contra
+        # una base que no es development). Docs: decisiones-menores §7.
+        PLANO=$(printf '%s' "$FRAG" | tr -d "\"'")
+        if [ "$(printf '%s' "$PLANO" | grep -Eo '(^|[[:space:]])(--base|-B)[[:space:]=]+[^[:space:]]+' | grep -Ec '[[:space:]=]main$')" = 1 ] \
+          && [ "$(printf '%s' "$PLANO" | grep -Eo '(^|[[:space:]])(--base|-B)[[:space:]=]' | wc -l)" = 1 ] \
+          && [ "$(printf '%s' "$PLANO" | grep -Eo '(^|[[:space:]])(--head|-H)[[:space:]=]+[^[:space:]]+' | grep -Ec '[[:space:]=]development$')" = 1 ] \
+          && [ "$(printf '%s' "$PLANO" | grep -Eo '(^|[[:space:]])(--head|-H)[[:space:]=]' | wc -l)" = 1 ]; then
+          continue
+        fi
+        denegar "pr create sin --base development explícito (o --base main --head development para el PR de release)"
         ;;
     esac
   fi

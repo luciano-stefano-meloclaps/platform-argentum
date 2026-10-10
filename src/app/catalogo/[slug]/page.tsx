@@ -15,7 +15,9 @@ import { FichaProcer } from "./ficha-procer.tsx";
  * recorre `listarSlugs()` —la única función del módulo `catalogo` (ADR 0002)
  * pensada exactamente para esto, ver su doc en `catalogo.ts`— así que el build
  * conoce de antemano el universo completo de fichas. Un slug fuera de ese
- * universo cae en `notFound()` (ver `./not-found.tsx`).
+ * universo es 404 sin ejecutar esta página, y lo muestra el `not-found` global
+ * (`src/app/not-found.tsx`, ADR 0016 Regla 8). `notFound()` se sigue llamando
+ * abajo porque es lo que estrecha `Entidad | undefined` a `Entidad`.
  *
  * El `switch` sobre `tipo` es a propósito y no un `if`: hoy el registro de
  * descriptores tiene un solo tipo y el `switch` es exhaustivo por eso, pero
@@ -44,7 +46,7 @@ export async function generateMetadata({ params }: PageProps<"/catalogo/[slug]">
   const entidad = await obtenerPorSlug(slug);
 
   if (entidad === undefined) {
-    return { title: "No encontrado | Argentum" };
+    return { title: "Página no encontrada | Argentum" };
   }
 
   return {

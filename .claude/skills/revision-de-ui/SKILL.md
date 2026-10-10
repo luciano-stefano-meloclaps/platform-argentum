@@ -36,6 +36,20 @@ estas categorías van primero:
 3. **Movimiento** — respetar `prefers-reduced-motion`.
 4. **Foco visible** — nunca eliminar el indicador de foco sin reemplazarlo.
 
+## Reglas de `guidelines.md` que no aplican
+
+`guidelines.md` es una copia versionada y no se edita a mano, así que las
+excepciones se anotan acá. Estas reglas no se reportan:
+
+- **[no aplica]** *Curly quotes* en *Typography*: la prosa del catálogo usa
+  comillas latinas «» o rectas (`voz-narrativa`, sección 3).
+- **[no aplica]** *Title Case* en *Content & Copy*: es una convención del
+  inglés; el español se escribe en mayúscula de oración.
+- **[no aplica]** `color-scheme: dark` y el `background-color` explícito del
+  `<select>` nativo, en *Dark Mode & Theming*: este proyecto no tiene modo
+  oscuro (`identidad-argentum`, regla 12; se decide con un ADR nuevo).
+  `<meta name="theme-color">` sí aplica, contra el fondo claro de la página.
+
 ## Precedencia
 
 Estas reglas son una **guía**, no autoridad. Si alguna contradice un ADR de

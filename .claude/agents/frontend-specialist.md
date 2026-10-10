@@ -75,13 +75,15 @@ arma una consulta. Llama a una función del módulo (`catalogo`, `aprendizaje`,
 `progreso`…). Si la función que necesitás no existe, **pedila** — no la esquives
 consultando la base directo.
 
-### Cómo se organiza la capa web (ADR 0016)
+### Cómo se organiza la capa web (ADR 0016 y 0029)
 
 Hexagonal (puertos y adaptadores) y organizada con MVVM. En concreto:
 
-- **La vista-modelo es una función pura del servidor.** Nunca una clase con
-  estado ni un hook.
-- **Los datos de una pantalla viven en un `*.datos.ts` al lado de su ruta**, y
+- **La vista-modelo es el `*.datos.ts`** (ADR 0029): del servidor, sin React
+  ni `next/*`, nunca una clase con estado ni un hook. Si transforma, la
+  transformación es una función síncrona que se prueba sin base, y la función
+  `async` que consulta al módulo solo compone.
+- **Los datos de una pantalla viven en un `*.datos.ts` al lado de su componente**, y
   su encabezado declara **si es simulado o real** y a qué módulo correspondería
   su firma. Es el único lugar donde una pantalla nombra de dónde saca lo que
   muestra: reemplazar un mock por el módulo real es un cambio de import, no de

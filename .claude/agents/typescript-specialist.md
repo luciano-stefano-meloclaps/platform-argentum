@@ -37,8 +37,9 @@ sección "Por qué no escribís" lo explica y te dice qué entregás en su lugar
    **0007**, que es el tuyo: la severidad del compilador ya está fijada y sus
    cinco opciones **no se aflojan para que compile algo**. Sumá el **0009**
    (formato del contenido curado, tipado por el descriptor), el **0011**
-   (extensión explícita en los imports de valor), el **0016** (capa web: la
-   vista-modelo es una función pura del servidor) y el **0017** (nombre del
+   (extensión explícita en los imports de valor), el **0016** y el **0029** (capa web: la
+   vista-modelo es el `*.datos.ts`, con una transformación síncrona que se
+   prueba sin base) y el **0017** (nombre del
    punto de entrada de un módulo).
 3. Leé `docs/decisiones-pendientes.md`. La entrada de la **política de errores**
    —excepciones o resultados tipados— es de las tuyas: define la forma del tipo

@@ -61,8 +61,9 @@ que no se puede olvidar:
 - **Monolito modular, cinco módulos** (ADR 0002). La capa web no consulta la
   base: le pide al módulo. La autorización se verifica dentro del módulo.
 - **La interfaz de un módulo es `src/<modulo>/<modulo>.ts`** (ADR 0017).
-- **Capa web hexagonal con MVVM** (ADR 0016): la vista-modelo es una función
-  pura del servidor. No hay `/api` interno; la ruta de protocolo de Better Auth
+- **Capa web hexagonal con MVVM** (ADR 0016 y 0029): la vista-modelo es el
+  `*.datos.ts`, del servidor y sin React; su transformación es síncrona y se
+  prueba sin base. No hay `/api` interno; la ruta de protocolo de Better Auth
   no cuenta como tal (ADR 0019). El puerto de salida está pospuesto (ADR 0018).
 - **Errores de los módulos** (ADR 0026):
   - Ausencia esperada: `undefined`.
@@ -71,9 +72,9 @@ que no se puede olvidar:
 - **Una tabla `entidad`**, con discriminador `tipo` y `datos` JSONB tipados por
   descriptores en código (ADR 0001). Una entidad tiene un solo slug, y el
   registro de lectura nunca es columna, fila ni ruta (ADR 0013).
-- **Los datos de una pantalla viven en un `*.datos.ts` al lado de su ruta.** Su
-  encabezado dice si son simulados o reales. Un mock no es contrato
-  (`decisiones-pendientes.md` §4).
+- **Los datos de una pantalla viven en un `*.datos.ts` al lado de su
+  componente** (ADR 0029). Su encabezado dice si son simulados o reales. Un
+  mock no es contrato (`decisiones-pendientes.md` §4).
 - **Contenido curado** en `contenido/<tipo>/<slug>.ts`, tipado por su
   descriptor e importado a la base (ADR 0004 y 0009).
 - **Compilador estricto** (ADR 0007 y 0011). Las banderas no se aflojan para
@@ -104,7 +105,8 @@ especialista   escribe el código, deja el árbol verde, termina
 entrega        verifica contra el ticket → commit
 usuario        verifica el commit → entrega: push + PR contra development
 usuario        verifica el PR    → entrega: merge a development y cierra el ticket
-usuario        mergea development a main y despliega, cuando quiere
+entrega        abre el PR development → main (si hay conflictos, antes reconcilia)
+usuario        mergea ese PR a main (merge commit, no squash) y despliega, cuando quiere
 ```
 
 - **Commits.**
@@ -112,8 +114,12 @@ usuario        mergea development a main y despliega, cuando quiere
   - La sesión principal y el arquitecto commitean lo suyo: documentación, ADR
     y configuración.
   - Convenciones: skill `convenciones-git`.
-- **Ramas.** `main` no recibe trabajo directo. Los PR van siempre contra
-  `development`.
+- **Ramas.** `main` no recibe trabajo directo: ningún agente pushea ni mergea a
+  `main`. Los PR de trabajo van contra `development`; el único PR contra `main`
+  es `development` → `main`, que abre el `delivery-specialist` y mergea el
+  usuario. Si tiene conflictos, el `delivery-specialist` los resuelve antes en
+  `chore/<n>-reconcile-main`, con PR contra `development`
+  (`docs/decisiones-menores.md` §7).
 - **Tracker.**
   - Solo el `delivery-specialist` escribe en él; el resto solo lee.
   - Se usan solo las etiquetas que ya existen (verificalas con `gh label list`).
@@ -172,7 +178,7 @@ guarda.
 | Hook | Qué hace |
 | ---- | -------- |
 | `bloquear-git-push.sh` | Solo el `delivery-specialist` pushea, nunca contra `main` y nunca forzado |
-| `limitar-gh.sh` | Lectura para todos; los issues y los PR contra `development`, solo para el `delivery-specialist`; todo lo demás, denegado |
+| `limitar-gh.sh` | Lectura para todos; los issues y los PR contra `development`, más `pr create --base main --head development`, solo para el `delivery-specialist`; todo lo demás, denegado |
 | `limitar-vercel.sh` | El comando `vercel`: lectura libre, y toda escritura pide confirmación (ADR 0010) |
 | `limitar-vercel-mcp.sh` | El MCP de Vercel: lo mismo, con aviso de PRODUCCIÓN; compras y facturación denegadas (ADR 0022) |
 | `limitar-neon.sh` | El MCP de Neon: lectura libre; solo el `infra-specialist` escribe; aviso de PRODUCCIÓN (ADR 0021 y 0022) |
@@ -234,6 +240,12 @@ cita:
 
 ## Setup al clonar
 
+0. **En Windows**, antes de clonar, activá el Modo de programador
+   (Configuración → Sistema → Para programadores) y cloná con
+   `git clone -c core.symlinks=true …`. Las skills de terceros de
+   `.claude/skills/` son symlinks hacia `.agents/skills/`: si alguna aparece
+   como un archivo de una línea con una ruta, no carga. Se versionan como
+   symlinks; no se reemplazan por copias.
 1. Corré `claude` en la raíz y aceptá el diálogo de confianza y el servidor MCP
    `context7` de `.mcp.json`.
 2. *(Opcional)* Exportá `CONTEXT7_API_KEY` en tu shell o en

@@ -122,13 +122,9 @@ Read files, check against rules below. Output concise but comprehensive—sacrif
 
 ### Dark Mode & Theming
 
-> **Este proyecto no tiene modo oscuro** (skill `identidad-argentum`, regla 12:
-> se decide con un ADR nuevo). Las dos reglas marcadas **[no aplica]** no se
-> reportan; `theme-color` sí aplica, contra el fondo claro de la página.
-
-- **[no aplica — sin modo oscuro]** `color-scheme: dark` on `<html>` for dark themes (fixes scrollbar, inputs)
+- `color-scheme: dark` on `<html>` for dark themes (fixes scrollbar, inputs)
 - `<meta name="theme-color">` matches page background
-- **[no aplica — sin modo oscuro]** Native `<select>`: explicit `background-color` and `color` (Windows dark mode)
+- Native `<select>`: explicit `background-color` and `color` (Windows dark mode)
 
 ### Locale & i18n
 

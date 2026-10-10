@@ -50,8 +50,25 @@ _Evitar_: atributos, propiedades, payload, campos extra
 
 **Ficha**:
 La página que muestra una entidad completa a un lector. Es el destino: a ella
-llevan la lámina y el listado de una sala.
+llevan la lámina y el listado de una sala. Nombra solo la página; el archivo de
+contenido que la alimenta es la **ficha curada**.
 _Evitar_: detalle, página de detalle, perfil, vista
+
+**Slug**:
+El identificador de una entidad en la dirección de su ficha
+(`/catalogo/<slug>`). Es una columna de la tabla `entidad`, no parte de los
+**Datos**, y vive en el nombre del archivo de contenido (ADR 0009). Una entidad
+tiene uno solo, sea cual sea el **registro de lectura** (ADR 0013).
+_Evitar_: id público, url, ruta (para nombrar el identificador)
+
+**Contexto**, **Semblanza** y **Resumen**:
+Las tres piezas de prosa de una ficha, campos de los **Datos** del tipo
+(descriptor `procer`). El **resumen** son una o dos frases, para el listado y la
+tarjeta de repaso; el **contexto** es el escenario en que apareció el personaje
+—el mundo, no la persona— y es opcional; la **semblanza** es la prosa principal.
+El escenario nunca se funde dentro de la semblanza (ADR 0012). Su voz la rige la
+skill `voz-narrativa`.
+_Evitar_: introducción, biografía, descripción, bajada
 
 **Sala**:
 Cada uno de los agrupamientos fijos del catálogo, uno por tipo de entidad. Es la
@@ -82,6 +99,19 @@ _Evitar_: versión, nivel, modo, edición
 El que escribe el equipo en archivos versionados del repositorio, por oposición
 a lo que proponen los usuarios.
 _Evitar_: contenido oficial, contenido base, seed
+
+**Ficha curada**:
+El archivo `contenido/<tipo>/<slug>.ts` que escribe el equipo, tipado por el
+descriptor de su tipo (el tipo `FichaCurada`) e importado a la base (ADR 0004 y
+0009). Es la unidad del **contenido curado**. No es la **ficha**: esa es la
+página que ve el lector.
+_Evitar_: ficha (a secas, para el archivo o el tipo), seed
+
+**Dossier**:
+El informe que entrega el `historiador-specialist` antes de que se escriba una
+ficha: hechos, fuentes y posturas en disputa. Es insumo de la redacción, nunca
+prosa del catálogo (ADR 0014).
+_Evitar_: investigación, informe, bibliografía
 
 ## Moderación
 
@@ -151,15 +181,29 @@ _Evitar_: debilidad, punto débil, materia pendiente
 ## Identidad
 
 **Usuario**:
-Quien tiene sesión iniciada. Los roles previstos son `usuario`, `admin` y
-`superadmin`.
+Quien tiene sesión iniciada. Es una condición de la aplicación, no una persona
+del equipo: quien decide qué se construye es el **CTO**, no "el usuario".
 _Evitar_: miembro, jugador, y cuenta para nombrar a la persona
+
+**CTO (Chief Technology Officer)**:
+El dueño del proyecto: quien decide qué se construye, aprueba el alcance, las
+decisiones y el texto de cada ficha, y confirma cada paso que sale del
+repositorio. Es una persona del equipo, no un **rol** ni un **usuario**: la
+aplicación no lo modela.
+_Evitar_: el usuario (para nombrarlo), dueño, product owner, cliente
+
+**Rol**:
+El nivel de permiso de un **usuario**. Los previstos son `usuario`, `admin` y
+`superadmin`. El **visitante** no tiene rol: no tiene sesión.
+_Evitar_: perfil, permiso, nivel, tipo (que es del catálogo)
 
 **Cuenta**:
 El alta de una persona en la aplicación, con email y contraseña o con Google.
 Tener cuenta no es lo mismo que ser usuario: se es usuario mientras la sesión
-está iniciada.
-_Evitar_: perfil, registro (que es otra cosa)
+está iniciada. **Registrarse** es válido como verbo —la ruta `/registrarse`, el
+botón— y nombra el acto de crear una cuenta; como sustantivo de la cuenta,
+"registro" se evita (es otra cosa: ver **Entidad**).
+_Evitar_: perfil, registro (como sustantivo de la cuenta)
 
 **Sesión**:
 El período en que una persona con cuenta está identificada en la aplicación,
@@ -183,6 +227,15 @@ Un cambio de esquema de la base, versionado en el repositorio. Nunca se usa
 esta palabra para el contenido.
 _Evitar_: usarla para la importación
 
+**Entorno**:
+Cada lugar donde corre la aplicación con su propia base: local (Docker),
+**preview** y **producción**. **Producción** es el entorno que ven los lectores
+y solo lo escribe el `infra-specialist`, con confirmación del **CTO** en cada
+ejecución (ADR 0024 y 0025). **Preview** es el entorno de prueba de cada rama y
+nunca recibe datos de producción (ADR 0027). Cómo se opera cada uno está en
+`docs/runbooks/`.
+_Evitar_: ambiente, stage, staging, prod (en prosa)
+
 ## Trabajo
 
 **Rebanada**:
@@ -204,6 +257,13 @@ Una rebanada o un cimiento, publicado como issue de GitHub para poder seguirlo.
 Es la unidad que se aprueba, se commitea y se cierra; el trabajo sin ticket no
 debería estar pasando.
 _Evitar_: tarea, historia, card, issue (en español), requerimiento
+
+**Guarda**:
+Un hook de `.claude/hooks/` que frena o pide confirmación antes de un comando
+riesgoso (`git push`, `gh`, `vercel`, Neon). Es una restricción del sistema, no
+una convención: no depende de que el agente la respete. Su criterio es del
+`infra-specialist`; sus archivos los escribe la sesión principal o el arquitecto.
+_Evitar_: permiso, regla, política, bloqueo
 
 **Módulo**:
 Cada una de las cinco piezas lógicas del sistema: `catalogo`, `moderacion`,

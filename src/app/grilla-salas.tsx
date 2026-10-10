@@ -55,22 +55,20 @@ const RUTA_POR_TIPO: Partial<Record<SalaTipo, string>> = {
  * son bordes por celda, es el hueco del grid mostrando el fondo de atrás; no
  * reemplazar por `border` en cada `<button>`.
  *
- * Foco y objetivo táctil (ticket #88, revisado por el `brand-specialist`):
- * el anillo de foco usa `outline-celeste-700`, ya vigente en el resto del
- * sitio (4.34:1 sobre los dos fondos reales de la celda, contra el piso
- * 3:1 de WCAG 2.4.11 para indicadores no textuales) — no `--color-foco`
- * del ticket #58, que sigue sin mergear a `development`; migrar cuando se
- * mergee, en una pasada aparte. No hace falta un `min-h`/`min-w` explícito
- * de objetivo táctil: el contenido de la celda (padding + numeral +
- * separador + título + caption) ya da un alto muy por encima de 44px en
- * cualquier viewport.
+ * Foco y objetivo táctil: el anillo de foco es el de la marca,
+ * `outline-foco` (`--color-foco`, ticket #212; antes era un celeste, de
+ * cuando ese token no existía). Sobre los dos fondos reales de la celda
+ * (`--blanco` y `--celeste-50`) supera el piso de 3:1 de WCAG 1.4.11 para
+ * indicadores no textuales. No hace falta un `min-h`/`min-w` explícito de
+ * objetivo táctil: el contenido de la celda (padding + numeral + separador
+ * + título + caption) ya da un alto muy por encima de 44px en cualquier
+ * viewport.
  *
- * `px-[26px] py-[30px]` de la celda, `h-px w-[26px]` del separador
- * decorativo y `text-[10px] tracking-[0.14em]` del caption quedan como
- * excepciones revisadas (`brand-specialist`, ticket #88): son valores sin
- * precedente exacto en otra pantalla hoy, salvo `text-[10px]`, que se
- * repite en varios archivos con tracking distinto — candidato a un futuro
- * `--text-micro`, pero unificarlo excede el alcance de esta rebanada.
+ * `px-[26px] py-[30px]` de la celda y `h-px w-[26px]` del separador
+ * decorativo quedan como excepciones revisadas (`brand-specialist`, ticket
+ * #88): son valores sin precedente exacto en otra pantalla hoy. El caption
+ * va en `text-chip` (11px, el piso de la marca; ticket #212) con su propio
+ * `tracking-[0.14em]` y peso regular.
  *
  * Navegación real vs. callback (hallazgo del `ui-reviewer`, corregido en esta
  * misma pasada): la celda con ruta real (hoy, solo Próceres) se renderiza
@@ -87,7 +85,7 @@ const RUTA_POR_TIPO: Partial<Record<SalaTipo, string>> = {
  * `revision-de-ui`.
  */
 const CELDA_CLASE =
-  "block cursor-pointer touch-manipulation border-0 bg-blanco px-[26px] py-[30px] text-center font-cuerpo text-texto-cuerpo [-webkit-tap-highlight-color:transparent] motion-safe:transition-colors motion-safe:duration-150 hover:bg-celeste-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-celeste-700";
+  "block cursor-pointer touch-manipulation border-0 bg-blanco px-[26px] py-[30px] text-center font-cuerpo text-texto-cuerpo [-webkit-tap-highlight-color:transparent] motion-safe:transition-colors motion-safe:duration-150 hover:bg-celeste-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foco";
 
 export function GrillaSalas({ salas, onSelectSala }: Props) {
   return (
@@ -112,7 +110,7 @@ export function GrillaSalas({ salas, onSelectSala }: Props) {
             <span className="block text-pretty font-titulo text-tile-title not-italic text-texto-titulo">
               {sala.nombre}
             </span>
-            <span className="mt-[10px] block font-cuerpo text-[10px] tracking-[0.14em] text-texto-secundario uppercase tabular-nums">
+            <span className="mt-[10px] block font-cuerpo text-chip font-normal leading-normal tracking-[0.14em] text-texto-secundario uppercase tabular-nums">
               {sala.cantidad} entidades
             </span>
           </>

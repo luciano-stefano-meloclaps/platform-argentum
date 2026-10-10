@@ -60,17 +60,21 @@ export function FichaEntidad({ entidad, onRepasar, onProponerCambio, onVerHistor
        * no un control de navegación. Se marca como `<nav>` con nombre para
        * que un lector de pantalla pueda saltarlo, y el tramo actual —el
        * nombre de esta ficha— no es link: es `aria-current="page"`.
+       *
+       * Ticket #212: 11px (`text-chip`, el piso de la marca) y cada tramo
+       * enlazado mide al menos 44 × 44px (`min-h-objetivo-tactil
+       * min-w-objetivo-tactil`).
        */}
       <nav aria-label="Migas de pan" className="px-lg text-center">
-        <ol className="m-0 flex list-none flex-wrap items-center justify-center gap-x-[6px] p-0 font-cuerpo text-[10px] tracking-[0.16em] text-texto-terciario uppercase">
+        <ol className="m-0 flex list-none flex-wrap items-center justify-center gap-x-[6px] gap-y-xs p-0 font-cuerpo text-chip font-normal tracking-[0.16em] text-texto-terciario uppercase">
           <li>
-            <Link href="/" className="text-texto-terciario underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-celeste-700">
+            <Link href="/" className="inline-flex min-h-objetivo-tactil min-w-objetivo-tactil items-center justify-center text-texto-terciario underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foco">
               Catálogo
             </Link>
           </li>
           <li aria-hidden="true">—</li>
           <li>
-            <Link href={entidad.salaHref} className="text-texto-terciario underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-celeste-700">
+            <Link href={entidad.salaHref} className="inline-flex min-h-objetivo-tactil min-w-objetivo-tactil items-center justify-center text-texto-terciario underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foco">
               {entidad.sala}
             </Link>
           </li>
@@ -136,7 +140,7 @@ export function FichaEntidad({ entidad, onRepasar, onProponerCambio, onVerHistor
               aria-label={entidad.imagenAlt}
               className="flex h-[380px] items-end justify-center rounded-t-[150px] rounded-b-[2px] bg-[repeating-linear-gradient(135deg,var(--color-arena-borde)_0_7px,var(--color-arena-borde-suave)_7px_14px)] p-[18px] outline outline-celeste-150"
             >
-              <span className="border border-arena-borde-suave bg-crema px-sm py-xs text-center font-mono text-[10px] leading-[1.6] text-texto-secundario">
+              <span className="border border-arena-borde-suave bg-crema px-sm py-xs text-center font-mono text-chip font-normal tracking-normal leading-[1.6] text-texto-secundario">
                 {entidad.imagenNota}
                 <br />
                 300 × 380
@@ -159,14 +163,14 @@ export function FichaEntidad({ entidad, onRepasar, onProponerCambio, onVerHistor
             <button
               type="button"
               onClick={onRepasar}
-              className="w-full cursor-pointer touch-manipulation rounded-sm border border-accent-600 bg-dorado-bg px-lg py-[14px] font-cuerpo text-[11px] font-semibold tracking-[0.14em] text-accent-800 uppercase motion-safe:transition-colors motion-safe:duration-150 hover:bg-accent-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-celeste-700"
+              className="min-h-objetivo-tactil w-full cursor-pointer touch-manipulation rounded-sm border border-accent-600 bg-dorado-bg px-lg py-[14px] font-cuerpo text-chip tracking-[0.14em] text-accent-800 uppercase motion-safe:transition-colors motion-safe:duration-150 hover:bg-accent-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foco"
             >
               Repasar esta ficha
             </button>
             <button
               type="button"
               onClick={onProponerCambio}
-              className="w-full cursor-pointer touch-manipulation rounded-sm border border-borde-strong bg-blanco px-lg py-[14px] font-cuerpo text-[11px] font-semibold tracking-[0.14em] text-texto-cuerpo uppercase motion-safe:transition-colors motion-safe:duration-150 hover:bg-crema focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-celeste-700"
+              className="min-h-objetivo-tactil w-full cursor-pointer touch-manipulation rounded-sm border border-borde-strong bg-blanco px-lg py-[14px] font-cuerpo text-chip tracking-[0.14em] text-texto-cuerpo uppercase motion-safe:transition-colors motion-safe:duration-150 hover:bg-crema focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foco"
             >
               Proponer un cambio
             </button>
@@ -180,8 +184,8 @@ export function FichaEntidad({ entidad, onRepasar, onProponerCambio, onVerHistor
            * `hyphens-auto` para que la justificación no abra ríos de espacio.
            * La letra capital va solo en el primer párrafo, en dorado oscuro
            * (`text-accent-700`, el único dorado que la marca habilita como
-           * texto): el gradiente `.au` se reserva para el logotipo y las
-           * cifras, no para lectura larga.
+           * texto): el gradiente `.au` es ornamento (ADR 0028 §1), del
+           * logotipo y de los numerales decorativos, no de lectura larga.
            */}
           {primerParrafo !== undefined && (
             <p className="m-0 font-cuerpo text-[16px] leading-[1.85] text-justify text-texto-cuerpo hyphens-auto">
@@ -220,14 +224,14 @@ export function FichaEntidad({ entidad, onRepasar, onProponerCambio, onVerHistor
                 <tr key={indice} className="border-b border-arena-borde-suave">
                   <th
                     scope="row"
-                    className="w-[120px] py-[10px] pr-md text-left align-top font-cuerpo text-[10px] font-semibold tracking-[0.14em] text-texto-terciario uppercase"
+                    className="w-[120px] py-[10px] pr-md text-left align-top font-cuerpo text-chip leading-[1.7] tracking-[0.14em] text-texto-terciario uppercase"
                   >
                     {fila.k1}
                   </th>
                   <td className="w-[30%] py-[10px] pr-lg align-top text-texto-cuerpo tabular-nums">{fila.v1}</td>
                   <th
                     scope="row"
-                    className="w-[120px] py-[10px] pr-md text-left align-top font-cuerpo text-[10px] font-semibold tracking-[0.14em] text-texto-terciario uppercase"
+                    className="w-[120px] py-[10px] pr-md text-left align-top font-cuerpo text-chip leading-[1.7] tracking-[0.14em] text-texto-terciario uppercase"
                   >
                     {fila.k2}
                   </th>
@@ -239,7 +243,7 @@ export function FichaEntidad({ entidad, onRepasar, onProponerCambio, onVerHistor
 
           <SeparadorDeSubseccion>Véase también</SeparadorDeSubseccion>
 
-          <ul className="m-0 grid list-none grid-cols-1 gap-x-[34px] gap-y-[2px] p-0 sm:grid-cols-2">
+          <ul className="m-0 grid list-none grid-cols-1 gap-x-[34px] gap-y-xs p-0 sm:grid-cols-2">
             {entidad.relacionadas.map((relacionada) => (
               <li key={relacionada.nombre} className="min-w-0">
                 <Relacionada relacionada={relacionada} />
@@ -255,15 +259,21 @@ export function FichaEntidad({ entidad, onRepasar, onProponerCambio, onVerHistor
            * el borde izquierdo más grueso—, sin inventar un cuarto tono.
            */}
           <aside className="mt-[34px] border border-celeste-150 border-l-2 border-l-celeste-400 px-[24px] py-[20px] bg-celeste-50">
-            <p className="m-0 font-cuerpo text-[10px] font-semibold tracking-[0.16em] text-celeste-text uppercase">
+            <p className="m-0 font-cuerpo text-chip tracking-[0.16em] text-celeste-text uppercase">
               Historial
             </p>
             <p className="mt-sm mb-0 font-cuerpo text-[14px] leading-[1.8] text-texto-cuerpo">
               {entidad.historialResumen}{" "}
+              {/*
+               * Objetivo táctil de 44px dentro de un renglón de ~25px (ticket
+               * #212): `-my-[10px]` le resta al renglón lo que el alto mínimo
+               * le suma, así el párrafo no cambia de interlineado. Mismo
+               * recurso que el enlace del dorso en `tarjetas-repaso.tsx`.
+               */}
               <button
                 type="button"
                 onClick={onVerHistorial}
-                className="cursor-pointer border-0 bg-transparent p-0 font-cuerpo text-[14px] text-celeste-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-celeste-700"
+                className="-my-[10px] inline-flex min-h-objetivo-tactil cursor-pointer touch-manipulation items-center border-0 bg-transparent p-0 font-cuerpo text-[14px] text-celeste-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foco"
               >
                 Ver el historial
               </button>
@@ -285,7 +295,7 @@ export function FichaEntidad({ entidad, onRepasar, onProponerCambio, onVerHistor
 function SeparadorDeSubseccion({ children }: { children: string }) {
   return (
     <div className="mt-[34px] mb-lg flex items-center gap-[14px]">
-      <h2 className="m-0 font-cuerpo text-[10px] font-semibold tracking-[0.18em] text-texto-terciario uppercase">
+      <h2 className="m-0 font-cuerpo text-chip tracking-[0.18em] text-texto-terciario uppercase">
         {children}
       </h2>
       <span aria-hidden="true" className="h-px flex-1 bg-arena-borde-suave" />
@@ -302,10 +312,17 @@ function SeparadorDeSubseccion({ children }: { children: string }) {
  * Cuando la ficha relacionada todavía no tiene ruta propia, la entrada se
  * renderiza como texto y no como link: es preferible a un link que va a
  * ningún lado.
+ *
+ * Dos cajas a propósito (ticket #212): la exterior es el objetivo táctil
+ * —`min-h-objetivo-tactil`, centrada en vertical— y la interior conserva la
+ * alineación por línea de base entre el nombre (17px) y el tipo (11px), de
+ * la que depende el punteado. Un solo `flex items-baseline` con alto mínimo
+ * dejaba el sobrante abajo; uno `items-center` despegaba el punteado de la
+ * línea de base.
  */
 function Relacionada({ relacionada }: { relacionada: { nombre: string; tipo: string; href?: string } }) {
   const contenido = (
-    <>
+    <span className="flex min-w-0 flex-1 items-baseline gap-[10px]">
       <span className="min-w-0 font-titulo text-[17px] text-texto-titulo [overflow-wrap:anywhere]">
         {relacionada.nombre}
       </span>
@@ -313,13 +330,13 @@ function Relacionada({ relacionada }: { relacionada: { nombre: string; tipo: str
         aria-hidden="true"
         className="-translate-y-[3px] flex-1 border-b border-dotted border-borde-strong"
       />
-      <span className="flex-none font-cuerpo text-[10px] tracking-[0.14em] text-texto-terciario uppercase">
+      <span className="flex-none font-cuerpo text-chip font-normal tracking-[0.14em] text-texto-terciario uppercase">
         {relacionada.tipo}
       </span>
-    </>
+    </span>
   );
 
-  const clases = "flex min-w-0 items-baseline gap-[10px] border-b border-arena-borde-suave py-[9px]";
+  const clases = "flex min-h-objetivo-tactil min-w-0 items-center border-b border-arena-borde-suave py-[9px]";
 
   if (relacionada.href === undefined) {
     return <span className={clases}>{contenido}</span>;
@@ -328,7 +345,7 @@ function Relacionada({ relacionada }: { relacionada: { nombre: string; tipo: str
   return (
     <Link
       href={relacionada.href}
-      className={`${clases} no-underline motion-safe:transition-colors motion-safe:duration-150 hover:bg-dorado-bg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-celeste-700`}
+      className={`${clases} no-underline motion-safe:transition-colors motion-safe:duration-150 hover:bg-dorado-bg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foco`}
     >
       {contenido}
     </Link>

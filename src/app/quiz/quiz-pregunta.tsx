@@ -35,6 +35,21 @@ const CLASES_DE_CIRCULO: Record<EstadoDePregunta, string> = {
 };
 
 /**
+ * Glifo de los dos estados respondidos del tracker (ticket #212): «correcta»
+ * e «incorrecta» tienen luminancias casi iguales (`--ok` y `--error`), así
+ * que sin una forma que los separe se confunden con daltonismo protán o
+ * deután (regla de uso 17). Son los mismos caracteres de texto, U+2713 y
+ * U+2715, que usan la opción elegida y la revisión de `resultado-quiz.tsx`:
+ * si algún día se pasan a íconos de Tabler, se cambian los tres lugares
+ * juntos. "Actual" y "pendiente" no llevan glifo: ya se distinguen por el
+ * borde y el peso.
+ */
+const GLIFO_DE_ESTADO: Partial<Record<EstadoDePregunta, string>> = {
+  correcta: "✓",
+  incorrecta: "✕",
+};
+
+/**
  * La pantalla "Quiz" (ticket #94): panel de pregunta con pista, grilla de
  * cuatro opciones, panel de feedback y el tracker de las 10 preguntas.
  * Presentación pura sobre el mock de `quiz-pregunta.datos.ts` — el módulo
@@ -84,7 +99,7 @@ export function QuizPregunta({ pregunta, progreso, aciertos, errores }: Props) {
     <main id="contenido" className="mx-auto max-w-[720px] px-lg py-2xl">
       {/* ── Panel de pregunta ─────────────────────────────────────────── */}
       <header className="border-y border-celeste-150 bg-celeste-50 px-xl py-2xl text-center">
-        <p className="font-cuerpo text-[10px] font-semibold tracking-[0.18em] text-celeste-text uppercase">
+        <p className="font-cuerpo text-chip leading-normal tracking-[0.18em] text-celeste-text uppercase">
           Quiz · pregunta {pregunta.numero} de {pregunta.totalPreguntas}
         </p>
 
@@ -129,7 +144,7 @@ export function QuizPregunta({ pregunta, progreso, aciertos, errores }: Props) {
           type="button"
           onClick={alternarPista}
           aria-expanded={pistaAbierta}
-          className="mt-xl inline-flex min-h-[44px] cursor-pointer touch-manipulation items-center gap-sm rounded-sm border border-dashed border-accent-600 bg-transparent px-lg py-sm font-cuerpo text-[12px] font-semibold tracking-[0.06em] text-accent-800 uppercase motion-safe:transition-colors motion-safe:duration-150 hover:bg-blanco focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-celeste-700"
+          className="mt-xl inline-flex min-h-objetivo-tactil cursor-pointer touch-manipulation items-center gap-sm rounded-sm border border-dashed border-accent-600 bg-transparent px-lg py-sm font-cuerpo text-[12px] font-semibold tracking-[0.06em] text-accent-800 uppercase motion-safe:transition-colors motion-safe:duration-150 hover:bg-blanco focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foco"
         >
           {pistaAbierta ? "Ocultar la pista" : "Ver una pista"}
         </button>
@@ -142,6 +157,7 @@ export function QuizPregunta({ pregunta, progreso, aciertos, errores }: Props) {
       </header>
 
       {/* ── Grilla de opciones ────────────────────────────────────────── */}
+      {/* Cada opción mide al menos 64px de alto: por encima del piso de 44px (`--spacing-objetivo-tactil`). */}
       <div className="mt-2xl grid grid-cols-1 gap-md sm:grid-cols-2">
         {pregunta.opciones.map((opcion) => {
           const esLaElegida = opcion.letra === opcionElegida;
@@ -173,7 +189,7 @@ export function QuizPregunta({ pregunta, progreso, aciertos, errores }: Props) {
               // fijada la respuesta, así que `aria-disabled` alcanza para
               // comunicar el estado sin sacrificar el foco.
               aria-disabled={respuestaFijada}
-              className={`flex min-h-[64px] w-full touch-manipulation flex-col items-start gap-xs rounded-lg border-2 px-lg py-md text-left font-cuerpo text-[15px] motion-safe:transition-colors motion-safe:duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-celeste-700 ${respuestaFijada ? "cursor-default" : "cursor-pointer"} ${clasesEstado}`}
+              className={`flex min-h-[64px] w-full touch-manipulation flex-col items-start gap-xs rounded-lg border-2 px-lg py-md text-left font-cuerpo text-[15px] motion-safe:transition-colors motion-safe:duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foco ${respuestaFijada ? "cursor-default" : "cursor-pointer"} ${clasesEstado}`}
             >
               <span className="flex items-center gap-sm">
                 <span
@@ -185,9 +201,17 @@ export function QuizPregunta({ pregunta, progreso, aciertos, errores }: Props) {
                 <span>{opcion.texto}</span>
               </span>
 
+              {/*
+               * El estado de la opción elegida va en palabra («Correcta» /
+               * «Incorrecta») y en ícono, además del verde o el rojo (regla
+               * de uso 17, ticket #212). El ícono es redundante con la
+               * palabra, así que se oculta a lectores de pantalla: si no, el
+               * nombre del botón terminaría en «marca de verificación».
+               */}
               {esLaElegida && (
-                <span className="pl-[34px] font-cuerpo text-[11px] font-semibold tracking-[0.08em] uppercase">
-                  {opcion.esCorrecta ? "Correcta ✓" : "Incorrecta ✕"}
+                <span className="pl-[34px] font-cuerpo text-chip tracking-[0.08em] uppercase">
+                  {opcion.esCorrecta ? "Correcta" : "Incorrecta"}{" "}
+                  <span aria-hidden="true">{opcion.esCorrecta ? "✓" : "✕"}</span>
                 </span>
               )}
             </button>
@@ -211,7 +235,7 @@ export function QuizPregunta({ pregunta, progreso, aciertos, errores }: Props) {
                 : "border-celeste-150 border-l-error bg-celeste-50"
             }`}
           >
-            <p className="m-0 font-cuerpo text-[10px] font-semibold tracking-[0.16em] text-celeste-text uppercase">
+            <p className="m-0 font-cuerpo text-chip tracking-[0.16em] text-celeste-text uppercase">
               {opcionElegidaDatos.esCorrecta ? "¡Correcto!" : "No era esa"}
             </p>
             <p className="mt-sm mb-0 font-cuerpo text-[15px] leading-[1.8] text-texto-cuerpo">
@@ -219,7 +243,7 @@ export function QuizPregunta({ pregunta, progreso, aciertos, errores }: Props) {
             </p>
             <Link
               href={pregunta.entidadHref}
-              className="mt-md inline-block font-cuerpo text-[13px] font-semibold text-celeste-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-celeste-700"
+              className="mt-md inline-flex min-h-objetivo-tactil items-center font-cuerpo text-[13px] font-semibold text-celeste-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foco"
             >
               Ver la ficha de {pregunta.entidadNombre}
             </Link>
@@ -236,19 +260,34 @@ export function QuizPregunta({ pregunta, progreso, aciertos, errores }: Props) {
         </p>
 
         {/*
-         * Diez círculos numerados —nunca con ícono, regla del ticket #94—,
-         * cada uno con su propio `aria-label` textual: el color nunca es el
-         * único portador del estado, ni para quien lo ve ni para quien lo
-         * escucha.
+         * Diez círculos numerados. Los dos estados respondidos llevan además
+         * un ✓ o un ✕ junto al número (`GLIFO_DE_ESTADO`, ticket #212, que
+         * deja sin efecto para este caso el «nunca con ícono» del ticket
+         * #94): 11px (`text-chip`, el piso), del color del estado (4.53:1
+         * sobre su fondo) y en línea dentro del mismo círculo, sin
+         * posicionamiento absoluto, validado por el `brand-specialist`.
+         *
+         * Para lectores de pantalla, el estado de cada círculo va en texto
+         * `sr-only` y no como `aria-label` sobre el `<span>` (ticket #212): un
+         * `<span>` sin rol no admite nombre accesible (ARIA 1.2) y varios
+         * lectores de pantalla lo ignoran. Número y glifo se ocultan para que
+         * no se anuncien dos veces.
          */}
         <ol aria-label="Las 10 preguntas del quiz" className="mt-lg flex flex-wrap justify-center gap-sm">
           {progreso.map((item) => (
             <li key={item.numero}>
               <span
-                aria-label={`Pregunta ${item.numero}: ${ETIQUETA_DE_ESTADO[item.estado]}`}
                 className={`flex h-[32px] w-[32px] items-center justify-center rounded-full border font-cuerpo text-[12px] tabular-nums ${CLASES_DE_CIRCULO[item.estado]}`}
               >
-                {item.numero}
+                <span aria-hidden="true" className="inline-flex items-baseline">
+                  {item.numero}
+                  {GLIFO_DE_ESTADO[item.estado] !== undefined && (
+                    <span className="text-chip">{GLIFO_DE_ESTADO[item.estado]}</span>
+                  )}
+                </span>
+                <span className="sr-only">
+                  Pregunta {item.numero}: {ETIQUETA_DE_ESTADO[item.estado]}
+                </span>
               </span>
             </li>
           ))}

@@ -4,6 +4,14 @@
   [ADR 0008](0008-identidad-visual-argentum.md): concepto/encuadre, logotipo,
   paleta de celeste/dorado/error y tipografía. El sistema de ligas, los
   íconos y la carga de fuentes del 0008 siguen vigentes.
+  **Supersedido parcialmente por el
+  [ADR 0028](0028-dorado-brillante-solo-como-ornamento.md)** en dos puntos:
+  la fila «Gradiente `.au`, stop 50%» de la tabla del §3 (el gradiente ya no
+  pinta texto que se lee, así que su centro no lleva requisito de contraste y
+  su valor vigente es el del código) y el alcance y la duración del brillo
+  animado (`.shiny` ya no es la receta de las cifras del hero, y el brillo
+  hace una sola pasada en vez de repetirse sin fin). El texto de abajo no se
+  edita.
 - **Fecha:** 2026-09-10
 - **Decide:** el usuario
 
