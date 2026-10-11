@@ -325,15 +325,19 @@ falta.
 
 ## 9. El archivo es TypeScript
 
-La prosa vive en un *template literal* dentro de `contenido/<tipo>/<slug>.ts`
-(ADR 0009). Dos caracteres rompen el build sin decir nada útil:
+La prosa vive dentro de `contenido/<tipo>/<slug>.ts` como **tramos entre
+comillas dobles concatenados con `+`**, de unas diez palabras por línea
+(ADR 0030):
 
-- una **comilla invertida** (`` ` ``) dentro del texto,
-- la secuencia **`${`**.
+- **Todo tramo termina con un espacio**, salvo el último del campo, y ninguno
+  empieza con espacio. Si falta ese espacio se pegan dos palabras, y ni el
+  compilador ni el lint lo avisan: es el defecto propio de este formato.
+- **Un cambio de párrafo es el tramo `"\n\n"`**, solo en su línea.
+- **Una comilla doble recta dentro del texto no hace falta**: las citas van en
+  comillas latinas «». Si aparece, se reescribe la frase.
 
-Ninguno de los dos hace falta en prosa castellana. Si aparecen, se reescribe la
-frase. Después de tocar un archivo de contenido se corre `pnpm typecheck`: un
-texto que no compila no es un texto entregado.
+Después de tocar un archivo de contenido se relee el final de cada tramo y se
+corre `pnpm typecheck`: un texto que no compila no es un texto entregado.
 
 ---
 
