@@ -31,16 +31,14 @@ const mapaDeCampos = {
 type Licencia = CamposProcer["imagen"]["licencia"];
 
 /**
- * Etiqueta humana de cada licencia. `Record<Licencia, string>` es la misma
- * guarda que `mapaDeCampos`: agregar una licencia al descriptor y olvidarse
- * de esta tabla rompe la compilación.
+ * Etiqueta humana de cada licencia. Hoy el descriptor admite solo dominio
+ * público (`docs/decisiones-menores.md` §8), así que la tabla tiene una sola
+ * entrada. `Record<Licencia, string>` es la misma guarda que `mapaDeCampos`:
+ * si el descriptor vuelve a admitir otra licencia y esta tabla no la nombra,
+ * la compilación se rompe.
  */
 const etiquetaLicencia = {
   "dominio-publico": "Dominio público",
-  cc0: "CC0",
-  "cc-by": "CC BY",
-  "cc-by-sa": "CC BY-SA",
-  propia: "Uso propio, con permiso",
 } satisfies Record<Licencia, string>;
 
 /** Una línea legible con los años de vida, con o sin año de muerte conocido. */
