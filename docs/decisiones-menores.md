@@ -220,3 +220,27 @@ Las decisiones que se **posponen** viven en `decisiones-pendientes.md`, no acá.
   etiquetas y esta entrada.
 - **Ejecuta:** el `backend-specialist` en el descriptor; el
   `frontend-specialist` en la tabla de etiquetas de la ficha.
+
+## 9. Toda ficha curada lista en su encabezado las fuentes de sus hechos
+
+- **Decisión (2026-10-10, `super-architect` por delegación del CTO, #177):**
+  el comentario de encabezado de cada `contenido/<tipo>/<slug>.ts` lista las
+  fuentes que sostienen los hechos de la ficha, agrupadas por bloque.
+  - Para una obra: autor, título y año.
+  - Para una fuente web: URL y fecha de consulta.
+  - Para un hecho aportado por el CTO: «aportado por el CTO en #<ticket>».
+
+  El dossier completo del `historiador-specialist` lo publica el
+  `delivery-specialist` como comentario en el ticket de la ficha.
+- **Contexto.** El ADR 0014 deja el dossier en el informe del historiador, y
+  el de #51 se perdió: la ficha de Belgrano quedó citando un dossier que no
+  existe.
+- **Motivo.** El encabezado es lo único versionado junto a la ficha, y es la
+  trazabilidad que pide el ADR 0004. No cambia el ADR 0014: el dossier sigue
+  siendo el informe; lo que se versiona es la lista de fuentes.
+- **Disparador para promoverlo a campo del descriptor:** que se decida
+  mostrar las fuentes en la ficha, o que una ficha llegue a cerrarse sin
+  ellas.
+- **Costo de revertir:** bajo; es un comentario por archivo.
+- **Ejecuta:** el `backend-specialist` al cerrar cada ficha; el
+  `delivery-specialist` lo verifica contra el ticket.
