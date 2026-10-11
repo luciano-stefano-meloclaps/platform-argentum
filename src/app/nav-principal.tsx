@@ -20,8 +20,15 @@ import { debeRefrescarSesion } from "./nav-refresco.ts";
  * `NavPrincipal` viejo. "Tarjetas" pasó a tener ruta real en el ticket #91
  * (`/tarjetas`, `src/app/tarjetas/page.tsx`), "Quiz" en el ticket #94
  * (`/quiz`, `src/app/quiz/page.tsx`) y "Resultado" en el #107
- * (`/quiz/resultado`, creada por el #106); las tres se renderizan como link,
- * igual que "Explorar", "Ficha" e "Índice".
+ * (`/quiz/resultado`, creada por el #106).
+ *
+ * Pantallas simuladas (ticket #175, `docs/decisiones-menores.md` §10):
+ * "Tarjetas" y "Quiz" siguen siendo links, pero llevan `vistaPrevia: true`,
+ * que les agrega el rótulo visible «vista previa» (ver `RotuloVistaPrevia`):
+ * todavía muestran datos simulados y la nav no los presenta como reales.
+ * "Resultado" salió de la nav: se llega desde el quiz. El rótulo se quita
+ * en el mismo ticket en que la pantalla pase a leer datos reales de su
+ * módulo (`aprendizaje`).
  *
  * "Ingresar" salió de esta lista estática en el ticket #114: ya no es un
  * botón inerte, es el ítem dinámico que se arma más abajo a partir de
@@ -32,13 +39,12 @@ import { debeRefrescarSesion } from "./nav-refresco.ts";
 const ITEMS = [
   { etiqueta: "Explorar", href: "/" },
   { etiqueta: "Ficha", href: "/ficha" },
-  { etiqueta: "Tarjetas", href: "/tarjetas" },
-  { etiqueta: "Quiz", href: "/quiz" },
+  { etiqueta: "Tarjetas", href: "/tarjetas", vistaPrevia: true },
+  { etiqueta: "Quiz", href: "/quiz", vistaPrevia: true },
   { etiqueta: "Mi progreso" },
   { etiqueta: "Propuestas" },
   { etiqueta: "Índice", href: "/catalogo" },
   { etiqueta: "Proponer" },
-  { etiqueta: "Resultado", href: "/quiz/resultado" },
   { etiqueta: "Perfil" },
   { etiqueta: "Usuarios" },
 ] as const;
@@ -85,6 +91,26 @@ const clasesBase =
  * línea.
  */
 const clasesActivo = "border-b-celeste-text text-celeste-text";
+
+/**
+ * Rótulo «vista previa» de un ítem con datos simulados (ticket #175,
+ * `docs/decisiones-menores.md` §10). El significado lo porta el texto, no el
+ * color: un chip con borde (forma) y la palabra escrita. `text-chip` (11px)
+ * es el piso de tamaño de `identidad-argentum`; `text-texto-secundario` sobre
+ * `--crema` (fondo del header) supera AA. El borde `borde-strong` es solo
+ * delimitación, no portador de significado. El `sr-only` agrega una pausa
+ * para que el lector de pantalla lea «Tarjetas, vista previa».
+ */
+function RotuloVistaPrevia() {
+  return (
+    <>
+      <span className="sr-only">, </span>
+      <span className="rounded-sm border border-borde-strong px-xs py-[3px] font-cuerpo text-chip uppercase leading-none text-texto-secundario">
+        vista previa
+      </span>
+    </>
+  );
+}
 
 /** "Salir" con estado de envío: se deshabilita mientras la acción corre, para no dispararla dos veces. `useFormStatus` exige ser hijo del `<form>`. */
 function BotonSalir() {
@@ -179,15 +205,18 @@ export function NavPrincipal({ cerrarSesion }: Props) {
         }
 
         const activo = esActivo(pathname, item.href);
+        const vistaPrevia = "vistaPrevia" in item;
+        const clases = activo ? `${clasesBase} ${clasesActivo}` : clasesBase;
 
         return (
           <Link
             key={item.href}
             href={item.href}
             aria-current={activo ? "page" : undefined}
-            className={activo ? `${clasesBase} ${clasesActivo}` : clasesBase}
+            className={vistaPrevia ? `${clases} inline-flex items-center gap-xs` : clases}
           >
             {item.etiqueta}
+            {vistaPrevia && <RotuloVistaPrevia />}
           </Link>
         );
       })}
