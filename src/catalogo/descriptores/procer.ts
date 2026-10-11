@@ -13,16 +13,16 @@ import type { Descriptor } from "./descriptor";
  * vuelve a ser una buena intención. Con un conjunto cerrado, agregar una
  * licencia es una decisión visible en el diff.
  *
+ * Hoy el conjunto tiene un solo miembro: una imagen entra al catálogo solo si
+ * está en dominio público (`docs/decisiones-menores.md`, §8 "Las imágenes del
+ * catálogo entran solo en dominio público"). Las CC con atribución, CC0 y el
+ * uso con permiso quedan afuera hasta que se cumpla el disparador de esa
+ * entrada; entonces se agrega esa licencia sola, con sus obligaciones escritas.
+ *
  * `z.enum` de Zod es un valor, no un `enum` de TypeScript: no lo toca la
  * prohibición de `erasableSyntaxOnly` (ADR 0007).
  */
-const licencia = z.enum([
-  "dominio-publico",
-  "cc0",
-  "cc-by",
-  "cc-by-sa",
-  "propia",
-]);
+const licencia = z.enum(["dominio-publico"]);
 
 /**
  * La imagen de la ficha, con los tres campos que el ADR 0009 declara

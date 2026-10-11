@@ -73,6 +73,19 @@ test("una ficha sin licencia de imagen falla y el error señala el campo", () =>
   expect(camposSenalados(error)).toContain("imagen.licencia");
 });
 
+test("una ficha con una licencia CC falla: solo entra el dominio público", () => {
+  // Decisión menor §8: una licencia CC es una licencia real, no una errata,
+  // y aun así no entra al catálogo.
+  const conLicenciaCC = {
+    ...belgrano,
+    imagen: { ...belgrano.imagen, licencia: "cc-by-sa" },
+  };
+
+  const error = errorAlValidar(() => validarDatos("procer", conLicenciaCC));
+
+  expect(camposSenalados(error)).toContain("imagen.licencia");
+});
+
 test("una errata en el año de nacimiento falla y el error señala el campo", () => {
   const conErrata = { ...belgrano, anioDeNacimiento: 17_700 };
 
