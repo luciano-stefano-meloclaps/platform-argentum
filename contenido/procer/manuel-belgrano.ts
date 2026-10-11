@@ -19,24 +19,86 @@ import type { FichaDe } from "../../src/catalogo/importacion/ficha";
  * sanguínea, que el usuario no aprobó ni rechazó explícitamente, solo pidió
  * otra opción—; la `semblanza` quedó aprobada en una reescritura anterior y
  * no se tocó en ninguna de las dos vueltas):
- * - Hechos biográficos de Belgrano: son exactamente los que ya traía la
- *   versión anterior de esta ficha —nacimiento en Buenos Aires en 1770,
- *   estudios de leyes en España, actividad en el Consulado de Buenos Aires
- *   (escuelas de comercio, náutica y dibujo, educación de niñas),
- *   participación en la Primera Junta, izamiento de la bandera en Rosario en
- *   febrero de 1812, Éxodo Jujeño, batallas de Tucumán y Salta, muerte en
- *   1820 pobre y enfermo, y la anécdota del reloj—. No se agregó ningún
- *   hecho biográfico nuevo sobre Belgrano.
- * - Contexto histórico general de época (monopolio comercial español previo
- *   a 1778, Reglamento de Libre Comercio de 1778 y creación de la Aduana de
- *   Buenos Aires, fundación del Virreinato del Río de la Plata en 1776/1777,
- *   ascenso administrativo de Buenos Aires y circulación clandestina de
- *   ideas ilustradas pese a la censura española): dossier del
- *   `historiador-specialist` del ticket #51. Es historia institucional de
- *   consenso, sin disputa política vigente.
- * Esta ficha no tiene todavía una referencia bibliográfica primaria citable
- * (obra, autor, año) para los hechos biográficos: queda pendiente que el
- * usuario la aporte si se quiere sostener con más detalle.
+ *
+ * Fuentes consultadas, agrupadas por bloque de hechos. Las verificó el
+ * `historiador-specialist` en #177; las web, consultadas el 2026-10-11. Su
+ * dossier completo, con el estado de cada hecho y los que no se sostienen,
+ * está publicado como comentario en #177. Ningún hecho de esta ficha fue
+ * aportado por escrito por el CTO.
+ *
+ * Datos biográficos (nombre, años, resumen y semblanza):
+ * - Bartolomé Mitre, «Historia de Belgrano y de la independencia argentina»,
+ *   t. IV, 6.ª ed., 1913 (1.ª ed. completa, 1887).
+ *   https://archive.org/details/mitre_historiadebelgranoydelaindependenciaargentina_v_4_1913
+ * - Manuel Belgrano, bando del 29 de julio de 1812, Cuartel General de Jujuy
+ *   (fuente primaria), en Joaquín Carrillo, «Jujuy. Apuntes de su historia
+ *   civil», 1877. https://backend.educ.ar/refactor_resource/get-attachment/24240
+ * - Ejército Argentino, «20 de Junio - Paso a la inmortalidad del general
+ *   Manuel Belgrano», 2019. https://www.argentina.gob.ar/node/155743
+ * - Honorable Cámara de Diputados de la Nación, proyecto de resolución
+ *   2563-D-2020, fundamentos.
+ *   https://www4.hcdn.gob.ar/dependencias/dsecretaria/Periodo2020/PDF2020/TP2020/2563-D-2020.pdf
+ * - Patricia Fernández Mainardi, «Día de la Bandera: los relatos poco
+ *   conocidos sobre Manuel Belgrano…», DEF, 2026.
+ *   https://defonline.com.ar/defensa/dia-de-la-bandera-los-relatos-poco-conocidos-sobre-manuel-belgrano-que-cambian-su-historia/
+ * - Wikipedia, «Manuel Belgrano» (solo para corroborar).
+ *   https://en.wikipedia.org/wiki/Manuel_Belgrano
+ * - Wikipedia, «Primera Junta». https://es.wikipedia.org/wiki/Primera_Junta
+ *
+ * Contexto de época (comercio, aduana, Virreinato e Ilustración):
+ * - Óscar Cruz Barney, «A 230 años del Reglamento y Aranceles Reales para el
+ *   Comercio Libre de España y las Indias del 12 de octubre de 1778», 2008.
+ *   https://revistas-colaboracion.juridicas.unam.mx/index.php/juridica/article/download/11693/10697
+ * - Herbert S. Klein y John J. TePaske, «The Royal Treasuries of the Spanish
+ *   Empire in America», vol. 3, «Chile and the Río de la Plata», 1982.
+ *   https://realhacienda.colmex.mx/introduccion-the-royal-treasuries-of-the-spanish-empire-in-america-chile-y-rio-de-la-plata/
+ * - Antonio Facundo Galarza, «Centralización de recursos fiscales bajo el
+ *   reformismo borbónico…», Avances del Cesor, 2024.
+ *   https://portal.amelica.org/ameli/journal/27/274944010/
+ * - Antonio Galarza, «Fiscal Transfers between Buenos Aires and the
+ *   Viceregal Interior at the End of the Colonial Period…», Latin American
+ *   Research Review, 2024.
+ *   https://www.cambridge.org/core/journals/latin-american-research-review/article/fiscal-transfers-between-buenos-aires-and-the-viceregal-interior-at-the-end-of-the-colonial-period-fall-of-the-situado-and-the-relation-with-the-regional-royal-treasuries-18001810/C24FC00E0BC988CE39EADA8633183FF1
+ * - Carlos Solans y Jorge Monetta, «Síntesis histórica. Historia de la
+ *   Aduana Argentina», 2014.
+ *   https://www.historiadelaaduana.com.ar/sintesis_historica_.htm
+ * - Rosendo Fraga, «La creación del Virreinato del Río de la Plata, germen
+ *   de la Argentina actual», La Nación, 2026.
+ *   https://www.lanacion.com.ar/ideas/la-creacion-del-virreinato-del-rio-de-la-plata-germen-de-la-argentina-actual-nid01082026/
+ * - Diego Valenzuela, «Belgrano y la autorización papal para leer libros
+ *   prohibidos», Infobae, 2026.
+ *   https://www.infobae.com/opinion/2026/06/22/belgrano-y-la-autorizacion-papal-para-leer-libros-prohibidos/
+ *
+ * Anécdota del reloj:
+ * - Bartolomé Mitre, «Historia de Belgrano…», t. IV, 1913, cap. XLIV (la
+ *   misma obra de arriba).
+ * - Wikipedia, «Reloj de Manuel Belgrano».
+ *   https://es.wikipedia.org/wiki/Reloj_de_Manuel_Belgrano
+ * - Infobae, «El sorprendente robo del reloj de Manuel Belgrano…», 2019.
+ *   https://www.infobae.com/sociedad/2019/06/20/el-sorprendente-robo-del-reloj-de-manuel-belgrano-la-unica-pertenencia-de-valor-que-tuvo-el-procer-al-morir/
+ * - El Heraldo, «Los últimos días de Manuel Belgrano…», 2021.
+ *   https://elheraldo.com.ar/noticias/interes-general/los-ultimos-dias-de-manuel-belgrano-sus-enfermedades-la-ingratitud-y-una-muerte-en-soledad
+ *
+ * El año 20 (tema en disputa, `voz-narrativa`):
+ * - Bartolomé Mitre, «Historia de Belgrano…», t. IV, 1913, caps. XLI a XLV
+ *   (lectura liberal).
+ * - Julián Otal Landi, «El hito de los comuneros y la anarquía del año 20…»,
+ *   2024 (lectura revisionista).
+ *   https://institutorosas.cultura.gob.ar/media/uploads/site-35/multimedia/el_hito_de_los_comuneros_y_la_anarquia_del_ano_20.pdf
+ * - María Silvia Di Liscia, reseña de Noemí Goldman y Ricardo Salvatore
+ *   (comps.), «Caudillismos rioplatenses», Quinto Sol, 1999.
+ *   https://ojs.unlpam.edu.ar/ojs/index.php/quintosol/article/download/644/579
+ * - Rosendo Fraga, «La anarquía del año 20 y los ecos del presente», La
+ *   Nación, 2020.
+ *   https://www.lanacion.com.ar/opinion/la-anarquia-del-ano-20-y-los-ecos-del-presente-nid2460084/
+ *
+ * Imagen (crédito y licencia):
+ * - Nanzi Sobrero de Vallejos, «Iconografía del general Belgrano», El
+ *   Litoral. https://www.ellitoral.com/opinion/iconografia-general-belgrano_0_xM7coacLK7.html
+ * - Wikimedia Commons, «File:Manuel Belgrano.JPG».
+ *   https://commons.wikimedia.org/wiki/File:Manuel_Belgrano.JPG
+ * - Virginia Mejía, «La grieta también es artística…», La Nación, 2020.
+ *   https://www.lanacion.com.ar/sociedad/la-grieta-tambien-es-artistica-que-cuadros-nid2334518/
  */
 const manuelBelgrano: FichaDe<"procer"> = {
   nombre: "Manuel Belgrano",
