@@ -191,3 +191,32 @@ Las decisiones que se **posponen** viven en `decisiones-pendientes.md`, no acá.
 - **Costo de revertir:** quitar el permiso de la guarda y un párrafo del agente.
   Si el flujo crece (más ramas, más gente), se promueve a ADR.
 - **Ejecuta:** `delivery-specialist`; la sesión principal edita `limitar-gh.sh`.
+
+## 8. Las imágenes del catálogo entran solo en dominio público
+
+- **Decisión (2026-10-10, `super-architect` por delegación del CTO):** una
+  imagen entra al contenido curado solo si está en dominio público. El
+  conjunto cerrado de licencias del descriptor queda en `dominio-publico`.
+- **Contexto.**
+  - #30 pedía dominio público, y el descriptor admitía además `cc0`,
+    `cc-by`, `cc-by-sa` y `propia`.
+  - Ningún ADR fijaba la política: el 0009 exige declarar crédito y
+    licencia, y el 0004 nombra los derechos de uso como riesgo.
+- **Motivo.**
+  - Cada licencia CC con atribución trae obligaciones propias (la forma
+    del crédito, el aviso de cambios y, en `cc-by-sa`, compartir igual) que
+    ningún documento del proyecto analizó.
+  - `propia` («uso propio, con permiso») depende de un permiso que ni el
+    descriptor ni la importación pueden verificar.
+  - CC0 es una renuncia del autor con una licencia de respaldo, no el
+    dominio público por vencimiento del plazo. Entra por el mismo disparador
+    que las demás.
+  - Ninguna ficha necesita hoy otra licencia.
+- **Disparador para revisarla:** una ficha que el CTO quiere incluir no
+  tiene imagen en dominio público. Entonces se agrega esa licencia sola, con
+  sus obligaciones escritas: cómo se muestra el crédito y si el recorte del
+  medallón cuenta como cambio.
+- **Costo de revertir:** bajo; una línea del descriptor, otra de la tabla de
+  etiquetas y esta entrada.
+- **Ejecuta:** el `backend-specialist` en el descriptor; el
+  `frontend-specialist` en la tabla de etiquetas de la ficha.
