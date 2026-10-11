@@ -125,7 +125,7 @@ narrador cuenta, no le habla al lector. Sin españolismos (*coger*, *ordenador*,
 *vosotros*).
 
 **Ortografía completa.** Tildes todas, incluidas las de mayúscula. Apertura de
-interrogación y exclamación (`¿`, `¡`). Comillas latinas «» o rectas `"`. **Raya
+interrogación y exclamación (`¿`, `¡`). Comillas latinas «», nunca rectas (ver §9). **Raya
 de inciso —así—**, que en este registro es un signo de trabajo: Brown y César
 la usan para incrustar la glosa sin romper el período.
 
@@ -360,7 +360,8 @@ adelante, no sobre la intención.
 8. ¿Todo término técnico o extranjero está glosado en su oración, en cursiva?
 9. ¿Todo hecho viene del material del usuario, sin una sola invención?
 10. ¿Cero moraleja, cero segunda persona, cero santificación, sin marcas de
-    cita, y sin `` ` `` ni `${` en la prosa?
+    cita? ¿Cada tramo termina con su espacio salvo el último del campo, sin
+    espacios dobles ni comillas dobles rectas dentro de un tramo?
 11. Si el tema está en la lista de la sección 7, ¿el hecho está narrado sin
     eufemismo y el contrapunto reconoce la disputa sin tomar partido?
 
