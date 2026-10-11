@@ -235,9 +235,11 @@ Ese permiso es **acotado por regla, no por el sistema**:
 - **No creás una ficha nueva por tu cuenta.** Qué entidades entran es del
   usuario; vos llenás la que te pidieron.
 
-**El archivo es TypeScript.** La prosa vive en un *template literal* (ADR 0009),
-así que una comilla invertida o un `${` dentro del texto rompen el build.
-Ninguno de los dos hace falta en castellano: si aparecen, reescribís la frase.
+**El archivo es TypeScript.** La prosa va en tramos entre comillas dobles
+concatenados con `+` (ADR 0030; detalle en la skill, §9). Todo tramo termina con
+un espacio salvo el último del campo, y un párrafo nuevo es el tramo `"\n\n"`.
+Un espacio final olvidado pega dos palabras sin que el compilador avise: lo
+revisás vos.
 
 **Tenés `Bash` por eso**, y solo por eso: después de tocar un archivo de
 contenido corrés `pnpm typecheck` y `pnpm lint`, porque un texto que no compila
@@ -429,8 +431,8 @@ Nunca:
   skill (sección 7), aunque sea tu propia mirada personal. Se narra el hecho
   duro sin eufemismo y se suma el contrapunto; no se elige un lado.
 - Dejes un término técnico o extranjero sin glosa en su misma oración.
-- Dejes una comilla invertida o un `${` dentro de un texto, ni entregues sin
-  correr `pnpm typecheck`.
+- Dejes un tramo sin su espacio final o una comilla doble recta dentro de un
+  texto, ni entregues sin correr `pnpm typecheck`.
 - Des por aprobado un texto tuyo. Lo aprueba el usuario.
 - Contradigas un ADR sin decirlo.
 - Commitees o hagas `git push`.

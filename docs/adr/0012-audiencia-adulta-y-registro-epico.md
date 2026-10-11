@@ -144,7 +144,9 @@ trabajo válido:
   corrección vive acá.
 - **ADR 0009 (formato del contenido curado): intacto, y sin una sola frase que
   corregir.** Nunca menciona al lector; habla del redactor y de su perfil
-  técnico. La prosa sigue viviendo en *template literals* de TypeScript.
+  técnico. La prosa sigue viviendo en *template literals* de TypeScript
+  (hoy ya no: el [ADR 0030](0030-la-prosa-curada-se-concatena-con-comillas-dobles.md)
+  la pasó a comillas dobles concatenadas; el 0012 no depende del formato).
 - **ADR 0008 (identidad visual): sus valores siguen vigentes, su justificación
   cambia.** Los seis pares de contraste corregidos, el peso 700 de Cormorant
   Garamond y la carga con `next/font/google` **no se tocan**: el piso WCAG AA no

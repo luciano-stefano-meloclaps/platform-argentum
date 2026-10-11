@@ -60,11 +60,9 @@ function etiquetaPeriodoDeVida(muerte: number | undefined): string {
 }
 
 /**
- * Separa una prosa en párrafos por la línea en blanco que usan los archivos
- * de contenido curado (ADR 0009) para marcarlos. Los saltos de línea sueltos
- * dentro de un mismo párrafo no se tocan: el navegador ya los colapsa en un
- * espacio, que es como se escriben los archivos de `contenido/` para no
- * superar el ancho de línea del editor.
+ * Separa una prosa en párrafos por el `"\n\n"` con el que los archivos de
+ * contenido curado los marcan (ADR 0030). Un salto de línea suelto no corta
+ * párrafo: si llegara a aparecer, el navegador lo colapsa en un espacio.
  */
 function parrafos(texto: string): string[] {
   return texto.trim().split(/\n{2,}/);

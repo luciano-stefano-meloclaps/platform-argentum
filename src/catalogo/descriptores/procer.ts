@@ -86,7 +86,7 @@ export const procer = z.object({
    * 0012).
    */
   contexto: z.string().min(1).optional(),
-  /** La prosa de la ficha. En el archivo de contenido va en un template literal. */
+  /** La prosa de la ficha. En el archivo de contenido va en comillas dobles concatenadas (ADR 0030). */
   semblanza: z.string().min(1),
 
   imagen,

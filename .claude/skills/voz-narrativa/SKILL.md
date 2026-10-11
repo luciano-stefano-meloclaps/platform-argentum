@@ -125,7 +125,7 @@ narrador cuenta, no le habla al lector. Sin españolismos (*coger*, *ordenador*,
 *vosotros*).
 
 **Ortografía completa.** Tildes todas, incluidas las de mayúscula. Apertura de
-interrogación y exclamación (`¿`, `¡`). Comillas latinas «» o rectas `"`. **Raya
+interrogación y exclamación (`¿`, `¡`). Comillas latinas «», nunca rectas (ver §9). **Raya
 de inciso —así—**, que en este registro es un signo de trabajo: Brown y César
 la usan para incrustar la glosa sin romper el período.
 
@@ -325,15 +325,19 @@ falta.
 
 ## 9. El archivo es TypeScript
 
-La prosa vive en un *template literal* dentro de `contenido/<tipo>/<slug>.ts`
-(ADR 0009). Dos caracteres rompen el build sin decir nada útil:
+La prosa vive dentro de `contenido/<tipo>/<slug>.ts` como **tramos entre
+comillas dobles concatenados con `+`**, de unas diez palabras por línea
+(ADR 0030):
 
-- una **comilla invertida** (`` ` ``) dentro del texto,
-- la secuencia **`${`**.
+- **Todo tramo termina con un espacio**, salvo el último del campo, y ninguno
+  empieza con espacio. Si falta ese espacio se pegan dos palabras, y ni el
+  compilador ni el lint lo avisan: es el defecto propio de este formato.
+- **Un cambio de párrafo es el tramo `"\n\n"`**, solo en su línea.
+- **Una comilla doble recta dentro del texto no hace falta**: las citas van en
+  comillas latinas «». Si aparece, se reescribe la frase.
 
-Ninguno de los dos hace falta en prosa castellana. Si aparecen, se reescribe la
-frase. Después de tocar un archivo de contenido se corre `pnpm typecheck`: un
-texto que no compila no es un texto entregado.
+Después de tocar un archivo de contenido se relee el final de cada tramo y se
+corre `pnpm typecheck`: un texto que no compila no es un texto entregado.
 
 ---
 
@@ -356,7 +360,8 @@ adelante, no sobre la intención.
 8. ¿Todo término técnico o extranjero está glosado en su oración, en cursiva?
 9. ¿Todo hecho viene del material del usuario, sin una sola invención?
 10. ¿Cero moraleja, cero segunda persona, cero santificación, sin marcas de
-    cita, y sin `` ` `` ni `${` en la prosa?
+    cita? ¿Cada tramo termina con su espacio salvo el último del campo, sin
+    espacios dobles ni comillas dobles rectas dentro de un tramo?
 11. Si el tema está en la lista de la sección 7, ¿el hecho está narrado sin
     eufemismo y el contrapunto reconoce la disputa sin tomar partido?
 

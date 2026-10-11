@@ -1,6 +1,10 @@
 # 0009 — Formato, ubicación e imágenes del contenido curado
 
-- **Estado:** Aceptado
+- **Estado:** Aceptado — supersedido parcialmente por
+  [0030](0030-la-prosa-curada-se-concatena-con-comillas-dobles.md): la prosa
+  larga ya no va en template literals, sino en comillas dobles concatenadas
+  (la última oración de la definición 1 y el disparador correspondiente de
+  «Revisar si»).
 - **Fecha:** 2026-09-04
 - **Decide:** Luciano Melo Claps
 
