@@ -244,3 +244,21 @@ Las decisiones que se **posponen** viven en `decisiones-pendientes.md`, no acá.
 - **Costo de revertir:** bajo; es un comentario por archivo.
 - **Ejecuta:** el `backend-specialist` al cerrar cada ficha; el
   `delivery-specialist` lo verifica contra el ticket.
+
+## 10. Tarjetas y Quiz siguen en la nav, con el rótulo «vista previa»
+
+- **Decisión (2026-10-11, CTO, #175):** «Tarjetas» y «Quiz» siguen en la
+  navegación principal, con un rótulo visible de «vista previa» que dice que
+  todavía muestran datos simulados. «Resultado» sale de la nav: se llega desde
+  el quiz.
+- **Contexto.** La nav mostraba las pantallas simuladas al lado de las reales
+  como si fueran iguales, y #175 pedía elegir entre rotularlas o sacarlas.
+- **Motivo.** Sacarlas esconde lo que el producto va a ser; dejarlas sin
+  rótulo le promete al lector algo que todavía no existe. El rótulo las deja a
+  la vista sin engañar.
+- **Disparador para quitar el rótulo:** que la pantalla lea datos reales de su
+  módulo (`aprendizaje` para Tarjetas y Quiz). Ese día su `*.datos.ts` deja de
+  decir «simulado» en el encabezado y el rótulo se va en el mismo ticket.
+- **Costo de revertir:** bajo; un ítem de la nav y esta entrada.
+- **Ejecuta:** el `frontend-specialist`, con la forma del rótulo según la skill
+  `identidad-argentum` (sin color como único portador de significado).
