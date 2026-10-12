@@ -29,6 +29,15 @@ describe("traducirError", () => {
     });
   });
 
+  it.each(["constructor", "toString", "__proto__"])(
+    "devuelve el mensaje genérico para %s, una clave heredada de Object",
+    (codigo) => {
+      expect(traducirError(codigo)).toEqual({
+        mensaje: "No se pudo completar la operación. Intentá de nuevo.",
+      });
+    },
+  );
+
   it("devuelve el mensaje genérico cuando no hay código", () => {
     expect(traducirError(undefined)).toEqual({
       mensaje: "No se pudo completar la operación. Intentá de nuevo.",
