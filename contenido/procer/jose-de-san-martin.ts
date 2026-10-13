@@ -120,58 +120,58 @@ const joseDeSanMartin: FichaDe<"procer"> = {
     contexto:
       "La revolución del Río de la Plata vivía, hacia 1816, " +
       "al pie de una muralla. Del otro lado de la " +
-      "cordillera, cuyos pasos trepaban hasta unos cinco mil metros, Chile " +
-      "obedecía a un jefe realista, Marcó del Pont, y más " +
-      "allá, en Lima, la sede del virrey del Perú se " +
-      "alzaba como la cumbre que toda libertad del sur tendría, " +
-      "tarde o temprano, que escalar. Buenos Aires, entretanto, se consumía " +
-      "en facciones, y la independencia seguía sin declararse aunque desde " +
-      "el oeste llegaran cartas que preguntaban, impacientes, hasta cuándo se " +
-      "pensaba esperar. Porque en Cuyo, Mendoza se había vuelto un " +
-      "taller de guerra: fray Luis Beltrán fundía cañones hasta con " +
-      "el bronce de las campanas, y buena parte de la " +
-      "tropa eran hombres negros antes esclavizados, comprados por el gobierno " +
-      "con la promesa de la libertad. Entre ese taller y " +
-      "Chile no había más que piedra y altura. Y frente " +
-      "a esa piedra, un militar que había combatido a Napoleón " +
-      "bajo bandera española y había vuelto a su tierra natal " +
-      "para pelear contra su antiguo rey miraba la montaña y " +
-      "no veía un muro: contaba sus pasos…",
+      "cordillera, cuyos pasos trepaban hasta unos cinco mil metros, quedaba " +
+      "Chile, y más allá, en Lima, la sede del virrey " +
+      "del Perú se alzaba como la cumbre que toda libertad " +
+      "del sur tendría, tarde o temprano, que escalar. Buenos Aires, " +
+      "entretanto, se consumía en facciones, y la independencia seguía sin " +
+      "declararse, aunque desde el oeste salían cartas que preguntaban, impacientes, " +
+      "hasta cuándo se pensaba esperar. Porque en Cuyo, Mendoza se " +
+      "había vuelto un taller de guerra: fray Luis Beltrán dirigía " +
+      "el arsenal y fundía cañones, incluso con campanas, y buena " +
+      "parte de la tropa eran hombres negros antes esclavizados, comprados " +
+      "por el gobierno con la promesa de la libertad. Entre ese " +
+      "taller y Chile no había más que piedra y altura. " +
+      "Y frente a esa piedra, un militar que había combatido " +
+      "a Napoleón bajo bandera española y había vuelto a su " +
+      "tierra para pelear contra el rey al que había servido " +
+      "miraba la montaña y no veía un muro: contaba sus " +
+      "pasos…",
 
     semblanza:
       "José de San Martín leía la guerra como se lee " +
       "una cordillera: donde otros veían la pared, él buscaba la " +
-      "quebrada. Antes de cruzar libró una " +
-      "guerra de zapa —espionaje, rumores y engaño— y negoció con " +
-      "los pehuenches, pueblo indígena cordillerano, un paso por el sur, " +
-      "sabiendo que la noticia llegaría a Marcó del Pont. En " +
-      "enero de 1817 unos cinco mil hombres y miles de " +
-      "mulas treparon por seis pasos; en febrero vencían en Chacabuco. " +
-      "La paciencia del estratega convivía con el arrojo del jinete. " +
-      "En San Lorenzo, el 3 de febrero de 1813, quedó " +
-      "atrapado bajo su caballo, y el granadero Juan Bautista Cabral " +
-      "murió de las heridas recibidas al socorrerlo. " +
+      "quebrada. Antes de cruzar libró una guerra de zapa —inteligencia " +
+      "y engaño— y negoció con los pehuenches, un pueblo indígena, " +
+      "el paso por el sur, sabiendo que la noticia llegaría a " +
+      "Marcó del Pont. En enero de 1817, unos cinco mil " +
+      "hombres y miles de mulas treparon por seis pasos, y " +
+      "en febrero vencían en Chacabuco. La paciencia del estratega convivía " +
+      "con el arrojo del jinete. En San Lorenzo, el 3 " +
+      "de febrero de 1813, su caballo cayó sobre él, y " +
+      "el granadero Juan Bautista Cabral murió de las heridas recibidas " +
+      "al socorrerlo. " +
       "\n\n" +
-      "Entre 1819 y 1820, cuando el gobierno del Directorio le " +
-      "ordenó marchar contra los federales del Litoral, no obedeció; caído " +
-      "ese gobierno, sus oficiales lo ratificaron en el mando en " +
-      "Rancagua. Para unos fue insubordinación; para otros, fidelidad a la " +
-      "guerra continental por sobre la civil. Sus proyectos monárquicos en " +
-      "el Perú se cuestionaron incluso entre sus allegados. En 1822 " +
-      "se reunió en Guayaquil con Bolívar —de lo que hablaron " +
-      "no quedó acta—, renunció ante el Congreso peruano, dejó a " +
-      "Bolívar el final de la guerra y emprendió el descenso. " +
+      "Igual de elocuentes fueron los pasos que se negó a " +
+      "dar. Cuando el Directorio le ordenó llevar el ejército contra " +
+      "los federales del Litoral, no obedeció, y caído ese gobierno " +
+      "sus oficiales lo ratificaron en el mando en Rancagua: para " +
+      "unos fue insubordinación; para otros, fidelidad a la guerra continental " +
+      "por sobre la civil. Ya Protector del Perú, vio cuestionadas " +
+      "sus propuestas monárquicas incluso entre sus allegados. Se reunió con " +
+      "Bolívar en Guayaquil —de lo que hablaron no quedó acta—; " +
+      "después renunció ante el Congreso peruano, dejó a Bolívar el " +
+      "final de la guerra y emprendió el descenso. Cuando volvió al " +
+      "Río de la Plata, con Dorrego ya fusilado por orden " +
+      "de Lavalle, rechazó el gobierno que le ofrecían sus enviados " +
+      "y regresó a Europa sin desembarcar en Buenos Aires. " +
       "\n\n" +
-      "En 1829 llegó al Río de la Plata cuando Dorrego " +
-      "había sido fusilado por orden de Lavalle, rechazó el gobierno " +
-      "que le ofrecieron en nombre de Lavalle y volvió a " +
-      "Europa sin desembarcar en Buenos Aires. En su testamento, escrito " +
-      "en París en 1844, se lee: «desearía el que mi " +
-      "corazón fuese depositado en el de Buenos Aires». Había hecho " +
-      "cruzar los Andes a un ejército por seis pasos; le " +
-      "quedaba uno, el del regreso, y lo dio treinta años " +
-      "después de muerto, cuando sus restos llegaron a Buenos Aires " +
-      "en 1880.",
+      "En su testamento pidió que no se le hiciera funeral, " +
+      "pero escribió: «desearía el que mi corazón fuese depositado " +
+      "en el de Buenos Aires». Había hecho cruzar los Andes " +
+      "a un ejército por seis pasos; le quedaba uno, el " +
+      "del regreso, y lo dio treinta años después de muerto, " +
+      "cuando sus restos llegaron a Buenos Aires.",
 
     imagen: {
       textoAlternativo:
