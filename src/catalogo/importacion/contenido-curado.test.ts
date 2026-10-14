@@ -36,6 +36,7 @@ test("el tipo y el slug de cada ficha salen de su ruta y no se repiten", async (
     "procer/jose-de-san-martin",
     "procer/julio-argentino-roca",
     "procer/manuel-belgrano",
+    "procer/martin-miguel-de-guemes",
   ]);
 });
 
