@@ -1,7 +1,6 @@
 import Image from "next/image";
 
 import type { Entidad } from "../../../catalogo/catalogo.ts";
-import { rutaDeImagen } from "../ruta-de-imagen.ts";
 
 /** Los **datos** del tipo `procer`, tal como los expone el módulo `catalogo`. */
 type CamposProcer = Entidad<"procer">["datos"];
@@ -14,8 +13,7 @@ type CamposProcer = Entidad<"procer">["datos"];
  * cada campo y a qué clase pertenece— sin que eso signifique recorrerlo en un
  * `<table>`: la prosa (`contexto`, `semblanza`) se sigue escribiendo a mano
  * más abajo, con su propia jerarquía editorial, tal como el ticket pide a
- * conciencia (ADR 0015, Regla 7, todavía en estado "Propuesto" — ver la nota
- * en `../ruta-de-imagen.ts`).
+ * conciencia (ADR 0016, Regla 7).
  */
 const mapaDeCampos = {
   nombreCompleto: { etiqueta: "Nombre completo", clase: "dato" },
@@ -78,7 +76,6 @@ function parrafos(texto: string): string[] {
  */
 export function FichaProcer({ procer }: { procer: Entidad<"procer"> }) {
   const { datos } = procer;
-  const ruta = rutaDeImagen(procer.tipo, procer.slug);
 
   return (
     <article>
@@ -100,7 +97,7 @@ export function FichaProcer({ procer }: { procer: Entidad<"procer"> }) {
       <figure className="mt-xl overflow-hidden rounded-xl border border-borde-default bg-blanco shadow-sombra-sm">
         <div className="relative aspect-square">
           <Image
-            src={ruta}
+            src={procer.rutaDeImagen}
             alt={datos.imagen.textoAlternativo}
             fill
             sizes="(min-width: 768px) 736px, 100vw"
