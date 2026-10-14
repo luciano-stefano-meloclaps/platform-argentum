@@ -188,11 +188,12 @@ while IFS= read -r FRAG; do
         # `--head development`, uno solo de cada. Abrirlo no escribe en `main`
         # (el merge sigue siendo del usuario, y `pr merge` falla cerrado contra
         # una base que no es development). Docs: decisiones-menores §7.
+        # `-eq`, no `=`: en macOS `wc -l` rellena con espacios a la izquierda.
         PLANO=$(printf '%s' "$FRAG" | tr -d "\"'")
         if [ "$(printf '%s' "$PLANO" | grep -Eo '(^|[[:space:]])(--base|-B)[[:space:]=]+[^[:space:]]+' | grep -Ec '[[:space:]=]main$')" = 1 ] \
-          && [ "$(printf '%s' "$PLANO" | grep -Eo '(^|[[:space:]])(--base|-B)[[:space:]=]' | wc -l)" = 1 ] \
+          && [ "$(printf '%s' "$PLANO" | grep -Eo '(^|[[:space:]])(--base|-B)[[:space:]=]' | wc -l)" -eq 1 ] \
           && [ "$(printf '%s' "$PLANO" | grep -Eo '(^|[[:space:]])(--head|-H)[[:space:]=]+[^[:space:]]+' | grep -Ec '[[:space:]=]development$')" = 1 ] \
-          && [ "$(printf '%s' "$PLANO" | grep -Eo '(^|[[:space:]])(--head|-H)[[:space:]=]' | wc -l)" = 1 ]; then
+          && [ "$(printf '%s' "$PLANO" | grep -Eo '(^|[[:space:]])(--head|-H)[[:space:]=]' | wc -l)" -eq 1 ]; then
           continue
         fi
         denegar "pr create sin --base development explícito (o --base main --head development para el PR de release)"

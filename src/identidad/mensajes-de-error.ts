@@ -49,9 +49,15 @@ const errores: Partial<Record<CodigoDeError, InfoError>> = {
  * garantía de tipo en el borde —viene de una respuesta HTTP de un tercero, o
  * puede faltar directamente—, así que la firma acepta `string | undefined` y
  * no `CodigoDeError`.
+ *
+ * `Object.hasOwn` filtra las claves heredadas de `Object.prototype`: sin él,
+ * un código como `"constructor"` o `"toString"` devolvería una función en
+ * lugar de un `InfoError` (#166).
  */
 export function traducirError(codigo?: string): InfoError {
-  if (codigo === undefined) return { mensaje: MENSAJE_GENERICO };
+  if (codigo === undefined || !Object.hasOwn(errores, codigo)) {
+    return { mensaje: MENSAJE_GENERICO };
+  }
 
   return errores[codigo as CodigoDeError] ?? { mensaje: MENSAJE_GENERICO };
 }

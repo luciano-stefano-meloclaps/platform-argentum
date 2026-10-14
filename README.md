@@ -174,8 +174,10 @@ Las pruebas de `catalogo` corren contra el PostgreSQL de Docker: sin
 El contenido vive en `contenido/<tipo>/<slug>.ts`: **un archivo TypeScript por
 entidad**, tipado por el descriptor de su tipo
 ([ADR 0009](docs/adr/0009-formato-del-contenido-curado.md)). El directorio es el
-**tipo** y el nombre del archivo es el **slug**; la prosa larga va en template
-literals.
+**tipo** y el nombre del archivo es el **slug**. La prosa va entre comillas
+dobles concatenadas con `+`: cada tramo termina con un espacio salvo el último
+del campo, un párrafo nuevo es `"\n\n"` y la importación no normaliza nada
+([ADR 0030](docs/adr/0030-la-prosa-curada-se-concatena-con-comillas-dobles.md)).
 
 ```ts
 // contenido/procer/manuel-belgrano.ts
@@ -185,8 +187,16 @@ export default {
     nombreCompleto: "Manuel José Joaquín del Corazón de Jesús Belgrano",
     anioDeNacimiento: 1770,
     anioDeMuerte: 1820,
-    resumen: "Abogado, economista y militar. Creó la bandera argentina en 1812.",
-    semblanza: `…`,
+    resumen:
+      "Abogado, economista y militar porteño. Creó la bandera celeste y blanca " +
+      "en 1812 y dedicó su vida y su fortuna a la independencia y a la escuela " +
+      "pública.",
+    semblanza:
+      "Manuel Belgrano no fue un militar que aprendió a gobernar: fue un " +
+      "sembrador obligado, contra su naturaleza y su fortuna, a defender " +
+      "el surco con la espada. " +
+      "\n\n" +
+      "…",
     imagen: {
       textoAlternativo: "Retrato de Manuel Belgrano",
       credito: "Museo Histórico Nacional",

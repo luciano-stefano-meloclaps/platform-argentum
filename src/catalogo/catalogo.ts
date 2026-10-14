@@ -44,6 +44,10 @@ import { esTipoConocido, validarDatos, type DatosDe, type Tipo } from "./descrip
  *   `docs/decisiones-pendientes.md` §1 — una fila que no cumple su propio
  *   descriptor es un defecto del sistema, no una decisión de un visitante, y
  *   todavía no hay decisiones de usuario en el catálogo.
+ * - Toda `Entidad` trae `rutaDeImagen` ya resuelta (ADR 0016): la ruta
+ *   pública de su imagen, `/contenido/<tipo>/<slug>.webp`. Es la misma
+ *   convención que la importación exige en disco (ADR 0009), escrita una sola
+ *   vez de este lado de la costura para que ningún consumidor la reconstruya.
  * - `server-only`: importar este módulo desde un componente de cliente rompe
  *   el build (también lo asegura `../db/cliente.ts`, que lo declara primero;
  *   se repite acá porque es parte del contrato de *este* módulo, no solo del
@@ -68,6 +72,10 @@ type FilaEntidad = typeof entidad.$inferSelect;
  * `datos` (verificado en `catalogo.test-d.ts`), que es lo que le ahorra a quien
  * llama tener que validar o castear de nuevo.
  *
+ * `rutaDeImagen` no es una columna: es un campo calculado por `aEntidad` a
+ * partir de `tipo` y `slug` (ADR 0016). Viaja pegado al dato para que ningún
+ * consumidor tenga que conocer la convención ni pueda olvidarse de aplicarla.
+ *
  * Es lo único que este módulo expone hacia afuera: quien lo consume nunca ve
  * `FilaEntidad` ni un `datos` sin estrechar.
  */
@@ -75,12 +83,14 @@ export type Entidad<T extends Tipo = Tipo> = {
   [K in T]: Omit<FilaEntidad, "tipo" | "datos"> & {
     tipo: K;
     datos: DatosDe<K>;
+    /** Ruta pública de la imagen, para el navegador: `/contenido/<tipo>/<slug>.webp`. */
+    rutaDeImagen: string;
   };
 }[T];
 
 /**
- * Valida `datos` contra el descriptor de `tipo` y arma la `Entidad` que
- * devuelve el módulo. Único punto donde una fila cruda se convierte en el tipo
+ * Valida `datos` contra el descriptor de `tipo`, resuelve `rutaDeImagen` y arma
+ * la `Entidad` que devuelve el módulo. Único punto donde una fila cruda se convierte en el tipo
  * estrecho, para que las tres funciones públicas no repitan la conversión.
  *
  * `Entidad` está parametrizado por `T` (con `Tipo` de valor por omisión para el
@@ -97,7 +107,11 @@ export type Entidad<T extends Tipo = Tipo> = {
 function aEntidad<T extends Tipo>(fila: Omit<FilaEntidad, "tipo"> & { tipo: T }): Entidad<T> {
   const { datos, ...resto } = fila;
 
-  return { ...resto, datos: validarDatos(fila.tipo, datos) } as Entidad<T>;
+  return {
+    ...resto,
+    datos: validarDatos(fila.tipo, datos),
+    rutaDeImagen: `/contenido/${fila.tipo}/${fila.slug}.webp`,
+  } as Entidad<T>;
 }
 
 /**

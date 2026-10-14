@@ -31,3 +31,6 @@ if (unaEntidad.tipo === "procer") {
 expectTypeOf(unaEntidad.id).toEqualTypeOf<string>();
 expectTypeOf(unaEntidad.slug).toEqualTypeOf<string>();
 expectTypeOf(unaEntidad.nombre).toEqualTypeOf<string>();
+
+/** La ruta de la imagen viaja ya resuelta en toda `Entidad` (ADR 0016). */
+expectTypeOf(unaEntidad.rutaDeImagen).toEqualTypeOf<string>();

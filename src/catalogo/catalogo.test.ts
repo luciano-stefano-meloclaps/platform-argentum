@@ -85,6 +85,7 @@ describe("catalogo", () => {
     // tipo.
     expect(propia?.datos.nombreCompleto).toBe(datos.nombreCompleto);
     expect(propia?.tipo).toBe("procer");
+    expect(propia?.rutaDeImagen).toBe(`/contenido/procer/${slug}.webp`);
   });
 
   test("listarPorTipo de un tipo sin entidades devuelve una lista vacía, no un error", async () => {
@@ -114,6 +115,8 @@ describe("catalogo", () => {
 
     expect(resultado?.slug).toBe(slug);
     expect(resultado?.tipo).toBe("procer");
+    // ADR 0016: la ruta de la imagen viene ya resuelta en la `Entidad`.
+    expect(resultado?.rutaDeImagen).toBe(`/contenido/procer/${slug}.webp`);
     if (resultado?.tipo === "procer") {
       expect(resultado.datos.nombreCompleto).toBe(datos.nombreCompleto);
     }

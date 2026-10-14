@@ -191,3 +191,74 @@ Las decisiones que se **posponen** viven en `decisiones-pendientes.md`, no acá.
 - **Costo de revertir:** quitar el permiso de la guarda y un párrafo del agente.
   Si el flujo crece (más ramas, más gente), se promueve a ADR.
 - **Ejecuta:** `delivery-specialist`; la sesión principal edita `limitar-gh.sh`.
+
+## 8. Las imágenes del catálogo entran solo en dominio público
+
+- **Decisión (2026-10-10, `super-architect` por delegación del CTO):** una
+  imagen entra al contenido curado solo si está en dominio público. El
+  conjunto cerrado de licencias del descriptor queda en `dominio-publico`.
+- **Contexto.**
+  - #30 pedía dominio público, y el descriptor admitía además `cc0`,
+    `cc-by`, `cc-by-sa` y `propia`.
+  - Ningún ADR fijaba la política: el 0009 exige declarar crédito y
+    licencia, y el 0004 nombra los derechos de uso como riesgo.
+- **Motivo.**
+  - Cada licencia CC con atribución trae obligaciones propias (la forma
+    del crédito, el aviso de cambios y, en `cc-by-sa`, compartir igual) que
+    ningún documento del proyecto analizó.
+  - `propia` («uso propio, con permiso») depende de un permiso que ni el
+    descriptor ni la importación pueden verificar.
+  - CC0 es una renuncia del autor con una licencia de respaldo, no el
+    dominio público por vencimiento del plazo. Entra por el mismo disparador
+    que las demás.
+  - Ninguna ficha necesita hoy otra licencia.
+- **Disparador para revisarla:** una ficha que el CTO quiere incluir no
+  tiene imagen en dominio público. Entonces se agrega esa licencia sola, con
+  sus obligaciones escritas: cómo se muestra el crédito y si el recorte del
+  medallón cuenta como cambio.
+- **Costo de revertir:** bajo; una línea del descriptor, otra de la tabla de
+  etiquetas y esta entrada.
+- **Ejecuta:** el `backend-specialist` en el descriptor; el
+  `frontend-specialist` en la tabla de etiquetas de la ficha.
+
+## 9. Toda ficha curada lista en su encabezado las fuentes de sus hechos
+
+- **Decisión (2026-10-10, `super-architect` por delegación del CTO, #177):**
+  el comentario de encabezado de cada `contenido/<tipo>/<slug>.ts` lista las
+  fuentes que sostienen los hechos de la ficha, agrupadas por bloque.
+  - Para una obra: autor, título y año.
+  - Para una fuente web: URL y fecha de consulta.
+  - Para un hecho aportado por el CTO: «aportado por el CTO en #<ticket>».
+
+  El dossier completo del `historiador-specialist` lo publica el
+  `delivery-specialist` como comentario en el ticket de la ficha.
+- **Contexto.** El ADR 0014 deja el dossier en el informe del historiador, y
+  el de #51 se perdió: la ficha de Belgrano quedó citando un dossier que no
+  existe.
+- **Motivo.** El encabezado es lo único versionado junto a la ficha, y es la
+  trazabilidad que pide el ADR 0004. No cambia el ADR 0014: el dossier sigue
+  siendo el informe; lo que se versiona es la lista de fuentes.
+- **Disparador para promoverlo a campo del descriptor:** que se decida
+  mostrar las fuentes en la ficha, o que una ficha llegue a cerrarse sin
+  ellas.
+- **Costo de revertir:** bajo; es un comentario por archivo.
+- **Ejecuta:** el `backend-specialist` al cerrar cada ficha; el
+  `delivery-specialist` lo verifica contra el ticket.
+
+## 10. Tarjetas y Quiz siguen en la nav, con el rótulo «vista previa»
+
+- **Decisión (2026-10-11, CTO, #175):** «Tarjetas» y «Quiz» siguen en la
+  navegación principal, con un rótulo visible de «vista previa» que dice que
+  todavía muestran datos simulados. «Resultado» sale de la nav: se llega desde
+  el quiz.
+- **Contexto.** La nav mostraba las pantallas simuladas al lado de las reales
+  como si fueran iguales, y #175 pedía elegir entre rotularlas o sacarlas.
+- **Motivo.** Sacarlas esconde lo que el producto va a ser; dejarlas sin
+  rótulo le promete al lector algo que todavía no existe. El rótulo las deja a
+  la vista sin engañar.
+- **Disparador para quitar el rótulo:** que la pantalla lea datos reales de su
+  módulo (`aprendizaje` para Tarjetas y Quiz). Ese día su `*.datos.ts` deja de
+  decir «simulado» en el encabezado y el rótulo se va en el mismo ticket.
+- **Costo de revertir:** bajo; un ítem de la nav y esta entrada.
+- **Ejecuta:** el `frontend-specialist`, con la forma del rótulo según la skill
+  `identidad-argentum` (sin color como único portador de significado).

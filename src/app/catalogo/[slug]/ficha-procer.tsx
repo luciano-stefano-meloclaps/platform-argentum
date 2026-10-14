@@ -1,7 +1,6 @@
 import Image from "next/image";
 
 import type { Entidad } from "../../../catalogo/catalogo.ts";
-import { rutaDeImagen } from "../ruta-de-imagen.ts";
 
 /** Los **datos** del tipo `procer`, tal como los expone el módulo `catalogo`. */
 type CamposProcer = Entidad<"procer">["datos"];
@@ -14,8 +13,7 @@ type CamposProcer = Entidad<"procer">["datos"];
  * cada campo y a qué clase pertenece— sin que eso signifique recorrerlo en un
  * `<table>`: la prosa (`contexto`, `semblanza`) se sigue escribiendo a mano
  * más abajo, con su propia jerarquía editorial, tal como el ticket pide a
- * conciencia (ADR 0015, Regla 7, todavía en estado "Propuesto" — ver la nota
- * en `../ruta-de-imagen.ts`).
+ * conciencia (ADR 0016, Regla 7).
  */
 const mapaDeCampos = {
   nombreCompleto: { etiqueta: "Nombre completo", clase: "dato" },
@@ -31,16 +29,14 @@ const mapaDeCampos = {
 type Licencia = CamposProcer["imagen"]["licencia"];
 
 /**
- * Etiqueta humana de cada licencia. `Record<Licencia, string>` es la misma
- * guarda que `mapaDeCampos`: agregar una licencia al descriptor y olvidarse
- * de esta tabla rompe la compilación.
+ * Etiqueta humana de cada licencia. Hoy el descriptor admite solo dominio
+ * público (`docs/decisiones-menores.md` §8), así que la tabla tiene una sola
+ * entrada. `Record<Licencia, string>` es la misma guarda que `mapaDeCampos`:
+ * si el descriptor vuelve a admitir otra licencia y esta tabla no la nombra,
+ * la compilación se rompe.
  */
 const etiquetaLicencia = {
   "dominio-publico": "Dominio público",
-  cc0: "CC0",
-  "cc-by": "CC BY",
-  "cc-by-sa": "CC BY-SA",
-  propia: "Uso propio, con permiso",
 } satisfies Record<Licencia, string>;
 
 /** Una línea legible con los años de vida, con o sin año de muerte conocido. */
@@ -62,11 +58,9 @@ function etiquetaPeriodoDeVida(muerte: number | undefined): string {
 }
 
 /**
- * Separa una prosa en párrafos por la línea en blanco que usan los archivos
- * de contenido curado (ADR 0009) para marcarlos. Los saltos de línea sueltos
- * dentro de un mismo párrafo no se tocan: el navegador ya los colapsa en un
- * espacio, que es como se escriben los archivos de `contenido/` para no
- * superar el ancho de línea del editor.
+ * Separa una prosa en párrafos por el `"\n\n"` con el que los archivos de
+ * contenido curado los marcan (ADR 0030). Un salto de línea suelto no corta
+ * párrafo: si llegara a aparecer, el navegador lo colapsa en un espacio.
  */
 function parrafos(texto: string): string[] {
   return texto.trim().split(/\n{2,}/);
@@ -82,7 +76,6 @@ function parrafos(texto: string): string[] {
  */
 export function FichaProcer({ procer }: { procer: Entidad<"procer"> }) {
   const { datos } = procer;
-  const ruta = rutaDeImagen(procer.tipo, procer.slug);
 
   return (
     <article>
@@ -104,7 +97,7 @@ export function FichaProcer({ procer }: { procer: Entidad<"procer"> }) {
       <figure className="mt-xl overflow-hidden rounded-xl border border-borde-default bg-blanco shadow-sombra-sm">
         <div className="relative aspect-square">
           <Image
-            src={ruta}
+            src={procer.rutaDeImagen}
             alt={datos.imagen.textoAlternativo}
             fill
             sizes="(min-width: 768px) 736px, 100vw"
