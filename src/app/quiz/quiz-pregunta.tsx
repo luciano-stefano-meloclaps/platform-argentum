@@ -243,7 +243,7 @@ export function QuizPregunta({ pregunta, progreso, aciertos, errores }: Props) {
             </p>
             <Link
               href={pregunta.entidadHref}
-              className="mt-md inline-flex min-h-objetivo-tactil items-center font-cuerpo text-[13px] font-semibold text-celeste-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foco"
+              className="mt-md inline-flex min-h-objetivo-tactil items-center font-cuerpo text-[13px] font-semibold text-celeste-text underline underline-offset-4 motion-safe:transition-[color,text-underline-offset,text-decoration-thickness] motion-safe:duration-150 hover:text-celeste-900 hover:decoration-2 hover:underline-offset-[6px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foco"
             >
               Ver la ficha de {pregunta.entidadNombre}
             </Link>
