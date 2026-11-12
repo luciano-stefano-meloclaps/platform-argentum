@@ -31,7 +31,7 @@ export type LaminaDestacada = {
   resumen: string;
   /**
    * El identificador con el que `GrillaLaminas` (`grilla-laminas.tsx`)
-   * decide adónde navegar al hacer click — ver `RUTA_POR_ENTIDAD` ahí. No
+   * decide si la lámina es un enlace y adónde va — ver `RUTA_POR_ENTIDAD` ahí. No
    * es un slug de `entidad` (ADR 0013): solo dos de las seis entidades
    * tienen ficha real u hoy mockeada, así que este campo es un
    * identificador de esta vidriera, no del catálogo.

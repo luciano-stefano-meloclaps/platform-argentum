@@ -27,9 +27,8 @@ type Props = {
  * la banda celeste del Hero.
  *
  * Server Component: solo arma el encabezado y pasa el mock a `GrillaLaminas`
- * — la interactividad (el `onClick` de cada lámina) vive ahí, la única isla
- * de cliente de esta sección, mismo criterio que `SalasDelCatalogo` +
- * `GrillaSalas`.
+ * — también Server Component: las láminas con ficha son `<Link>` reales
+ * (ticket #224), sin isla de cliente.
  */
 export function LaminasDestacadas({ totalFichas }: Props) {
   return (
